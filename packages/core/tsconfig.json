@@ -8,8 +8,18 @@
     "declarationMap": true,
     "sourceMap": true,
     "noEmit": false,
-    "lib": ["ES2022"]
+    "allowImportingTsExtensions": false,
+    "lib": [
+      "ES2022"
+    ]
   },
-  "include": ["src/**/*"],
-  "exclude": ["dist", "node_modules", "**/*.test.ts", "**/*.spec.ts"]
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "dist",
+    "node_modules",
+    "**/*.test.ts",
+    "**/*.spec.ts"
+  ]
 }
