@@ -23,7 +23,7 @@ Tiny Screen Studios is a powerful toolkit for converting pixel art and animation
 
 ### Prerequisites
 
-- Node.js 18+ 
+- Node.js 18+
 - pnpm 8+ (recommended) or npm
 
 ### Installation
@@ -57,7 +57,7 @@ const bitmap = await convertImage('path/to/image.png', {
   displayType: DisplayType.SSD1306,
   width: 128,
   height: 64,
-  threshold: 128
+  threshold: 128,
 });
 ```
 
@@ -148,11 +148,11 @@ tiny-screen-studios/
 
 ## 🎯 Supported Display Types
 
-| Display | Resolution | Notes |
-|---------|------------|-------|
-| SSD1306 | 128×64, 128×32 | Most common OLED display |
-| SH1106 | 128×64 | Similar to SSD1306 with slight differences |
-| Custom | Any size | Define your own display parameters |
+| Display | Resolution     | Notes                                      |
+| ------- | -------------- | ------------------------------------------ |
+| SSD1306 | 128×64, 128×32 | Most common OLED display                   |
+| SH1106  | 128×64         | Similar to SSD1306 with slight differences |
+| Custom  | Any size       | Define your own display parameters         |
 
 ## 📖 Usage Examples
 
@@ -166,7 +166,7 @@ const result = await convertImage('logo.png', {
   width: 128,
   height: 64,
   threshold: 128,
-  invert: false
+  invert: false,
 });
 
 // Export as C array for Arduino
@@ -183,7 +183,7 @@ const frames = await convertAnimation('animation.gif', {
   width: 128,
   height: 64,
   maxFrames: 30,
-  frameDelay: 100
+  frameDelay: 100,
 });
 
 // Export as frame sequence
@@ -209,6 +209,7 @@ We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) f
 ### Code Style
 
 This project uses:
+
 - **TypeScript** with strict mode enabled
 - **ESLint** for code linting
 - **Prettier** for code formatting
