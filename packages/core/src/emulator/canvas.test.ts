@@ -271,11 +271,46 @@ describe('CanvasEmulator', () => {
   });
 
   describe('playFramesOnCanvas', () => {
-    it('should return animation controller', () => {
-      const frames = [testFrame];
+    let testFrames: PackedFrame[];
+
+    beforeEach(() => {
+      // Create multiple test frames for animation testing
+      testFrames = [
+        {
+          bytes: new Uint8Array([0x01, 0x00, 0x00, 0x00]), // Frame 0: pixel at (0,0)
+          dims: { width: 128, height: 32 },
+          preset: 'SSD1306_128x32',
+          delayMs: 100,
+        },
+        {
+          bytes: new Uint8Array([0x00, 0x01, 0x00, 0x00]), // Frame 1: pixel at (1,0)
+          dims: { width: 128, height: 32 },
+          preset: 'SSD1306_128x32',
+          delayMs: 100,
+        },
+        {
+          bytes: new Uint8Array([0x00, 0x00, 0x01, 0x00]), // Frame 2: pixel at (2,0)
+          dims: { width: 128, height: 32 },
+          preset: 'SSD1306_128x32',
+          delayMs: 100,
+        },
+      ];
+
+      // Mock requestAnimationFrame and cancelAnimationFrame
+      global.requestAnimationFrame = vi.fn(callback => {
+        setTimeout(callback, 16); // ~60fps
+        return 1;
+      });
+      global.cancelAnimationFrame = vi.fn();
+      global.performance = {
+        now: vi.fn(() => Date.now()),
+      } as unknown as Performance;
+    });
+
+    it('should return animation controller with all required methods', () => {
       const controller = emulator.playFramesOnCanvas(
         mockContext as unknown as MockRenderingContext,
-        frames
+        testFrames
       );
 
       expect(controller).toHaveProperty('stop');
@@ -283,16 +318,41 @@ describe('CanvasEmulator', () => {
       expect(controller).toHaveProperty('setFPS');
       expect(controller).toHaveProperty('isPlaying');
       expect(controller).toHaveProperty('getCurrentFrame');
+      expect(typeof controller.stop).toBe('function');
+      expect(typeof controller.goTo).toBe('function');
+      expect(typeof controller.setFPS).toBe('function');
+      expect(typeof controller.isPlaying).toBe('function');
+      expect(typeof controller.getCurrentFrame).toBe('function');
     });
 
-    it('should render first frame when frames provided', () => {
-      const frames = [testFrame];
+    it('should render first frame immediately', () => {
       emulator.playFramesOnCanvas(
         mockContext as unknown as MockRenderingContext,
-        frames
+        testFrames
       );
 
       expect(mockContext.fillRect).toHaveBeenCalled();
+    });
+
+    it('should start playing automatically with multiple frames', () => {
+      const controller = emulator.playFramesOnCanvas(
+        mockContext as unknown as MockRenderingContext,
+        testFrames
+      );
+
+      expect(controller.isPlaying()).toBe(true);
+      expect(global.requestAnimationFrame).toHaveBeenCalled();
+    });
+
+    it('should not start playing with single frame', () => {
+      const singleFrame = [testFrames[0]];
+      const controller = emulator.playFramesOnCanvas(
+        mockContext as unknown as MockRenderingContext,
+        singleFrame
+      );
+
+      expect(controller.isPlaying()).toBe(false);
+      expect(controller.getCurrentFrame()).toBe(0);
     });
 
     it('should handle empty frames array', () => {
@@ -303,6 +363,138 @@ describe('CanvasEmulator', () => {
 
       expect(controller.isPlaying()).toBe(false);
       expect(controller.getCurrentFrame()).toBe(0);
+    });
+
+    it('should stop animation when stop() is called', () => {
+      const controller = emulator.playFramesOnCanvas(
+        mockContext as unknown as MockRenderingContext,
+        testFrames
+      );
+
+      expect(controller.isPlaying()).toBe(true);
+
+      controller.stop();
+
+      expect(controller.isPlaying()).toBe(false);
+      expect(global.cancelAnimationFrame).toHaveBeenCalled();
+    });
+
+    it('should jump to specific frame with goTo()', () => {
+      const controller = emulator.playFramesOnCanvas(
+        mockContext as unknown as MockRenderingContext,
+        testFrames
+      );
+
+      controller.goTo(2);
+
+      expect(controller.getCurrentFrame()).toBe(2);
+      // Should render the new frame
+      expect(mockContext.fillRect).toHaveBeenCalled();
+    });
+
+    it('should ignore invalid frame indices in goTo()', () => {
+      const controller = emulator.playFramesOnCanvas(
+        mockContext as unknown as MockRenderingContext,
+        testFrames
+      );
+
+      const initialFrame = controller.getCurrentFrame();
+
+      controller.goTo(-1); // Invalid
+      expect(controller.getCurrentFrame()).toBe(initialFrame);
+
+      controller.goTo(10); // Out of bounds
+      expect(controller.getCurrentFrame()).toBe(initialFrame);
+    });
+
+    it('should update FPS with setFPS()', () => {
+      const controller = emulator.playFramesOnCanvas(
+        mockContext as unknown as MockRenderingContext,
+        testFrames
+      );
+
+      controller.setFPS(30);
+      // FPS change should be accepted (internal state, hard to test directly)
+      expect(controller.isPlaying()).toBe(true);
+    });
+
+    it('should ignore invalid FPS values', () => {
+      const controller = emulator.playFramesOnCanvas(
+        mockContext as unknown as MockRenderingContext,
+        testFrames
+      );
+
+      controller.setFPS(0); // Invalid
+      controller.setFPS(-5); // Invalid
+
+      // Animation should still be playing
+      expect(controller.isPlaying()).toBe(true);
+    });
+
+    it('should use default animation options', () => {
+      const controller = emulator.playFramesOnCanvas(
+        mockContext as unknown as MockRenderingContext,
+        testFrames
+      );
+
+      // Default: loop=true, pingpong=false, fps=10
+      expect(controller.isPlaying()).toBe(true);
+      expect(controller.getCurrentFrame()).toBe(0);
+    });
+
+    it('should respect custom animation options', () => {
+      const options = {
+        fps: 5,
+        loop: false,
+        pingpong: true,
+      };
+
+      const controller = emulator.playFramesOnCanvas(
+        mockContext as unknown as MockRenderingContext,
+        testFrames,
+        options
+      );
+
+      expect(controller.isPlaying()).toBe(true);
+    });
+
+    it('should handle loop mode correctly', () => {
+      const options = { loop: true, fps: 60 }; // High FPS for testing
+
+      const controller = emulator.playFramesOnCanvas(
+        mockContext as unknown as MockRenderingContext,
+        testFrames,
+        options
+      );
+
+      expect(controller.isPlaying()).toBe(true);
+      // Loop behavior is tested through frame advancement logic
+    });
+
+    it('should handle pingpong mode correctly', () => {
+      const options = { pingpong: true, fps: 60 };
+
+      const controller = emulator.playFramesOnCanvas(
+        mockContext as unknown as MockRenderingContext,
+        testFrames,
+        options
+      );
+
+      expect(controller.isPlaying()).toBe(true);
+      // Pingpong behavior is tested through frame advancement logic
+    });
+
+    it('should stop when reaching end in non-loop mode', () => {
+      const options = { loop: false, fps: 60 };
+
+      const controller = emulator.playFramesOnCanvas(
+        mockContext as unknown as MockRenderingContext,
+        testFrames,
+        options
+      );
+
+      expect(controller.isPlaying()).toBe(true);
+      // Non-loop behavior would stop at the end (tested through frame advancement)
     });
   });
 
@@ -388,5 +580,260 @@ describe('renderFrameToNewCanvas', () => {
     expect(canvas).toBe(mockCanvas);
     expect(mockCanvas.width).toBe(256);
     expect(mockCanvas.height).toBe(64);
+  });
+});
+
+describe('Animation Controller Timing and Frame Advancement', () => {
+  let emulator: CanvasEmulator;
+  let testFrames: PackedFrame[];
+  let mockTime: number;
+
+  beforeEach(() => {
+    emulator = new CanvasEmulator();
+    vi.clearAllMocks();
+
+    // Create test frames
+    testFrames = [
+      {
+        bytes: new Uint8Array([0x01]),
+        dims: { width: 128, height: 32 },
+        preset: 'SSD1306_128x32',
+      },
+      {
+        bytes: new Uint8Array([0x02]),
+        dims: { width: 128, height: 32 },
+        preset: 'SSD1306_128x32',
+      },
+      {
+        bytes: new Uint8Array([0x04]),
+        dims: { width: 128, height: 32 },
+        preset: 'SSD1306_128x32',
+      },
+    ];
+
+    // Mock time progression
+    mockTime = 0;
+    global.performance = {
+      now: vi.fn(() => mockTime),
+    } as unknown as Performance;
+
+    // Mock animation frame with manual control
+    let animationCallback: ((time: number) => void) | null = null;
+    global.requestAnimationFrame = vi.fn(callback => {
+      animationCallback = callback;
+      return 1;
+    });
+    global.cancelAnimationFrame = vi.fn();
+
+    // Helper to advance time and trigger animation frame
+    (global as unknown as { advanceTime: (ms: number) => void }).advanceTime = (
+      ms: number
+    ): void => {
+      mockTime += ms;
+      if (animationCallback) {
+        animationCallback(mockTime);
+      }
+    };
+  });
+
+  it('should advance frames at correct FPS timing', () => {
+    const controller = emulator.playFramesOnCanvas(
+      mockContext as unknown as MockRenderingContext,
+      testFrames,
+      { fps: 10 } // 100ms per frame
+    );
+
+    expect(controller.getCurrentFrame()).toBe(0);
+
+    // Advance time by 50ms - should not advance frame yet
+    (global as unknown as { advanceTime: (ms: number) => void }).advanceTime(
+      50
+    );
+    expect(controller.getCurrentFrame()).toBe(0);
+
+    // Advance time by another 50ms (total 100ms) - should advance frame
+    (global as unknown as { advanceTime: (ms: number) => void }).advanceTime(
+      50
+    );
+    expect(controller.getCurrentFrame()).toBe(1);
+
+    // Advance another 100ms - should advance to frame 2
+    (global as unknown as { advanceTime: (ms: number) => void }).advanceTime(
+      100
+    );
+    expect(controller.getCurrentFrame()).toBe(2);
+  });
+
+  it('should loop back to start in loop mode', () => {
+    const controller = emulator.playFramesOnCanvas(
+      mockContext as unknown as MockRenderingContext,
+      testFrames,
+      { fps: 10, loop: true }
+    );
+
+    // Advance through all frames
+    (global as unknown as { advanceTime: (ms: number) => void }).advanceTime(
+      100
+    ); // Frame 1
+    (global as unknown as { advanceTime: (ms: number) => void }).advanceTime(
+      100
+    ); // Frame 2
+    (global as unknown as { advanceTime: (ms: number) => void }).advanceTime(
+      100
+    ); // Should loop to Frame 0
+
+    expect(controller.getCurrentFrame()).toBe(0);
+    expect(controller.isPlaying()).toBe(true);
+  });
+
+  it('should stop at end in non-loop mode', () => {
+    const controller = emulator.playFramesOnCanvas(
+      mockContext as unknown as MockRenderingContext,
+      testFrames,
+      { fps: 10, loop: false }
+    );
+
+    // Advance through all frames
+    (global as unknown as { advanceTime: (ms: number) => void }).advanceTime(
+      100
+    ); // Frame 1
+    (global as unknown as { advanceTime: (ms: number) => void }).advanceTime(
+      100
+    ); // Frame 2
+    (global as unknown as { advanceTime: (ms: number) => void }).advanceTime(
+      100
+    ); // Should stop at Frame 2
+
+    expect(controller.getCurrentFrame()).toBe(2);
+    expect(controller.isPlaying()).toBe(false);
+  });
+
+  it('should bounce back and forth in pingpong mode', () => {
+    const controller = emulator.playFramesOnCanvas(
+      mockContext as unknown as MockRenderingContext,
+      testFrames,
+      { fps: 10, pingpong: true }
+    );
+
+    expect(controller.getCurrentFrame()).toBe(0);
+
+    // Forward direction: 0 -> 1 -> 2
+    (global as unknown as { advanceTime: (ms: number) => void }).advanceTime(
+      100
+    );
+    expect(controller.getCurrentFrame()).toBe(1);
+
+    (global as unknown as { advanceTime: (ms: number) => void }).advanceTime(
+      100
+    );
+    expect(controller.getCurrentFrame()).toBe(2);
+
+    // Should reverse direction: 2 -> 1 -> 0
+    (global as unknown as { advanceTime: (ms: number) => void }).advanceTime(
+      100
+    );
+    expect(controller.getCurrentFrame()).toBe(1);
+
+    (global as unknown as { advanceTime: (ms: number) => void }).advanceTime(
+      100
+    );
+    expect(controller.getCurrentFrame()).toBe(0);
+
+    // Should reverse again: 0 -> 1
+    (global as unknown as { advanceTime: (ms: number) => void }).advanceTime(
+      100
+    );
+    expect(controller.getCurrentFrame()).toBe(1);
+
+    expect(controller.isPlaying()).toBe(true);
+  });
+
+  it('should handle FPS changes during playback', () => {
+    const controller = emulator.playFramesOnCanvas(
+      mockContext as unknown as MockRenderingContext,
+      testFrames,
+      { fps: 10 } // 100ms per frame
+    );
+
+    // Advance one frame at 10 FPS
+    (global as unknown as { advanceTime: (ms: number) => void }).advanceTime(
+      100
+    );
+    expect(controller.getCurrentFrame()).toBe(1);
+
+    // Change to 20 FPS (50ms per frame)
+    controller.setFPS(20);
+
+    // Should advance at new rate
+    (global as unknown as { advanceTime: (ms: number) => void }).advanceTime(
+      50
+    );
+    expect(controller.getCurrentFrame()).toBe(2);
+  });
+
+  it('should render correct frame after goTo()', () => {
+    const controller = emulator.playFramesOnCanvas(
+      mockContext as unknown as MockRenderingContext,
+      testFrames
+    );
+
+    // Jump to frame 2
+    controller.goTo(2);
+    expect(controller.getCurrentFrame()).toBe(2);
+
+    // Should continue from frame 2 when animation resumes
+    (global as unknown as { advanceTime: (ms: number) => void }).advanceTime(
+      100
+    );
+    expect(controller.getCurrentFrame()).toBe(0); // Loops back
+  });
+
+  it('should handle edge case with two frames in pingpong mode', () => {
+    const twoFrames = testFrames.slice(0, 2);
+    const controller = emulator.playFramesOnCanvas(
+      mockContext as unknown as MockRenderingContext,
+      twoFrames,
+      { fps: 10, pingpong: true }
+    );
+
+    expect(controller.getCurrentFrame()).toBe(0);
+
+    // 0 -> 1
+    (global as unknown as { advanceTime: (ms: number) => void }).advanceTime(
+      100
+    );
+    expect(controller.getCurrentFrame()).toBe(1);
+
+    // 1 -> 0 (reverse)
+    (global as unknown as { advanceTime: (ms: number) => void }).advanceTime(
+      100
+    );
+    expect(controller.getCurrentFrame()).toBe(0);
+
+    // 0 -> 1 (forward again)
+    (global as unknown as { advanceTime: (ms: number) => void }).advanceTime(
+      100
+    );
+    expect(controller.getCurrentFrame()).toBe(1);
+  });
+
+  it('should maintain timing accuracy with high FPS', () => {
+    const controller = emulator.playFramesOnCanvas(
+      mockContext as unknown as MockRenderingContext,
+      testFrames,
+      { fps: 60 } // ~16.67ms per frame
+    );
+
+    expect(controller.getCurrentFrame()).toBe(0);
+
+    // Should not advance at 16ms (just under threshold)
+    (global as unknown as { advanceTime: (ms: number) => void }).advanceTime(
+      16
+    );
+    expect(controller.getCurrentFrame()).toBe(0);
+
+    // Should advance at 17ms (over threshold)
+    (global as unknown as { advanceTime: (ms: number) => void }).advanceTime(1);
+    expect(controller.getCurrentFrame()).toBe(1);
   });
 });

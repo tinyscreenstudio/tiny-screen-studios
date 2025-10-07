@@ -9,6 +9,186 @@ import type {
 import { getPresetConfig, getVisibleDimensions } from '../config/presets.js';
 
 /**
+ * Animation controller for managing frame playback on canvas
+ * Handles FPS control, loop modes, and frame scrubbing
+ */
+class CanvasAnimationController implements AnimationController {
+  private ctx: CanvasRenderingContext2D;
+  private frames: PackedFrame[];
+  private emulator: CanvasEmulator;
+
+  // Animation state
+  private currentFrame = 0;
+  private isAnimationPlaying = false;
+  private animationId: number | null = null;
+  private lastFrameTime = 0;
+
+  // Animation options
+  private fps: number;
+  private loop: boolean;
+  private pingpong: boolean;
+  private direction = 1; // 1 for forward, -1 for backward (pingpong mode)
+
+  constructor(
+    ctx: CanvasRenderingContext2D,
+    frames: PackedFrame[],
+    options: AnimationOptions,
+    emulator: CanvasEmulator
+  ) {
+    this.ctx = ctx;
+    this.frames = frames;
+    this.emulator = emulator;
+
+    // Set default options
+    this.fps = options.fps ?? 10;
+    this.loop = options.loop ?? true;
+    this.pingpong = options.pingpong ?? false;
+
+    // Start animation if we have frames
+    if (frames.length > 0) {
+      this.renderCurrentFrame();
+      if (frames.length > 1) {
+        this.start();
+      }
+    }
+  }
+
+  /**
+   * Stop the animation
+   */
+  stop(): void {
+    this.isAnimationPlaying = false;
+    if (this.animationId !== null) {
+      cancelAnimationFrame(this.animationId);
+      this.animationId = null;
+    }
+  }
+
+  /**
+   * Go to a specific frame index
+   * @param frameIndex - Frame index to jump to (0-based)
+   */
+  goTo(frameIndex: number): void {
+    if (frameIndex < 0 || frameIndex >= this.frames.length) {
+      return; // Invalid frame index
+    }
+
+    this.currentFrame = frameIndex;
+    this.renderCurrentFrame();
+  }
+
+  /**
+   * Set the animation FPS
+   * @param fps - Frames per second (must be positive)
+   */
+  setFPS(fps: number): void {
+    if (fps > 0) {
+      this.fps = fps;
+    }
+  }
+
+  /**
+   * Check if animation is currently playing
+   * @returns True if animation is playing
+   */
+  isPlaying(): boolean {
+    return this.isAnimationPlaying;
+  }
+
+  /**
+   * Get the current frame index
+   * @returns Current frame index (0-based)
+   */
+  getCurrentFrame(): number {
+    return this.currentFrame;
+  }
+
+  /**
+   * Start the animation loop
+   * @private
+   */
+  private start(): void {
+    if (this.frames.length <= 1) {
+      return; // No animation needed for single frame
+    }
+
+    this.isAnimationPlaying = true;
+    this.lastFrameTime = performance.now();
+    this.animate();
+  }
+
+  /**
+   * Animation loop using requestAnimationFrame
+   * @private
+   */
+  private animate = (): void => {
+    if (!this.isAnimationPlaying) {
+      return;
+    }
+
+    const currentTime = performance.now();
+    const frameInterval = 1000 / this.fps; // Convert FPS to milliseconds
+
+    // Check if enough time has passed for the next frame
+    if (currentTime - this.lastFrameTime >= frameInterval) {
+      this.advanceFrame();
+      this.renderCurrentFrame();
+      this.lastFrameTime = currentTime;
+    }
+
+    // Schedule next animation frame
+    this.animationId = requestAnimationFrame(this.animate);
+  };
+
+  /**
+   * Advance to the next frame based on loop mode
+   * @private
+   */
+  private advanceFrame(): void {
+    if (this.frames.length <= 1) {
+      return;
+    }
+
+    if (this.pingpong) {
+      // Ping-pong mode: bounce back and forth
+      this.currentFrame += this.direction;
+
+      // Check boundaries and reverse direction
+      if (this.currentFrame >= this.frames.length - 1) {
+        this.currentFrame = this.frames.length - 1;
+        this.direction = -1;
+      } else if (this.currentFrame <= 0) {
+        this.currentFrame = 0;
+        this.direction = 1;
+      }
+    } else {
+      // Normal forward playback
+      this.currentFrame++;
+
+      if (this.currentFrame >= this.frames.length) {
+        if (this.loop) {
+          this.currentFrame = 0; // Loop back to start
+        } else {
+          this.currentFrame = this.frames.length - 1; // Stay on last frame
+          this.stop(); // Stop animation
+        }
+      }
+    }
+  }
+
+  /**
+   * Render the current frame to the canvas
+   * @private
+   */
+  private renderCurrentFrame(): void {
+    const frame = this.frames[this.currentFrame];
+    if (frame) {
+      this.emulator.renderFrameToCanvas(this.ctx, frame);
+    }
+  }
+}
+
+/**
  * Canvas-based display emulator for rendering packed frames
  * Provides pixel-exact rendering with scaling and overlay options
  */
@@ -79,10 +259,10 @@ export class CanvasEmulator implements DisplayEmulator {
   }
 
   /**
-   * Play an animation sequence on a canvas (placeholder for task 10)
+   * Play an animation sequence on a canvas with full playback control
    * @param ctx - Canvas 2D rendering context
    * @param frames - Array of packed frames to animate
-   * @param options - Animation options (unused in this placeholder)
+   * @param options - Animation options (fps, loop, pingpong)
    * @returns Animation controller for playback control
    */
   playFramesOnCanvas(
@@ -90,22 +270,7 @@ export class CanvasEmulator implements DisplayEmulator {
     frames: PackedFrame[],
     options: AnimationOptions = {}
   ): AnimationController {
-    // This is a placeholder implementation for task 10
-    // For now, just render the first frame
-    if (frames.length > 0 && frames[0]) {
-      this.renderFrameToCanvas(ctx, frames[0]);
-    }
-
-    // Suppress unused parameter warning for placeholder implementation
-    void options;
-
-    return {
-      stop: (): void => {},
-      goTo: (): void => {},
-      setFPS: (): void => {},
-      isPlaying: (): boolean => false,
-      getCurrentFrame: (): number => 0,
-    };
+    return new CanvasAnimationController(ctx, frames, options, this);
   }
 
   /**

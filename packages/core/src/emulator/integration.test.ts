@@ -233,6 +233,81 @@ describe('Emulator Integration Tests', () => {
     });
   });
 
+  describe('Animation Integration', () => {
+    beforeEach(() => {
+      // Mock requestAnimationFrame for animation tests
+      global.requestAnimationFrame = vi.fn(callback => {
+        setTimeout(callback, 16);
+        return 1;
+      });
+      global.cancelAnimationFrame = vi.fn();
+      global.performance = {
+        now: vi.fn(() => Date.now()),
+      } as unknown as Performance;
+    });
+
+    it('should create animation controller for multiple packed frames', () => {
+      // Create multiple test frames
+      const monoFrames: FrameMono[] = [
+        {
+          bits: new Uint8Array((128 * 32) / 8),
+          dims: { width: 128, height: 32 },
+        },
+        {
+          bits: new Uint8Array((128 * 32) / 8),
+          dims: { width: 128, height: 32 },
+        },
+      ];
+
+      // Set different patterns for each frame
+      monoFrames[0].bits[0] = 0x01; // First pixel
+      monoFrames[1].bits[1] = 0x01; // Second pixel
+
+      // Pack the frames
+      const packedFrames = packFrames(monoFrames, {
+        preset: 'SSD1306_128x32',
+      });
+
+      // Create animation controller
+      const controller = emulator.playFramesOnCanvas(
+        mockContext as unknown as MockRenderingContext,
+        packedFrames,
+        { fps: 10, loop: true }
+      );
+
+      // Verify controller functionality
+      expect(controller.isPlaying()).toBe(true);
+      expect(controller.getCurrentFrame()).toBe(0);
+      expect(typeof controller.stop).toBe('function');
+      expect(typeof controller.goTo).toBe('function');
+      expect(typeof controller.setFPS).toBe('function');
+
+      // Clean up
+      controller.stop();
+    });
+
+    it('should handle single frame animation gracefully', () => {
+      const monoFrame: FrameMono = {
+        bits: new Uint8Array((128 * 32) / 8),
+        dims: { width: 128, height: 32 },
+      };
+      monoFrame.bits[0] = 0x01;
+
+      const packedFrames = packFrames([monoFrame], {
+        preset: 'SSD1306_128x32',
+      });
+
+      const controller = emulator.playFramesOnCanvas(
+        mockContext as unknown as MockRenderingContext,
+        packedFrames
+      );
+
+      // Single frame should not start animation
+      expect(controller.isPlaying()).toBe(false);
+      expect(controller.getCurrentFrame()).toBe(0);
+    });
+  });
+
   describe('Error Handling', () => {
     it('should handle empty byte arrays gracefully', () => {
       const emptyFrame: PackedFrame = {
