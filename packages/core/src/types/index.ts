@@ -134,8 +134,14 @@ export interface MonochromeConverter {
 export interface BytePacker {
   packFrames(frames: FrameMono[], options: PackingOptions): PackedFrame[];
   getPresetConfig(preset: DevicePreset): PresetConfig;
-  packSSD1306(frame: FrameMono, config: PresetConfig): Uint8Array;
-  packSH1106(frame: FrameMono, config: PresetConfig): Uint8Array;
+  packSSD1306(
+    frame: FrameMono,
+    config: PresetConfig & { invert?: boolean }
+  ): Uint8Array;
+  packSH1106(
+    frame: FrameMono,
+    config: PresetConfig & { invert?: boolean }
+  ): Uint8Array;
   validatePackedFrame(frame: PackedFrame): ValidationResult;
 }
 

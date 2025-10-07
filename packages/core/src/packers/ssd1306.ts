@@ -143,15 +143,72 @@ export class BytePackerImpl implements BytePacker {
 
   /**
    * Pack frame for SH1106 displays (132x64 with 128-pixel viewport)
-   * Note: This is a placeholder - will be implemented in task 7
+   * SH1106 has 132 physical columns but only shows columns 2-129 (128 visible pixels)
    */
   packSH1106(
     frame: FrameMono,
     config: PresetConfig & { invert?: boolean }
   ): Uint8Array {
-    // For now, delegate to SSD1306 packing since the format is similar
-    // Task 7 will implement the viewport handling
-    return this.packSSD1306(frame, config);
+    const { bits, dims } = frame;
+    const { width, height } = dims;
+    const { pageHeight, bitOrder, pageOrder, columnOrder, invert } = config;
+
+    // SH1106 physical width is 132, but input frame should be 132x64
+    if (width !== 132 || height !== 64) {
+      throw new Error(`SH1106 requires 132x64 frame, got ${width}x${height}`);
+    }
+
+    // Calculate number of pages (8-pixel vertical strips)
+    const pageCount = height / pageHeight; // 8 pages for 64-pixel height
+    const physicalWidth = 132; // SH1106 physical width
+    const totalBytes = physicalWidth * pageCount;
+    const bytes = new Uint8Array(totalBytes);
+
+    // Process each page
+    for (let page = 0; page < pageCount; page++) {
+      // Determine actual page index based on page order
+      const actualPage = pageOrder === 'top-down' ? page : pageCount - 1 - page;
+
+      // Process each column in the page (all 132 physical columns)
+      for (let col = 0; col < physicalWidth; col++) {
+        // Determine actual column index based on column order
+        const actualCol =
+          columnOrder === 'left-right' ? col : physicalWidth - 1 - col;
+
+        let pageByte = 0;
+
+        // Pack 8 pixels into one byte (vertical strip)
+        for (let pixelInPage = 0; pixelInPage < pageHeight; pixelInPage++) {
+          const y = actualPage * pageHeight + pixelInPage;
+          const x = actualCol;
+
+          // Get pixel from monochrome frame
+          const pixelIndex = y * width + x;
+          let isLit = getBitFromArray(bits, pixelIndex);
+
+          // Apply invert if specified
+          if (invert) {
+            isLit = !isLit;
+          }
+
+          if (isLit) {
+            if (bitOrder === 'lsb-top') {
+              // LSB = top pixel (bit 0 = top, bit 7 = bottom)
+              pageByte |= 1 << pixelInPage;
+            } else {
+              // MSB = top pixel (bit 7 = top, bit 0 = bottom)
+              pageByte |= 1 << (pageHeight - 1 - pixelInPage);
+            }
+          }
+        }
+
+        // Store byte in output array
+        const byteIndex = page * physicalWidth + col;
+        bytes[byteIndex] = pageByte;
+      }
+    }
+
+    return bytes;
   }
 
   /**
