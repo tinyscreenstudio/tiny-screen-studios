@@ -1,7 +1,10 @@
 import { describe, it, expect, vi } from 'vitest';
-import { DefaultImageDecoder, decodeAndValidateFiles } from './decoder.js';
-import { getPresetDimensions } from './presets.js';
-import type { DevicePreset } from './types.js';
+import {
+  DefaultImageDecoder,
+  decodeAndValidateFiles,
+} from '../converters/decoder.js';
+import { getPresetDimensions } from '../config/presets.js';
+import type { DevicePreset } from '../types/index.js';
 
 // Mock browser APIs for testing
 const mockCreateImageBitmap = vi.fn();
@@ -286,7 +289,7 @@ describe('Decoder Module Exports', () => {
     expect(typeof DefaultImageDecoder).toBe('function');
 
     // Test convenience functions using ES imports
-    const decoderModule = await import('./decoder.js');
+    const decoderModule = await import('../converters/decoder.js');
 
     expect(typeof decoderModule.decodeImageFiles).toBe('function');
     expect(typeof decoderModule.decodeAndValidateFiles).toBe('function');

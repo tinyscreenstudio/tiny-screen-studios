@@ -6,7 +6,7 @@ import type {
   ValidationWarning,
   ImageDecoder,
   DevicePreset,
-} from './types.js';
+} from '../types/index.js';
 
 /**
  * Image decoder implementation for converting PNG files to RGBA frame data
@@ -367,7 +367,7 @@ export async function decodeAndValidateFiles(
   const orderedFrames = decoder.orderFramesByFilename(frames, files);
 
   // Validate dimensions against preset
-  const { getPresetDimensions } = await import('./presets.js');
+  const { getPresetDimensions } = await import('../config/presets.js');
   const expectedDims = getPresetDimensions(preset);
   const validation = decoder.validateDimensions(orderedFrames, expectedDims);
 

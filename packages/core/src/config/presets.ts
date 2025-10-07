@@ -3,7 +3,7 @@ import type {
   PresetConfig,
   ValidationResult,
   Dimensions,
-} from './types.js';
+} from '../types/index.js';
 
 /**
  * Device preset configurations for supported displays

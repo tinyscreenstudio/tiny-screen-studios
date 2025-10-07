@@ -4,7 +4,7 @@ import {
   decodeImageFiles,
   decodeAndValidateFiles,
 } from './decoder.js';
-import type { FrameRGBA, Dimensions } from './types.js';
+import type { FrameRGBA, Dimensions } from '../types/index.js';
 
 // Mock createImageBitmap and OffscreenCanvas for testing
 const mockCreateImageBitmap = vi.fn();

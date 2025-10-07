@@ -10,9 +10,9 @@ import type {
   PresetConfig,
   ValidationResult,
   ValidationError,
-} from './types.js';
-import { getPresetConfig, getExpectedByteCount } from './presets.js';
-import { getBitFromArray } from './mono.js';
+} from '../types/index.js';
+import { getPresetConfig, getExpectedByteCount } from '../config/presets.js';
+import { getBitFromArray } from '../converters/mono.js';
 
 /**
  * Default packing options

@@ -1,8 +1,12 @@
 // Unit tests for byte packer module
 
 import { describe, it, expect } from 'vitest';
-import { BytePackerImpl } from './packer.js';
-import type { FrameMono, PackingOptions, DevicePreset } from './types.js';
+import { BytePackerImpl } from './ssd1306.js';
+import type {
+  FrameMono,
+  PackingOptions,
+  DevicePreset,
+} from '../types/index.js';
 
 /**
  * Create a test monochrome frame with specific pixels set

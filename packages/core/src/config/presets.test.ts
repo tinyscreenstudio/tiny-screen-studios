@@ -9,7 +9,7 @@ import {
   getAvailablePresets,
   validateDimensions,
 } from './presets.js';
-import type { DevicePreset } from './types.js';
+import type { DevicePreset } from '../types/index.js';
 
 describe('Device Presets', () => {
   describe('DEVICE_PRESETS constant', () => {

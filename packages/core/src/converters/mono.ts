@@ -8,7 +8,7 @@ import type {
   MonochromeConverter,
   ValidationResult,
   ValidationError,
-} from './types.js';
+} from '../types/index.js';
 
 /**
  * Bayer 4x4 dithering matrix

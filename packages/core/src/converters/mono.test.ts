@@ -9,7 +9,7 @@ import {
   getBitFromArray,
   createTestFrameRGBA,
 } from './mono.js';
-import type { FrameRGBA } from './types.js';
+import type { FrameRGBA } from '../types/index.js';
 
 describe('MonochromeConverter', () => {
   const converter = new MonochromeConverterImpl();
