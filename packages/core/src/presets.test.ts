@@ -72,15 +72,16 @@ describe('Device Presets', () => {
     it('should return a copy of the config to prevent mutation', () => {
       const config1 = getPresetConfig('SSD1306_128x32');
       const config2 = getPresetConfig('SSD1306_128x32');
-      
+
       config1.width = 999;
       expect(config2.width).toBe(128);
       expect(DEVICE_PRESETS.SSD1306_128x32.width).toBe(128);
     });
 
     it('should throw error for invalid preset', () => {
-      expect(() => getPresetConfig('INVALID_PRESET' as DevicePreset))
-        .toThrow('Unknown device preset: INVALID_PRESET');
+      expect(() => getPresetConfig('INVALID_PRESET' as DevicePreset)).toThrow(
+        'Unknown device preset: INVALID_PRESET'
+      );
     });
   });
 
@@ -186,25 +187,37 @@ describe('Device Presets', () => {
 
   describe('validateDimensions', () => {
     it('should validate correct dimensions for SSD1306_128x32', () => {
-      const result = validateDimensions({ width: 128, height: 32 }, 'SSD1306_128x32');
+      const result = validateDimensions(
+        { width: 128, height: 32 },
+        'SSD1306_128x32'
+      );
       expect(result.isValid).toBe(true);
       expect(result.errors).toHaveLength(0);
     });
 
     it('should validate correct dimensions for SSD1306_128x64', () => {
-      const result = validateDimensions({ width: 128, height: 64 }, 'SSD1306_128x64');
+      const result = validateDimensions(
+        { width: 128, height: 64 },
+        'SSD1306_128x64'
+      );
       expect(result.isValid).toBe(true);
       expect(result.errors).toHaveLength(0);
     });
 
     it('should validate correct dimensions for SH1106_132x64', () => {
-      const result = validateDimensions({ width: 132, height: 64 }, 'SH1106_132x64');
+      const result = validateDimensions(
+        { width: 132, height: 64 },
+        'SH1106_132x64'
+      );
       expect(result.isValid).toBe(true);
       expect(result.errors).toHaveLength(0);
     });
 
     it('should reject incorrect width', () => {
-      const result = validateDimensions({ width: 64, height: 32 }, 'SSD1306_128x32');
+      const result = validateDimensions(
+        { width: 64, height: 32 },
+        'SSD1306_128x32'
+      );
       expect(result.isValid).toBe(false);
       expect(result.errors).toHaveLength(1);
       expect(result.errors[0].type).toBe('dimension_mismatch');
@@ -212,7 +225,10 @@ describe('Device Presets', () => {
     });
 
     it('should reject incorrect height', () => {
-      const result = validateDimensions({ width: 128, height: 64 }, 'SSD1306_128x32');
+      const result = validateDimensions(
+        { width: 128, height: 64 },
+        'SSD1306_128x32'
+      );
       expect(result.isValid).toBe(false);
       expect(result.errors).toHaveLength(1);
       expect(result.errors[0].type).toBe('dimension_mismatch');
@@ -220,14 +236,22 @@ describe('Device Presets', () => {
     });
 
     it('should reject both incorrect width and height', () => {
-      const result = validateDimensions({ width: 256, height: 128 }, 'SSD1306_128x32');
+      const result = validateDimensions(
+        { width: 256, height: 128 },
+        'SSD1306_128x32'
+      );
       expect(result.isValid).toBe(false);
       expect(result.errors).toHaveLength(1);
-      expect(result.errors[0].message).toContain('Expected 128×32, got 256×128');
+      expect(result.errors[0].message).toContain(
+        'Expected 128×32, got 256×128'
+      );
     });
 
     it('should include context in error', () => {
-      const result = validateDimensions({ width: 64, height: 32 }, 'SSD1306_128x32');
+      const result = validateDimensions(
+        { width: 64, height: 32 },
+        'SSD1306_128x32'
+      );
       expect(result.errors[0].context).toEqual({
         expected: { width: 128, height: 32 },
         actual: { width: 64, height: 32 },
@@ -238,8 +262,12 @@ describe('Device Presets', () => {
 
   describe('Edge cases and error handling', () => {
     it('should handle all preset types correctly', () => {
-      const presets: DevicePreset[] = ['SSD1306_128x32', 'SSD1306_128x64', 'SH1106_132x64'];
-      
+      const presets: DevicePreset[] = [
+        'SSD1306_128x32',
+        'SSD1306_128x64',
+        'SH1106_132x64',
+      ];
+
       presets.forEach(preset => {
         expect(() => getPresetConfig(preset)).not.toThrow();
         expect(validatePreset(preset).isValid).toBe(true);
@@ -251,11 +279,11 @@ describe('Device Presets', () => {
 
     it('should maintain immutability of DEVICE_PRESETS', () => {
       const originalConfig = { ...DEVICE_PRESETS.SSD1306_128x32 };
-      
+
       // Try to modify the returned config
       const config = getPresetConfig('SSD1306_128x32');
       config.width = 999;
-      
+
       // Original should be unchanged
       expect(DEVICE_PRESETS.SSD1306_128x32).toEqual(originalConfig);
     });

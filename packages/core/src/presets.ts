@@ -1,4 +1,9 @@
-import type { DevicePreset, PresetConfig, ValidationResult, Dimensions } from './types.js';
+import type {
+  DevicePreset,
+  PresetConfig,
+  ValidationResult,
+  Dimensions,
+} from './types.js';
 
 /**
  * Device preset configurations for supported displays
@@ -96,7 +101,7 @@ export function getPresetDimensions(preset: DevicePreset): Dimensions {
  */
 export function getVisibleDimensions(preset: DevicePreset): Dimensions {
   const config = getPresetConfig(preset);
-  
+
   // For SH1106, only 128 pixels are visible despite 132 physical width
   if (preset === 'SH1106_132x64') {
     return {
@@ -104,7 +109,7 @@ export function getVisibleDimensions(preset: DevicePreset): Dimensions {
       height: config.height,
     };
   }
-  
+
   return {
     width: config.width,
     height: config.height,
@@ -144,7 +149,10 @@ export function validateDimensions(
   const warnings: ValidationResult['warnings'] = [];
   const expected = getPresetDimensions(preset);
 
-  if (dimensions.width !== expected.width || dimensions.height !== expected.height) {
+  if (
+    dimensions.width !== expected.width ||
+    dimensions.height !== expected.height
+  ) {
     errors.push({
       type: 'dimension_mismatch' as const,
       message: `Dimension mismatch for ${preset}. Expected ${expected.width}×${expected.height}, got ${dimensions.width}×${dimensions.height}`,
