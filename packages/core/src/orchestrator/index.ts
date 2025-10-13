@@ -31,6 +31,18 @@ import {
   createCanvasEmulator,
   renderFrameToNewCanvas,
 } from '../emulator/index.js';
+import {
+  getBatchWorker,
+  shouldUseWorker,
+  getMemoryPool,
+  getMemoryMonitor,
+  estimateProcessingMemory,
+  getBrowserMemoryUsage,
+  forceGarbageCollection,
+  BatchProcessor,
+  TypedArrayPool,
+  MemoryMonitor,
+} from '../performance/index.js';
 
 /**
  * Progress callback function type for batch processing
@@ -79,6 +91,9 @@ export type ExportResult = {
  */
 export class ProcessingOrchestratorImpl implements ProcessingOrchestrator {
   private memoryLimit = 100; // Default max frames to process at once
+  private memoryPool = getMemoryPool();
+  private memoryMonitor = getMemoryMonitor();
+  private batchProcessor = new BatchProcessor(50);
 
   /**
    * Process files through the complete pipeline: decode → mono → pack
@@ -93,7 +108,22 @@ export class ProcessingOrchestratorImpl implements ProcessingOrchestrator {
     const aggregatedErrors: ValidationError[] = [];
     const aggregatedWarnings: ValidationWarning[] = [];
 
+    // Record initial memory usage
+    const initialMemory = getBrowserMemoryUsage();
+    if (initialMemory.available && initialMemory.used) {
+      this.memoryMonitor.record(initialMemory.used, 'process_files_start');
+    }
+
     try {
+      // Check if we should use web worker for large batches
+      if (shouldUseWorker(files.length)) {
+        return this.processFilesWithWorker(
+          files,
+          preset,
+          monoOptions,
+          packOptions
+        );
+      }
       // Step 1: Decode and validate files
       const { frames: rgbaFrames, validation: decodeValidation } =
         await decodeAndValidateFiles(files, preset);
@@ -172,6 +202,15 @@ export class ProcessingOrchestratorImpl implements ProcessingOrchestrator {
 
       const processingTime = performance.now() - startTime;
 
+      // Record final memory usage
+      const finalMemory = getBrowserMemoryUsage();
+      if (finalMemory.available && finalMemory.used) {
+        this.memoryMonitor.record(finalMemory.used, 'process_files_end');
+      }
+
+      // Clean up memory pool
+      this.memoryPool.cleanup();
+
       return {
         frames: packedFrames,
         validation: {
@@ -206,6 +245,88 @@ export class ProcessingOrchestratorImpl implements ProcessingOrchestrator {
   }
 
   /**
+   * Process files using web worker for large batches
+   */
+  private async processFilesWithWorker(
+    files: File[],
+    preset: DevicePreset,
+    monoOptions?: MonochromeOptions,
+    packOptions?: Partial<PackingOptions>
+  ): Promise<WorkflowResult> {
+    const startTime = performance.now();
+    const aggregatedErrors: ValidationError[] = [];
+    const aggregatedWarnings: ValidationWarning[] = [];
+
+    try {
+      // First decode files on main thread (createImageBitmap requires main thread)
+      const { frames: rgbaFrames, validation: decodeValidation } =
+        await decodeAndValidateFiles(files, preset);
+
+      aggregatedErrors.push(...decodeValidation.errors);
+      aggregatedWarnings.push(...decodeValidation.warnings);
+
+      if (!decodeValidation.isValid) {
+        return {
+          frames: [],
+          validation: {
+            isValid: false,
+            errors: aggregatedErrors,
+            warnings: aggregatedWarnings,
+          },
+          processingTime: performance.now() - startTime,
+        };
+      }
+
+      // Use web worker for mono conversion and packing
+      const worker = getBatchWorker();
+      const packedFrames = await worker.processBatch(rgbaFrames, preset, {
+        ...(monoOptions && { monoOptions }),
+        ...(packOptions && { packOptions }),
+        progressCallback: (completed, total, operation) => {
+          // eslint-disable-next-line no-console
+          console.log(`Worker progress: ${completed}/${total} - ${operation}`);
+        },
+      });
+
+      const processingTime = performance.now() - startTime;
+      const totalBytes = packedFrames.reduce(
+        (sum, frame) => sum + frame.bytes.length,
+        0
+      );
+
+      return {
+        frames: packedFrames,
+        validation: {
+          isValid: aggregatedErrors.length === 0,
+          errors: aggregatedErrors,
+          warnings: aggregatedWarnings,
+        },
+        processingTime,
+        memoryUsage: {
+          peakFrames: packedFrames.length,
+          totalBytes,
+        },
+      };
+    } catch (error) {
+      aggregatedErrors.push({
+        type: 'invalid_parameters',
+        message: `Worker processing failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        context: { error },
+      });
+
+      return {
+        frames: [],
+        validation: {
+          isValid: false,
+          errors: aggregatedErrors,
+          warnings: aggregatedWarnings,
+        },
+        processingTime: performance.now() - startTime,
+      };
+    }
+  }
+
+  /**
    * Process multiple file groups in batches with memory management
    */
   async batchProcess(
@@ -220,70 +341,91 @@ export class ProcessingOrchestratorImpl implements ProcessingOrchestrator {
       memoryLimit = this.memoryLimit,
     } = options;
 
-    const results: PackedFrame[][] = [];
-    const totalGroups = fileGroups.length;
+    // Estimate memory requirements
+    const totalFiles = fileGroups.reduce((sum, group) => sum + group.length, 0);
+    const memoryEstimate = estimateProcessingMemory(
+      totalFiles,
+      { width: 128, height: 64 }, // Default dimensions, will be updated after first decode
+      preset
+    );
 
-    // Process in chunks to manage memory
-    for (let i = 0; i < fileGroups.length; i += memoryLimit) {
-      const chunk = fileGroups.slice(i, i + memoryLimit);
-      const chunkResults: PackedFrame[][] = [];
+    // Adjust batch size based on memory estimate
+    const adjustedBatchSize = Math.min(
+      memoryLimit,
+      memoryEstimate.recommendedBatchSize
+    );
+    this.batchProcessor.setBatchSize(adjustedBatchSize);
 
-      for (let j = 0; j < chunk.length; j++) {
-        const fileGroup = chunk[j];
-        if (!fileGroup) continue;
+    // Process file groups with progress tracking
+    let processedGroups = 0;
 
-        const groupIndex = i + j;
+    // Use the memory-efficient batch processor
+    return this.batchProcessor
+      .processBatches(
+        fileGroups,
+        async (batch: File[][]) => {
+          const batchResults: PackedFrame[][] = [];
 
-        // Report progress
+          for (const fileGroup of batch) {
+            // Report progress for each group
+            if (progressCallback) {
+              progressCallback(
+                processedGroups,
+                fileGroups.length,
+                `Processing group ${processedGroups + 1}/${fileGroups.length}`
+              );
+            }
+
+            try {
+              const result = await this.processFiles(
+                fileGroup,
+                preset,
+                monoOptions,
+                packOptions
+              );
+
+              if (result.validation.isValid) {
+                batchResults.push(result.frames);
+              } else {
+                console.warn(
+                  `Failed to process file group:`,
+                  result.validation.errors
+                );
+                batchResults.push([]);
+              }
+            } catch (error) {
+              console.error(`Error processing file group:`, error);
+              batchResults.push([]);
+            }
+
+            processedGroups++;
+          }
+
+          return batchResults;
+        },
+        {
+          cleanupBetweenBatches: true,
+          onBatchComplete: (_, batchIndex) => {
+            // Log batch completion with memory stats
+            const memoryStats = this.memoryPool.getStats();
+            // eslint-disable-next-line no-console
+            console.log(
+              `Batch ${batchIndex + 1} complete. Memory: ${Math.round(memoryStats.currentUsage / 1024 / 1024)}MB used, ${memoryStats.totalReused} arrays reused`
+            );
+          },
+        }
+      )
+      .then(results => {
+        // Final progress report
         if (progressCallback) {
           progressCallback(
-            groupIndex,
-            totalGroups,
-            `Processing group ${groupIndex + 1}/${totalGroups}`
+            fileGroups.length,
+            fileGroups.length,
+            'Batch processing complete'
           );
         }
-
-        try {
-          const result = await this.processFiles(
-            fileGroup,
-            preset,
-            monoOptions,
-            packOptions
-          );
-
-          if (result.validation.isValid) {
-            chunkResults.push(result.frames);
-          } else {
-            // Log errors but continue processing other groups
-            console.warn(
-              `Failed to process file group ${groupIndex + 1}:`,
-              result.validation.errors
-            );
-            chunkResults.push([]); // Empty result for failed group
-          }
-        } catch (error) {
-          console.error(
-            `Error processing file group ${groupIndex + 1}:`,
-            error
-          );
-          chunkResults.push([]); // Empty result for failed group
-        }
-      }
-
-      results.push(...chunkResults);
-
-      // Force garbage collection between chunks if available
-      if (typeof globalThis.gc === 'function') {
-        globalThis.gc();
-      }
-    }
-
-    // Final progress report
-    if (progressCallback) {
-      progressCallback(totalGroups, totalGroups, 'Batch processing complete');
-    }
-
-    return results;
+        return results;
+      });
   }
 
   /**
@@ -301,6 +443,41 @@ export class ProcessingOrchestratorImpl implements ProcessingOrchestrator {
    */
   getMemoryLimit(): number {
     return this.memoryLimit;
+  }
+
+  /**
+   * Get memory pool statistics
+   */
+  getMemoryStats(): ReturnType<TypedArrayPool['getStats']> {
+    return this.memoryPool.getStats();
+  }
+
+  /**
+   * Get memory usage statistics
+   */
+  getMemoryUsageStats(
+    timeWindowMs = 60000
+  ): ReturnType<MemoryMonitor['getUsageStats']> {
+    return this.memoryMonitor.getUsageStats(timeWindowMs);
+  }
+
+  /**
+   * Force cleanup of memory pools and garbage collection
+   */
+  forceCleanup(): void {
+    this.memoryPool.cleanup();
+    forceGarbageCollection();
+  }
+
+  /**
+   * Estimate memory requirements for processing
+   */
+  estimateMemoryRequirements(
+    fileCount: number,
+    dimensions: { width: number; height: number },
+    preset: DevicePreset
+  ): ReturnType<typeof estimateProcessingMemory> {
+    return estimateProcessingMemory(fileCount, dimensions, preset);
   }
 }
 
