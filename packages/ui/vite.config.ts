@@ -3,6 +3,7 @@ import { resolve } from 'path';
 
 export default defineConfig({
   root: '.',
+  base: './', // Use relative paths for GitHub Pages compatibility
   build: {
     outDir: 'dist',
     rollupOptions: {
@@ -12,6 +13,7 @@ export default defineConfig({
     },
     sourcemap: true,
     target: 'es2022',
+    assetsDir: 'assets',
   },
   server: {
     port: 3000,

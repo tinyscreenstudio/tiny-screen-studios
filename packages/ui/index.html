@@ -1,19 +1,270 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Tiny Screen Studios</title>
-    <meta
-      name="description"
-      content="Convert pixel art and animations to tiny display formats"
-    />
-  </head>
-  <body>
-    <div id="app">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tiny Screen Studios</title>
+  <meta name="description" content="Convert pixel art and animations to tiny display formats" />
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background-color: #f5f5f5;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    h1 {
+      color: #2c3e50;
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      color: #7f8c8d;
+      font-size: 1.1em;
+    }
+
+    .main-content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      margin-bottom: 30px;
+    }
+
+    .panel {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .panel h2 {
+      margin-bottom: 15px;
+      color: #2c3e50;
+      font-size: 1.2em;
+    }
+
+    .file-input-area {
+      border: 2px dashed #bdc3c7;
+      border-radius: 8px;
+      padding: 30px;
+      text-align: center;
+      margin-bottom: 20px;
+      transition: border-color 0.3s ease;
+    }
+
+    .file-input-area:hover {
+      border-color: #3498db;
+    }
+
+    .file-input-area.dragover {
+      border-color: #2980b9;
+      background-color: #ecf0f1;
+    }
+
+    #fileInput {
+      display: none;
+    }
+
+    .file-input-button {
+      background: #3498db;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1em;
+      transition: background-color 0.3s ease;
+    }
+
+    .file-input-button:hover {
+      background: #2980b9;
+    }
+
+    .controls-group {
+      margin-bottom: 20px;
+    }
+
+    .controls-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 500;
+    }
+
+    select,
+    input[type="range"] {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #bdc3c7;
+      border-radius: 4px;
+      font-size: 1em;
+    }
+
+    .canvas-container {
+      text-align: center;
+      background: #2c3e50;
+      border-radius: 8px;
+      padding: 20px;
+      min-height: 300px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: auto;
+      /* Allow scrolling for large scaled images */
+    }
+
+    #previewCanvas {
+      border: 1px solid #34495e;
+      background: #000;
+      image-rendering: pixelated;
+      image-rendering: -moz-crisp-edges;
+      image-rendering: crisp-edges;
+      max-width: none;
+      /* Allow canvas to grow beyond container */
+      max-height: none;
+      /* Allow canvas to grow beyond container */
+    }
+
+    .canvas-placeholder {
+      color: #95a5a6;
+      font-style: italic;
+    }
+
+    .status-bar {
+      background: white;
+      border-radius: 8px;
+      padding: 15px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    .error {
+      color: #e74c3c;
+      background: #fdf2f2;
+      border: 1px solid #f5c6cb;
+      padding: 10px;
+      border-radius: 4px;
+      margin-bottom: 15px;
+    }
+
+    .success {
+      color: #27ae60;
+      background: #f0f9f0;
+      border: 1px solid #c3e6cb;
+      padding: 10px;
+      border-radius: 4px;
+      margin-bottom: 15px;
+    }
+
+    @media (max-width: 768px) {
+      .main-content {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <header>
       <h1>Tiny Screen Studios</h1>
-      <p>Loading...</p>
+      <p class="subtitle">Convert pixel art and animations to tiny display formats</p>
+    </header>
+
+    <div class="main-content">
+      <!-- Input and Controls Panel -->
+      <div class="panel">
+        <h2>Input & Settings</h2>
+
+        <!-- File Input -->
+        <div class="file-input-area" id="fileInputArea">
+          <p>Drop PNG files here or</p>
+          <button class="file-input-button" onclick="document.getElementById('fileInput').click()">
+            Choose Files
+          </button>
+          <input type="file" id="fileInput" accept=".png" multiple>
+          <p style="margin-top: 10px; font-size: 0.9em; color: #7f8c8d;">
+            Supports single images or numbered sequences (e.g., frame001.png, frame002.png)
+          </p>
+        </div>
+
+        <!-- Device Preset Selection -->
+        <div class="controls-group">
+          <label for="devicePreset">Device Preset:</label>
+          <select id="devicePreset">
+            <option value="SSD1306_128x32">SSD1306 128×32</option>
+            <option value="SSD1306_128x64">SSD1306 128×64</option>
+            <option value="SH1106_132x64">SH1106 132×64</option>
+          </select>
+        </div>
+
+        <!-- Conversion Settings -->
+        <div class="controls-group">
+          <label for="threshold">Threshold: <span id="thresholdValue">128</span></label>
+          <input type="range" id="threshold" min="0" max="255" value="128">
+        </div>
+
+        <div class="controls-group">
+          <label>
+            <input type="checkbox" id="invert"> Invert Output
+          </label>
+        </div>
+
+        <div class="controls-group">
+          <label>
+            <input type="checkbox" id="dithering"> Enable Dithering
+          </label>
+        </div>
+      </div>
+
+      <!-- Preview Panel -->
+      <div class="panel">
+        <h2>Preview</h2>
+        <div class="canvas-container">
+          <canvas id="previewCanvas" width="128" height="64" style="display: none;"></canvas>
+          <div class="canvas-placeholder" id="canvasPlaceholder">
+            Upload PNG files to see preview
+          </div>
+        </div>
+
+        <!-- Preview Controls -->
+        <div class="controls-group" style="margin-top: 15px;">
+          <label for="scale">Scale: <span id="scaleValue">4x</span></label>
+          <input type="range" id="scale" min="1" max="8" value="4">
+        </div>
+
+        <div class="controls-group">
+          <label>
+            <input type="checkbox" id="showGrid"> Show Grid
+          </label>
+        </div>
+      </div>
     </div>
-    <script type="module" src="/src/main.ts"></script>
-  </body>
+
+    <!-- Status Bar -->
+    <div class="status-bar">
+      <div id="statusMessage">Ready to process files</div>
+    </div>
+  </div>
+
+  <script type="module" src="/src/main.ts"></script>
+</body>
+
 </html>
