@@ -228,6 +228,88 @@ describe('CanvasEmulator', () => {
       expect(mockCanvas.height).toBe(64);
     });
 
+    it('should render SH1106 viewport window correctly (columns 2-129)', () => {
+      // Create SH1106 frame with specific pixels to test viewport offset
+      const frameSH1106: PackedFrame = {
+        bytes: new Uint8Array(1056), // 132 * 8 pages
+        dims: { width: 132, height: 64 },
+        preset: 'SH1106_132x64',
+      };
+
+      // Set pixels in columns 0, 1 (should be hidden), 2 (first visible), 129 (last visible), 130, 131 (should be hidden)
+      frameSH1106.bytes[0] = 0x01; // Column 0, page 0 - should be hidden
+      frameSH1106.bytes[1] = 0x01; // Column 1, page 0 - should be hidden
+      frameSH1106.bytes[2] = 0x01; // Column 2, page 0 - should be visible at canvas x=0
+      frameSH1106.bytes[129] = 0x01; // Column 129, page 0 - should be visible at canvas x=127
+      frameSH1106.bytes[130] = 0x01; // Column 130, page 0 - should be hidden
+      frameSH1106.bytes[131] = 0x01; // Column 131, page 0 - should be hidden
+
+      emulator.renderFrameToCanvas(
+        mockContext as unknown as MockRenderingContext,
+        frameSH1106
+      );
+
+      // Should render 128 visible pixels
+      expect(mockCanvas.width).toBe(128);
+      expect(mockCanvas.height).toBe(64);
+
+      // Check that pixels are rendered at correct positions
+      // Column 2 (physical) should appear at canvas x=0
+      expect(mockContext.fillRect).toHaveBeenCalledWith(0, 0, 1, 1);
+      // Column 129 (physical) should appear at canvas x=127
+      expect(mockContext.fillRect).toHaveBeenCalledWith(127, 0, 1, 1);
+
+      // Should have rendered background + 2 visible pixels
+      expect(mockContext.fillRect).toHaveBeenCalledTimes(3);
+    });
+
+    it('should handle SH1106 viewport with scaling', () => {
+      const frameSH1106: PackedFrame = {
+        bytes: new Uint8Array(1056),
+        dims: { width: 132, height: 64 },
+        preset: 'SH1106_132x64',
+      };
+
+      // Set pixel at column 2 (first visible column)
+      frameSH1106.bytes[2] = 0x01;
+
+      emulator.renderFrameToCanvas(
+        mockContext as unknown as MockRenderingContext,
+        frameSH1106,
+        { scale: 3 }
+      );
+
+      // Canvas should be scaled to visible dimensions
+      expect(mockCanvas.width).toBe(384); // 128 * 3
+      expect(mockCanvas.height).toBe(192); // 64 * 3
+
+      // Pixel should be scaled and positioned correctly
+      expect(mockContext.fillRect).toHaveBeenCalledWith(0, 0, 3, 3);
+    });
+
+    it('should handle SH1106 viewport with grid overlay', () => {
+      const frameSH1106: PackedFrame = {
+        bytes: new Uint8Array(1056),
+        dims: { width: 132, height: 64 },
+        preset: 'SH1106_132x64',
+      };
+
+      emulator.renderFrameToCanvas(
+        mockContext as unknown as MockRenderingContext,
+        frameSH1106,
+        { scale: 2, showGrid: true }
+      );
+
+      // Grid should be drawn for visible dimensions (128x64)
+      expect(mockContext.strokeStyle).toBe('#333333');
+      expect(mockContext.beginPath).toHaveBeenCalled();
+      expect(mockContext.stroke).toHaveBeenCalled();
+
+      // Canvas should be sized for visible area
+      expect(mockCanvas.width).toBe(256); // 128 * 2
+      expect(mockCanvas.height).toBe(128); // 64 * 2
+    });
+
     it('should handle MSB-top bit order correctly', () => {
       // Create frame with MSB-top bit order (not currently configurable, but tests the logic)
       const frameWithMSB: PackedFrame = {

@@ -163,6 +163,65 @@ describe('Emulator Integration Tests', () => {
       expect(mockCanvas.height).toBe(64);
       expect(mockContext.imageSmoothingEnabled).toBe(false);
     });
+
+    it('should render SH1106 viewport window accurately', () => {
+      // Create specific test pattern to verify viewport offset
+      const monoFrame: FrameMono = {
+        bits: new Uint8Array((132 * 64) / 8),
+        dims: { width: 132, height: 64 },
+      };
+
+      // Set pixels at specific columns to test viewport behavior
+      // Column 0: should be hidden (outside viewport)
+      // Column 1: should be hidden (outside viewport)
+      // Column 2: should be visible at canvas position 0
+      // Column 129: should be visible at canvas position 127
+      // Column 130: should be hidden (outside viewport)
+      // Column 131: should be hidden (outside viewport)
+
+      const testColumns = [0, 1, 2, 129, 130, 131];
+      testColumns.forEach(col => {
+        const pixelIndex = col; // Top row pixel
+        const byteIndex = Math.floor(pixelIndex / 8);
+        const bitIndex = pixelIndex % 8;
+        monoFrame.bits[byteIndex] |= 1 << bitIndex;
+      });
+
+      // Pack the frame
+      const packedFrames = packFrames([monoFrame], { preset: 'SH1106_132x64' });
+      const packedFrame = packedFrames[0];
+
+      // Render the packed frame
+      emulator.renderFrameToCanvas(
+        mockContext as unknown as MockRenderingContext,
+        packedFrame
+      );
+
+      // Verify canvas dimensions (should show only visible area)
+      expect(mockCanvas.width).toBe(128);
+      expect(mockCanvas.height).toBe(64);
+
+      // Verify that only visible pixels are rendered
+      // We should see pixels from columns 2 and 129 (physical) at canvas positions 0 and 127
+      const fillRectCalls = (
+        mockContext.fillRect as unknown as {
+          mock: { calls: [number, number, number, number][] };
+        }
+      ).mock.calls;
+
+      // Filter out the background fill call (first call with full canvas dimensions)
+      const pixelCalls = fillRectCalls.filter(
+        (call: [number, number, number, number]) =>
+          !(call[0] === 0 && call[1] === 0 && call[2] === 128 && call[3] === 64)
+      );
+
+      // Should have exactly 2 pixel calls (columns 2 and 129 visible)
+      expect(pixelCalls).toHaveLength(2);
+
+      // Check that pixels are at correct canvas positions
+      expect(pixelCalls).toContainEqual([0, 0, 1, 1]); // Column 2 -> canvas x=0
+      expect(pixelCalls).toContainEqual([127, 0, 1, 1]); // Column 129 -> canvas x=127
+    });
   });
 
   describe('Rendering Options Integration', () => {
