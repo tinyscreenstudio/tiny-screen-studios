@@ -20,10 +20,13 @@
     "dev": "vite build --watch",
     "test": "vitest --run",
     "test:watch": "vitest",
+    "test:coverage": "vitest --run --coverage",
+    "test:coverage:watch": "vitest --coverage",
     "type-check": "tsc --noEmit"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
+    "@vitest/coverage-v8": "^1.6.1",
     "typescript": "^5.0.0",
     "vite": "^5.0.0",
     "vite-plugin-dts": "^3.0.0",
