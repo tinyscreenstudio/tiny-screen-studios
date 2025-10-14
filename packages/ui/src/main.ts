@@ -4,6 +4,7 @@ import {
   DEVICE_PRESETS,
   type DevicePreset,
   type PackedFrame,
+  type AnimationController,
 } from '@tiny-screen-studios/core';
 
 // eslint-disable-next-line no-console
@@ -32,6 +33,19 @@ const canvasPlaceholder = document.getElementById(
 const scale = document.getElementById('scale') as HTMLInputElement;
 const scaleValue = document.getElementById('scaleValue') as HTMLSpanElement;
 const showGrid = document.getElementById('showGrid') as HTMLInputElement;
+// Animation controls
+const animationControls = document.getElementById(
+  'animationControls'
+) as HTMLDivElement;
+const playbackControls = document.getElementById(
+  'playbackControls'
+) as HTMLDivElement;
+const fps = document.getElementById('fps') as HTMLInputElement;
+const fpsValue = document.getElementById('fpsValue') as HTMLSpanElement;
+const playStopBtn = document.getElementById('playStopBtn') as HTMLButtonElement;
+const frameSlider = document.getElementById('frameSlider') as HTMLInputElement;
+const frameValue = document.getElementById('frameValue') as HTMLSpanElement;
+const totalFrames = document.getElementById('totalFrames') as HTMLSpanElement;
 // Status message element removed - using validation results instead
 const progressContainer = document.getElementById(
   'progressContainer'
@@ -49,6 +63,9 @@ let currentPreset = 'SSD1306_128x32';
 let isProcessing = false;
 let currentPackedFrames: PackedFrame[] = []; // Store processed frames for re-rendering
 let thresholdDebounceTimer: ReturnType<typeof setTimeout> | null = null;
+// Animation state
+let animationController: AnimationController | null = null;
+let isAnimationPlaying = false;
 
 // Initialize the application
 function init(): void {
@@ -73,6 +90,11 @@ function setupEventListeners(): void {
   dithering.addEventListener('change', handleDitheringChange);
   scale.addEventListener('input', handleScaleChange);
   showGrid.addEventListener('change', handleGridChange);
+
+  // Animation control listeners
+  fps.addEventListener('input', handleFpsChange);
+  playStopBtn.addEventListener('click', handlePlayStopClick);
+  frameSlider.addEventListener('input', handleFrameSliderChange);
 }
 
 // File handling functions
@@ -183,6 +205,130 @@ function handleGridChange(): void {
   }
 }
 
+// Animation control handlers
+function handleFpsChange(): void {
+  const newFps = parseInt(fps.value);
+  fpsValue.textContent = newFps.toString();
+
+  // Update animation controller FPS if animation is active
+  if (animationController) {
+    animationController.setFPS(newFps);
+  }
+}
+
+function handlePlayStopClick(): void {
+  if (!animationController || currentPackedFrames.length <= 1) {
+    return;
+  }
+
+  if (isAnimationPlaying) {
+    // Stop animation
+    animationController.stop();
+    isAnimationPlaying = false;
+    playStopBtn.textContent = 'Play';
+  } else {
+    // Start animation - create new controller to restart
+    startAnimation();
+  }
+}
+
+function handleFrameSliderChange(): void {
+  const frameIndex = parseInt(frameSlider.value);
+  frameValue.textContent = (frameIndex + 1).toString();
+
+  // Jump to specific frame
+  if (animationController) {
+    animationController.goTo(frameIndex);
+  }
+}
+
+// Animation management functions
+async function startAnimation(): Promise<void> {
+  if (currentPackedFrames.length <= 1) {
+    return;
+  }
+
+  try {
+    const { createCanvasEmulator } = await import('@tiny-screen-studios/core');
+    const emulator = createCanvasEmulator();
+    const ctx = previewCanvas.getContext('2d');
+
+    if (ctx) {
+      const animationOptions = {
+        fps: parseInt(fps.value),
+        loop: true,
+        pingpong: false,
+      };
+
+      // Stop existing animation if any
+      if (animationController) {
+        animationController.stop();
+      }
+
+      // Create new animation controller
+      animationController = emulator.playFramesOnCanvas(
+        ctx,
+        currentPackedFrames,
+        animationOptions
+      );
+      isAnimationPlaying = true;
+      playStopBtn.textContent = 'Stop';
+
+      // Update frame slider as animation plays
+      updateFrameSliderFromAnimation();
+    }
+  } catch (error) {
+    console.error('Error starting animation:', error);
+  }
+}
+
+function updateFrameSliderFromAnimation(): void {
+  if (!animationController || !isAnimationPlaying) {
+    return;
+  }
+
+  const currentFrame = animationController.getCurrentFrame();
+  frameSlider.value = currentFrame.toString();
+  frameValue.textContent = (currentFrame + 1).toString();
+
+  // Continue updating if animation is still playing
+  if (isAnimationPlaying) {
+    requestAnimationFrame(() => updateFrameSliderFromAnimation());
+  }
+}
+
+function stopAnimation(): void {
+  if (animationController) {
+    animationController.stop();
+    animationController = null;
+  }
+  isAnimationPlaying = false;
+  playStopBtn.textContent = 'Play';
+}
+
+function setupAnimationControls(frameCount: number): void {
+  if (frameCount > 1) {
+    // Show animation controls for multi-frame content
+    animationControls.style.display = 'block';
+    playbackControls.style.display = 'block';
+
+    // Setup frame slider
+    frameSlider.max = (frameCount - 1).toString();
+    frameSlider.value = '0';
+    frameValue.textContent = '1';
+    totalFrames.textContent = frameCount.toString();
+
+    // Reset play button
+    playStopBtn.textContent = 'Play';
+    isAnimationPlaying = false;
+  } else {
+    // Hide animation controls for single frames
+    animationControls.style.display = 'none';
+    playbackControls.style.display = 'none';
+    stopAnimation();
+  }
+}
+
 // Canvas management
 function updateCanvasSize(): void {
   const presetConfig =
@@ -212,7 +358,21 @@ async function renderCurrentFrame(): Promise<void> {
         showGrid: showGrid.checked,
       };
 
-      emulator.renderFrameToCanvas(ctx, currentPackedFrames[0], renderOptions);
+      // If we have animation controller and it's not playing, render the current frame from controller
+      if (animationController && !isAnimationPlaying) {
+        const currentFrameIndex = animationController.getCurrentFrame();
+        const frameToRender =
+          currentPackedFrames[currentFrameIndex] || currentPackedFrames[0];
+        emulator.renderFrameToCanvas(ctx, frameToRender, renderOptions);
+      } else if (!animationController) {
+        // No animation controller, render first frame
+        emulator.renderFrameToCanvas(
+          ctx,
+          currentPackedFrames[0],
+          renderOptions
+        );
+      }
+      // If animation is playing, let the animation controller handle rendering
     }
   } catch (error) {
     console.error('Error rendering frame:', error);
@@ -548,12 +708,15 @@ async function processFiles(files: File[]): Promise<void> {
     previewCanvas.style.display = 'block';
     canvasPlaceholder.style.display = 'none';
 
-    // Render the first frame to canvas
+    // Set up animation controls and render preview
     if (packedFrames.length > 0) {
       const emulator = createCanvasEmulator();
       const ctx = previewCanvas.getContext('2d');
 
       if (ctx) {
+        // Setup animation controls based on frame count
+        setupAnimationControls(packedFrames.length);
+
         const renderOptions = {
           scale: parseInt(scale.value),
           showGrid: showGrid.checked,
@@ -561,7 +724,30 @@ async function processFiles(files: File[]): Promise<void> {
 
         const firstFrame = packedFrames[0];
         if (firstFrame) {
-          emulator.renderFrameToCanvas(ctx, firstFrame, renderOptions);
+          // Stop any existing animation
+          stopAnimation();
+
+          if (packedFrames.length > 1) {
+            // Multi-frame: set up animation controller but don't start playing
+            animationController = emulator.playFramesOnCanvas(
+              ctx,
+              packedFrames,
+              {
+                fps: parseInt(fps.value),
+                loop: true,
+                pingpong: false,
+              }
+            );
+            // Stop it immediately so user can control playback
+            animationController.stop();
+            isAnimationPlaying = false;
+
+            // Render first frame with proper scaling
+            emulator.renderFrameToCanvas(ctx, firstFrame, renderOptions);
+          } else {
+            // Single frame: just render it
+            emulator.renderFrameToCanvas(ctx, firstFrame, renderOptions);
+          }
 
           updateProgress(100, 'Complete!');
 
@@ -595,6 +781,10 @@ async function processFiles(files: File[]): Promise<void> {
     currentPackedFrames = [];
     previewCanvas.style.display = 'none';
     canvasPlaceholder.style.display = 'block';
+
+    // Clean up animation state
+    stopAnimation();
+    setupAnimationControls(0);
   } finally {
     isProcessing = false;
   }

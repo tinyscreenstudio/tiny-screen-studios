@@ -353,6 +353,22 @@
             <input type="checkbox" id="showGrid"> Show Grid
           </label>
         </div>
+
+        <!-- Animation Controls -->
+        <div class="controls-group" id="animationControls" style="display: none;">
+          <label for="fps">FPS: <span id="fpsValue">10</span></label>
+          <input type="range" id="fps" min="1" max="30" value="10">
+        </div>
+
+        <div class="controls-group" id="playbackControls" style="display: none;">
+          <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 10px;">
+            <button id="playStopBtn" class="file-input-button" style="flex: 0 0 auto; padding: 8px 16px;">Play</button>
+            <div style="flex: 1;">
+              <label for="frameSlider" style="margin-bottom: 5px;">Frame: <span id="frameValue">1</span> / <span id="totalFrames">1</span></label>
+              <input type="range" id="frameSlider" min="0" max="0" value="0" style="width: 100%;">
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
