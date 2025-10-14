@@ -3,6 +3,7 @@ import {
   version,
   DEVICE_PRESETS,
   type DevicePreset,
+  type PackedFrame,
 } from '@tiny-screen-studios/core';
 
 // eslint-disable-next-line no-console
@@ -31,9 +32,7 @@ const canvasPlaceholder = document.getElementById(
 const scale = document.getElementById('scale') as HTMLInputElement;
 const scaleValue = document.getElementById('scaleValue') as HTMLSpanElement;
 const showGrid = document.getElementById('showGrid') as HTMLInputElement;
-const statusMessage = document.getElementById(
-  'statusMessage'
-) as HTMLDivElement;
+// Status message element removed - using validation results instead
 const progressContainer = document.getElementById(
   'progressContainer'
 ) as HTMLDivElement;
@@ -48,12 +47,13 @@ const validationResults = document.getElementById(
 let currentFiles: File[] = [];
 let currentPreset = 'SSD1306_128x32';
 let isProcessing = false;
+let currentPackedFrames: PackedFrame[] = []; // Store processed frames for re-rendering
+let thresholdDebounceTimer: ReturnType<typeof setTimeout> | null = null;
 
 // Initialize the application
 function init(): void {
   setupEventListeners();
   updateCanvasSize();
-  showStatus('Ready to process files', 'info');
 }
 
 // Set up all event listeners
@@ -69,10 +69,10 @@ function setupEventListeners(): void {
   // Control changes
   devicePreset.addEventListener('change', handlePresetChange);
   threshold.addEventListener('input', handleThresholdChange);
-  invert.addEventListener('change', handleSettingsChange);
-  dithering.addEventListener('change', handleSettingsChange);
+  invert.addEventListener('change', handleInvertChange);
+  dithering.addEventListener('change', handleDitheringChange);
   scale.addEventListener('input', handleScaleChange);
-  showGrid.addEventListener('change', handleSettingsChange);
+  showGrid.addEventListener('change', handleGridChange);
 }
 
 // File handling functions
@@ -108,12 +108,13 @@ function handlePresetChange(): void {
     return;
   }
 
+  const oldPreset = currentPreset;
   currentPreset = devicePreset.value;
   updateCanvasSize();
-  showStatus(`Changed to ${currentPreset}`, 'info');
+  // Don't show preset change messages - they're not needed
 
-  // Reprocess files if any are loaded
-  if (currentFiles.length > 0) {
+  // Reprocess files if any are loaded and preset actually changed
+  if (currentFiles.length > 0 && oldPreset !== currentPreset) {
     processFiles(currentFiles).catch(error => {
       console.error('Error in handlePresetChange:', error);
     });
@@ -121,13 +122,20 @@ function handlePresetChange(): void {
 }
 
 function handleThresholdChange(): void {
-  thresholdValue.textContent = threshold.value;
+  const newThreshold = threshold.value;
+  thresholdValue.textContent = newThreshold;
 
-  // Reprocess files if any are loaded
+  // Trigger real-time preview update if files are loaded
   if (currentFiles.length > 0 && !isProcessing) {
-    processFiles(currentFiles).catch(error => {
-      console.error('Error in handleThresholdChange:', error);
-    });
+    // Debounce the processing to avoid excessive updates during slider drag
+    if (thresholdDebounceTimer !== null) {
+      clearTimeout(thresholdDebounceTimer);
+    }
+    thresholdDebounceTimer = setTimeout(() => {
+      processFiles(currentFiles).catch(error => {
+        console.error('Error in handleThresholdChange:', error);
+      });
+    }, 150); // 150ms debounce
   }
 }
 
@@ -136,19 +144,42 @@ function handleScaleChange(): void {
   scaleValue.textContent = `${scaleVal}x`;
 
   // Re-render current frame with new scale if files are loaded
+  if (
+    currentFiles.length > 0 &&
+    !isProcessing &&
+    currentPackedFrames.length > 0
+  ) {
+    // Scale changes only affect rendering, not processing
+    renderCurrentFrame();
+  }
+}
+
+function handleInvertChange(): void {
+  // Trigger real-time preview update if files are loaded
   if (currentFiles.length > 0 && !isProcessing) {
     processFiles(currentFiles).catch(error => {
-      console.error('Error in handleScaleChange:', error);
+      console.error('Error in handleInvertChange:', error);
     });
   }
 }
 
-function handleSettingsChange(): void {
-  // Reprocess files if any are loaded
+function handleDitheringChange(): void {
+  // Trigger real-time preview update if files are loaded
   if (currentFiles.length > 0 && !isProcessing) {
     processFiles(currentFiles).catch(error => {
-      console.error('Error in handleSettingsChange:', error);
+      console.error('Error in handleDitheringChange:', error);
     });
+  }
+}
+
+function handleGridChange(): void {
+  // Grid changes only affect rendering, not processing
+  if (
+    currentFiles.length > 0 &&
+    !isProcessing &&
+    currentPackedFrames.length > 0
+  ) {
+    renderCurrentFrame();
   }
 }
 
@@ -164,17 +195,44 @@ function updateCanvasSize(): void {
   }
 }
 
+// Render the current frame with current settings (for scale/grid changes)
+async function renderCurrentFrame(): Promise<void> {
+  if (currentPackedFrames.length === 0) {
+    return;
+  }
+
+  try {
+    const { createCanvasEmulator } = await import('@tiny-screen-studios/core');
+    const emulator = createCanvasEmulator();
+    const ctx = previewCanvas.getContext('2d');
+
+    if (ctx && currentPackedFrames[0]) {
+      const renderOptions = {
+        scale: parseInt(scale.value),
+        showGrid: showGrid.checked,
+      };
+
+      emulator.renderFrameToCanvas(ctx, currentPackedFrames[0], renderOptions);
+    }
+  } catch (error) {
+    console.error('Error rendering frame:', error);
+  }
+}
+
 // Enhanced file upload handler with validation
 function handleFileUpload(files: File[]): void {
   if (isProcessing) {
-    showStatus('Already processing files. Please wait...', 'warning');
+    showMessage('Already processing files. Please wait...', 'warning');
     return;
   }
 
   if (files.length === 0) {
-    showStatus('No files selected', 'warning');
+    showMessage('No files selected', 'warning');
     return;
   }
+
+  // Clear any previous messages when starting new file processing
+  clearMessages();
 
   // Validate files before processing
   const validation = validateUploadedFiles(files);
@@ -187,16 +245,13 @@ function handleFileUpload(files: File[]): void {
   );
 
   if (validFiles.length > 0) {
+    // processFiles handles its own error display, so we don't need to catch here
     processFiles(validFiles).catch(error => {
       console.error('Error processing files:', error);
-      hideProgress();
-      showStatus(
-        `Error processing files: ${error instanceof Error ? error.message : 'Unknown error'}`,
-        'error'
-      );
+      // Error handling is done inside processFiles
     });
   } else {
-    showStatus('No valid PNG files to process', 'error');
+    showMessage('No valid PNG files to process', 'error');
   }
 }
 
@@ -311,11 +366,17 @@ function displayFileList(
   });
 }
 
+// Clear all validation results
+function clearValidationResults(): void {
+  validationResults.innerHTML = '';
+}
+
 // Display validation results
 function displayValidationResults(
   validation: ReturnType<typeof validateUploadedFiles>
 ): void {
-  validationResults.innerHTML = '';
+  // Clear previous results first
+  clearValidationResults();
 
   // Show summary
   if (validation.validCount > 0) {
@@ -369,17 +430,13 @@ function displayDecodingValidation(validation: {
   }>;
   warnings: Array<{ message: string }>;
 }): void {
-  // Clear previous validation results
-  const existingDecodingResults = validationResults.querySelectorAll(
-    '.decoding-validation'
-  );
-  existingDecodingResults.forEach(el => el.remove());
+  // Clear all previous results to avoid clutter
+  clearValidationResults();
 
-  // Show decoding errors
+  // Show decoding errors directly without redundant header
   validation.errors.forEach(error => {
     const errorItem = document.createElement('div');
-    errorItem.className =
-      'validation-item validation-error decoding-validation';
+    errorItem.className = 'validation-item validation-error';
 
     let message = error.message;
     if (error.context && typeof error.context === 'object') {
@@ -402,8 +459,7 @@ function displayDecodingValidation(validation: {
   // Show decoding warnings
   validation.warnings.forEach(warning => {
     const warningItem = document.createElement('div');
-    warningItem.className =
-      'validation-item validation-warning decoding-validation';
+    warningItem.className = 'validation-item validation-warning';
     warningItem.textContent = warning.message;
     validationResults.appendChild(warningItem);
   });
@@ -428,6 +484,9 @@ async function processFiles(files: File[]): Promise<void> {
   currentFiles = files;
 
   try {
+    // Clear any previous messages
+    clearMessages();
+
     showProgress('Decoding images...');
     updateProgress(10, 'Decoding images...');
 
@@ -452,9 +511,8 @@ async function processFiles(files: File[]): Promise<void> {
 
     // If there are validation errors, stop processing
     if (!validation.isValid) {
-      throw new Error(
-        `Validation failed: ${validation.errors.map(e => e.message).join(', ')}`
-      );
+      // Don't show error in status bar since it's already shown in validation results
+      throw new Error('Validation failed - see details above');
     }
 
     updateProgress(50, 'Converting to monochrome...');
@@ -481,6 +539,9 @@ async function processFiles(files: File[]): Promise<void> {
 
     const packedFrames = packFrames(monoFrames, packingOptions);
 
+    // Store packed frames for re-rendering
+    currentPackedFrames = packedFrames;
+
     updateProgress(90, 'Rendering preview...');
 
     // Show canvas and hide placeholder
@@ -506,7 +567,7 @@ async function processFiles(files: File[]): Promise<void> {
 
           setTimeout(() => {
             hideProgress();
-            showStatus(
+            showMessage(
               `Successfully processed ${packedFrames.length} frame(s)`,
               'success'
             );
@@ -521,12 +582,17 @@ async function processFiles(files: File[]): Promise<void> {
   } catch (error) {
     console.error('Error processing files:', error);
     hideProgress();
-    showStatus(
-      `Error processing files: ${error instanceof Error ? error.message : 'Unknown error'}`,
-      'error'
-    );
 
-    // Hide canvas and show placeholder on error
+    // Only show generic error if it's not a validation error (validation errors are already shown)
+    const errorMessage =
+      error instanceof Error ? error.message : 'Unknown error';
+    if (errorMessage !== 'Validation failed - see details above') {
+      showMessage(`Error: ${errorMessage}`, 'error');
+    }
+    // For validation errors, the details are already shown by displayDecodingValidation
+
+    // Clear stored frames and hide canvas on error
+    currentPackedFrames = [];
     previewCanvas.style.display = 'none';
     canvasPlaceholder.style.display = 'block';
   } finally {
@@ -534,23 +600,33 @@ async function processFiles(files: File[]): Promise<void> {
   }
 }
 
-// Status message handling
-function showStatus(
+// Unified message system using validation results section
+function showMessage(
   message: string,
   type: 'info' | 'success' | 'warning' | 'error' = 'info'
 ): void {
-  statusMessage.textContent = message;
-  statusMessage.className = type;
+  // Clear previous messages
+  clearValidationResults();
 
-  // Auto-clear non-error messages after 5 seconds
-  if (type !== 'error') {
+  const messageItem = document.createElement('div');
+  messageItem.className = `validation-item validation-${type === 'error' ? 'error' : type === 'warning' ? 'warning' : 'success'}`;
+  messageItem.textContent = message;
+
+  validationResults.appendChild(messageItem);
+
+  // Auto-clear success/info messages after 5 seconds
+  if (type === 'success' || type === 'info') {
     setTimeout(() => {
-      if (statusMessage.textContent === message) {
-        statusMessage.textContent = 'Ready to process files';
-        statusMessage.className = '';
+      if (validationResults.contains(messageItem)) {
+        validationResults.removeChild(messageItem);
       }
     }, 5000);
   }
+}
+
+// Clear all messages
+function clearMessages(): void {
+  clearValidationResults();
 }
 
 // Initialize the application when DOM is loaded
