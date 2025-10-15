@@ -48,6 +48,10 @@
       margin-bottom: 30px;
     }
 
+    .main-content.with-export {
+      grid-template-columns: 1fr 1fr 1fr;
+    }
+
     .panel {
       background: white;
       border-radius: 8px;
@@ -257,9 +261,79 @@
       color: #0c5460;
     }
 
+    .export-button {
+      background: #27ae60;
+      color: white;
+      border: none;
+      padding: 12px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.9em;
+      transition: background-color 0.3s ease;
+      text-align: center;
+    }
+
+    .export-button:hover:not(:disabled) {
+      background: #229954;
+    }
+
+    .export-button:disabled {
+      background: #bdc3c7;
+      cursor: not-allowed;
+    }
+
+    .export-status {
+      margin-top: 15px;
+      padding: 10px;
+      background: #f8f9fa;
+      border-radius: 4px;
+      border-left: 4px solid #3498db;
+    }
+
+    .export-progress {
+      width: 100%;
+      height: 6px;
+      background: #ecf0f1;
+      border-radius: 3px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+
+    .export-progress-fill {
+      height: 100%;
+      background: #3498db;
+      transition: width 0.3s ease;
+      width: 0%;
+    }
+
+    .export-text {
+      font-size: 0.9em;
+      color: #2c3e50;
+      text-align: center;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #bdc3c7;
+      border-radius: 4px;
+      font-size: 1em;
+      font-family: monospace;
+    }
+
+    input[type="text"]:focus {
+      outline: none;
+      border-color: #3498db;
+      box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+    }
+
     @media (max-width: 768px) {
       .main-content {
         grid-template-columns: 1fr;
+      }
+      
+      .export-buttons > div {
+        grid-template-columns: 1fr !important;
       }
     }
   </style>
@@ -372,6 +446,75 @@
       </div>
     </div>
 
+    <!-- Export Panel -->
+    <div class="panel" id="exportPanel" style="display: none;">
+      <h2>Export</h2>
+      
+      <!-- Export Options -->
+      <div class="controls-group">
+        <label for="symbolName">Symbol Name:</label>
+        <input type="text" id="symbolName" value="display_data" placeholder="display_data">
+        <p style="font-size: 0.8em; color: #7f8c8d; margin-top: 5px;">
+          Used for C array variable names (letters, numbers, underscore only)
+        </p>
+      </div>
+
+      <div class="controls-group">
+        <label for="bytesPerRow">Bytes per Row: <span id="bytesPerRowValue">16</span></label>
+        <input type="range" id="bytesPerRow" min="8" max="32" value="16">
+        <p style="font-size: 0.8em; color: #7f8c8d; margin-top: 5px;">
+          Controls formatting of C array output
+        </p>
+      </div>
+
+      <div class="controls-group">
+        <label>
+          <input type="checkbox" id="perFrame" checked> Separate arrays per frame
+        </label>
+        <p style="font-size: 0.8em; color: #7f8c8d; margin-top: 5px;">
+          Generate individual arrays for each frame vs. single concatenated array
+        </p>
+      </div>
+
+      <div class="controls-group">
+        <label>
+          <input type="checkbox" id="includeMetadata" checked> Include metadata comments
+        </label>
+        <p style="font-size: 0.8em; color: #7f8c8d; margin-top: 5px;">
+          Add dimension, timing, and usage information to generated code
+        </p>
+      </div>
+
+      <!-- Export Buttons -->
+      <div class="export-buttons" style="margin-top: 20px;">
+        <h3 style="margin-bottom: 15px; font-size: 1.1em;">Download Options</h3>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
+          <button id="exportBinaryBtn" class="export-button" disabled>
+            Raw Binary (.bin)
+          </button>
+          <button id="exportConcatenatedBtn" class="export-button" disabled>
+            Concatenated Binary
+          </button>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
+          <button id="exportCArrayBtn" class="export-button" disabled>
+            C Array (.c)
+          </button>
+          <button id="exportCFilesBtn" class="export-button" disabled>
+            C Files (.c + .h)
+          </button>
+        </div>
+
+        <div id="exportStatus" class="export-status" style="display: none;">
+          <div class="export-progress">
+            <div class="export-progress-fill"></div>
+          </div>
+          <div class="export-text">Preparing download...</div>
+        </div>
+      </div>
+    </div>
 
   </div>
 

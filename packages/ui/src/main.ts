@@ -46,6 +46,34 @@ const playStopBtn = document.getElementById('playStopBtn') as HTMLButtonElement;
 const frameSlider = document.getElementById('frameSlider') as HTMLInputElement;
 const frameValue = document.getElementById('frameValue') as HTMLSpanElement;
 const totalFrames = document.getElementById('totalFrames') as HTMLSpanElement;
+// Export panel elements
+const exportPanel = document.getElementById('exportPanel') as HTMLDivElement;
+const symbolName = document.getElementById('symbolName') as HTMLInputElement;
+const bytesPerRow = document.getElementById('bytesPerRow') as HTMLInputElement;
+const bytesPerRowValue = document.getElementById(
+  'bytesPerRowValue'
+) as HTMLSpanElement;
+const perFrame = document.getElementById('perFrame') as HTMLInputElement;
+const includeMetadata = document.getElementById(
+  'includeMetadata'
+) as HTMLInputElement;
+const exportBinaryBtn = document.getElementById(
+  'exportBinaryBtn'
+) as HTMLButtonElement;
+const exportConcatenatedBtn = document.getElementById(
+  'exportConcatenatedBtn'
+) as HTMLButtonElement;
+const exportCArrayBtn = document.getElementById(
+  'exportCArrayBtn'
+) as HTMLButtonElement;
+const exportCFilesBtn = document.getElementById(
+  'exportCFilesBtn'
+) as HTMLButtonElement;
+const exportStatus = document.getElementById('exportStatus') as HTMLDivElement;
+const exportProgressFill = document.querySelector(
+  '.export-progress-fill'
+) as HTMLDivElement;
+const exportText = document.querySelector('.export-text') as HTMLDivElement;
 // Status message element removed - using validation results instead
 const progressContainer = document.getElementById(
   'progressContainer'
@@ -95,6 +123,13 @@ function setupEventListeners(): void {
   fps.addEventListener('input', handleFpsChange);
   playStopBtn.addEventListener('click', handlePlayStopClick);
   frameSlider.addEventListener('input', handleFrameSliderChange);
+
+  // Export control listeners
+  bytesPerRow.addEventListener('input', handleBytesPerRowChange);
+  exportBinaryBtn.addEventListener('click', handleExportBinary);
+  exportConcatenatedBtn.addEventListener('click', handleExportConcatenated);
+  exportCArrayBtn.addEventListener('click', handleExportCArray);
+  exportCFilesBtn.addEventListener('click', handleExportCFiles);
 }
 
 // File handling functions
@@ -644,8 +679,9 @@ async function processFiles(files: File[]): Promise<void> {
   currentFiles = files;
 
   try {
-    // Clear any previous messages
+    // Clear any previous messages and hide export panel
     clearMessages();
+    hideExportPanel();
 
     showProgress('Decoding images...');
     updateProgress(10, 'Decoding images...');
@@ -757,6 +793,8 @@ async function processFiles(files: File[]): Promise<void> {
               `Successfully processed ${packedFrames.length} frame(s)`,
               'success'
             );
+            // Show export panel when processing is complete
+            showExportPanel();
           }, 500);
         } else {
           throw new Error('No frames to render');
@@ -785,6 +823,9 @@ async function processFiles(files: File[]): Promise<void> {
     // Clean up animation state
     stopAnimation();
     setupAnimationControls(0);
+
+    // Hide export panel on error
+    hideExportPanel();
   } finally {
     isProcessing = false;
   }
@@ -817,6 +858,254 @@ function showMessage(
 // Clear all messages
 function clearMessages(): void {
   clearValidationResults();
+}
+
+// Export functionality handlers
+function handleBytesPerRowChange(): void {
+  const value = parseInt(bytesPerRow.value);
+  bytesPerRowValue.textContent = value.toString();
+}
+
+async function handleExportBinary(): Promise<void> {
+  if (currentPackedFrames.length === 0) {
+    showMessage('No frames available for export', 'error');
+    return;
+  }
+
+  try {
+    showExportProgress('Generating binary files...');
+
+    const { makeByteFiles } = await import('@tiny-screen-studios/core');
+    const basename = symbolName.value.trim() || 'display_data';
+
+    const exportFiles = makeByteFiles(currentPackedFrames, basename);
+
+    updateExportProgress(50, 'Preparing downloads...');
+
+    // Download each file
+    for (let i = 0; i < exportFiles.length; i++) {
+      const file = exportFiles[i];
+      if (file) {
+        downloadFile(
+          file.name,
+          file.data,
+          file.mimeType || 'application/octet-stream'
+        );
+        updateExportProgress(
+          50 + (50 * (i + 1)) / exportFiles.length,
+          `Downloaded ${file.name}`
+        );
+
+        // Small delay between downloads to avoid browser blocking
+        if (i < exportFiles.length - 1) {
+          await new Promise(resolve => setTimeout(resolve, 100));
+        }
+      }
+    }
+
+    hideExportProgress();
+    showMessage(`Downloaded ${exportFiles.length} binary file(s)`, 'success');
+  } catch (error) {
+    hideExportProgress();
+    console.error('Error exporting binary files:', error);
+    showMessage(
+      `Export failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      'error'
+    );
+  }
+}
+
+async function handleExportConcatenated(): Promise<void> {
+  if (currentPackedFrames.length === 0) {
+    showMessage('No frames available for export', 'error');
+    return;
+  }
+
+  try {
+    showExportProgress('Generating concatenated binary...');
+
+    const { makeConcatenatedByteFile } = await import(
+      '@tiny-screen-studios/core'
+    );
+    const basename = symbolName.value.trim() || 'display_data';
+
+    const exportFile = makeConcatenatedByteFile(currentPackedFrames, basename);
+
+    updateExportProgress(75, 'Preparing download...');
+
+    downloadFile(
+      exportFile.name,
+      exportFile.data,
+      exportFile.mimeType || 'application/octet-stream'
+    );
+
+    hideExportProgress();
+    showMessage(`Downloaded ${exportFile.name}`, 'success');
+  } catch (error) {
+    hideExportProgress();
+    console.error('Error exporting concatenated binary:', error);
+    showMessage(
+      `Export failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      'error'
+    );
+  }
+}
+
+async function handleExportCArray(): Promise<void> {
+  if (currentPackedFrames.length === 0) {
+    showMessage('No frames available for export', 'error');
+    return;
+  }
+
+  try {
+    showExportProgress('Generating C array...');
+
+    const { toCRawArray } = await import('@tiny-screen-studios/core');
+    const symbol = symbolName.value.trim() || 'display_data';
+
+    const options = {
+      perFrame: perFrame.checked,
+      bytesPerRow: parseInt(bytesPerRow.value),
+      includeMetadata: includeMetadata.checked,
+    };
+
+    updateExportProgress(50, 'Formatting C code...');
+
+    const cCode = toCRawArray(currentPackedFrames, symbol, options);
+
+    updateExportProgress(75, 'Preparing download...');
+
+    const filename = `${symbol}.c`;
+    const data = new TextEncoder().encode(cCode);
+
+    downloadFile(filename, data, 'text/plain');
+
+    hideExportProgress();
+    showMessage(`Downloaded ${filename}`, 'success');
+  } catch (error) {
+    hideExportProgress();
+    console.error('Error exporting C array:', error);
+    showMessage(
+      `Export failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      'error'
+    );
+  }
+}
+
+async function handleExportCFiles(): Promise<void> {
+  if (currentPackedFrames.length === 0) {
+    showMessage('No frames available for export', 'error');
+    return;
+  }
+
+  try {
+    showExportProgress('Generating C files...');
+
+    const { makeCArrayFiles } = await import('@tiny-screen-studios/core');
+    const symbol = symbolName.value.trim() || 'display_data';
+
+    const options = {
+      perFrame: perFrame.checked,
+      bytesPerRow: parseInt(bytesPerRow.value),
+      includeMetadata: includeMetadata.checked,
+    };
+
+    updateExportProgress(50, 'Formatting C code...');
+
+    const exportFiles = makeCArrayFiles(currentPackedFrames, symbol, options);
+
+    updateExportProgress(75, 'Preparing downloads...');
+
+    // Download each file
+    for (let i = 0; i < exportFiles.length; i++) {
+      const file = exportFiles[i];
+      if (file) {
+        downloadFile(file.name, file.data, file.mimeType || 'text/plain');
+        updateExportProgress(
+          75 + (25 * (i + 1)) / exportFiles.length,
+          `Downloaded ${file.name}`
+        );
+
+        // Small delay between downloads
+        if (i < exportFiles.length - 1) {
+          await new Promise(resolve => setTimeout(resolve, 100));
+        }
+      }
+    }
+
+    hideExportProgress();
+    showMessage(`Downloaded ${exportFiles.length} C file(s)`, 'success');
+  } catch (error) {
+    hideExportProgress();
+    console.error('Error exporting C files:', error);
+    showMessage(
+      `Export failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      'error'
+    );
+  }
+}
+
+// Export progress functions
+function showExportProgress(text: string = 'Exporting...'): void {
+  exportStatus.style.display = 'block';
+  exportText.textContent = text;
+  exportProgressFill.style.width = '0%';
+}
+
+function updateExportProgress(percentage: number, text?: string): void {
+  exportProgressFill.style.width = `${Math.min(100, Math.max(0, percentage))}%`;
+  if (text) {
+    exportText.textContent = text;
+  }
+}
+
+function hideExportProgress(): void {
+  exportStatus.style.display = 'none';
+}
+
+// File download utility
+function downloadFile(
+  filename: string,
+  data: Uint8Array,
+  mimeType: string
+): void {
+  const blob = new Blob([new Uint8Array(data)], { type: mimeType });
+  const url = URL.createObjectURL(blob);
+
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  link.style.display = 'none';
+
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+
+  // Clean up the URL object
+  setTimeout(() => URL.revokeObjectURL(url), 100);
+}
+
+// Export panel management
+function showExportPanel(): void {
+  exportPanel.style.display = 'block';
+  document.querySelector('.main-content')?.classList.add('with-export');
+
+  // Enable export buttons
+  exportBinaryBtn.disabled = false;
+  exportConcatenatedBtn.disabled = false;
+  exportCArrayBtn.disabled = false;
+  exportCFilesBtn.disabled = false;
+}
+
+function hideExportPanel(): void {
+  exportPanel.style.display = 'none';
+  document.querySelector('.main-content')?.classList.remove('with-export');
+
+  // Disable export buttons
+  exportBinaryBtn.disabled = true;
+  exportConcatenatedBtn.disabled = true;
+  exportCArrayBtn.disabled = true;
+  exportCFilesBtn.disabled = true;
 }
 
 // Initialize the application when DOM is loaded
