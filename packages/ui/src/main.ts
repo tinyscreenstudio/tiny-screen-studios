@@ -33,6 +33,23 @@ const canvasPlaceholder = document.getElementById(
 const scale = document.getElementById('scale') as HTMLInputElement;
 const scaleValue = document.getElementById('scaleValue') as HTMLSpanElement;
 const showGrid = document.getElementById('showGrid') as HTMLInputElement;
+
+// Panel and loading overlay references
+const inputPanel = document.getElementById('inputPanel') as HTMLDivElement;
+const previewPanel = document.getElementById('previewPanel') as HTMLDivElement;
+const exportPanel = document.getElementById('exportPanel') as HTMLDivElement;
+
+// Recovery action elements
+const recoveryActions = document.getElementById(
+  'recoveryActions'
+) as HTMLDivElement;
+const retryBtn = document.getElementById('retryBtn') as HTMLButtonElement;
+const clearFilesBtn = document.getElementById(
+  'clearFilesBtn'
+) as HTMLButtonElement;
+const resetSettingsBtn = document.getElementById(
+  'resetSettingsBtn'
+) as HTMLButtonElement;
 // Animation controls
 const animationControls = document.getElementById(
   'animationControls'
@@ -47,7 +64,6 @@ const frameSlider = document.getElementById('frameSlider') as HTMLInputElement;
 const frameValue = document.getElementById('frameValue') as HTMLSpanElement;
 const totalFrames = document.getElementById('totalFrames') as HTMLSpanElement;
 // Export panel elements
-const exportPanel = document.getElementById('exportPanel') as HTMLDivElement;
 const symbolName = document.getElementById('symbolName') as HTMLInputElement;
 const bytesPerRow = document.getElementById('bytesPerRow') as HTMLInputElement;
 const bytesPerRowValue = document.getElementById(
@@ -95,6 +111,19 @@ let thresholdDebounceTimer: ReturnType<typeof setTimeout> | null = null;
 let animationController: AnimationController | null = null;
 let isAnimationPlaying = false;
 
+// Error handling state
+let retryCount = 0;
+const MAX_RETRIES = 3;
+let processingStartTime = 0;
+
+// Performance monitoring
+const performanceMetrics = {
+  lastProcessingTime: 0,
+  averageProcessingTime: 0,
+  processedFrameCount: 0,
+  memoryUsage: 0,
+};
+
 // Initialize the application
 function init(): void {
   setupEventListeners();
@@ -130,6 +159,15 @@ function setupEventListeners(): void {
   exportConcatenatedBtn.addEventListener('click', handleExportConcatenated);
   exportCArrayBtn.addEventListener('click', handleExportCArray);
   exportCFilesBtn.addEventListener('click', handleExportCFiles);
+
+  // Recovery action listeners
+  retryBtn.addEventListener('click', handleRetry);
+  clearFilesBtn.addEventListener('click', handleClearFiles);
+  resetSettingsBtn.addEventListener('click', handleResetSettings);
+
+  // Global error handling
+  window.addEventListener('error', handleGlobalError);
+  window.addEventListener('unhandledrejection', handleUnhandledRejection);
 }
 
 // File handling functions
@@ -411,6 +449,20 @@ async function renderCurrentFrame(): Promise<void> {
     }
   } catch (error) {
     console.error('Error rendering frame:', error);
+
+    // Show degradation notice instead of failing completely
+    const container = previewCanvas.parentElement;
+    if (container && !container.querySelector('.degradation-notice')) {
+      const notice = document.createElement('div');
+      notice.className = 'degradation-notice';
+      notice.innerHTML = `
+        <h4>Preview Unavailable</h4>
+        <p>Canvas rendering failed, but your data is still processed correctly. 
+        You can still export your files below.</p>
+      `;
+      container.appendChild(notice);
+      previewCanvas.style.display = 'none';
+    }
   }
 }
 
@@ -426,8 +478,9 @@ function handleFileUpload(files: File[]): void {
     return;
   }
 
-  // Clear any previous messages when starting new file processing
+  // Clear any previous messages and recovery actions when starting new file processing
   clearMessages();
+  hideRecoveryActions();
 
   // Validate files before processing
   const validation = validateUploadedFiles(files);
@@ -440,6 +493,9 @@ function handleFileUpload(files: File[]): void {
   );
 
   if (validFiles.length > 0) {
+    // Reset retry count for new files
+    retryCount = 0;
+
     // processFiles handles its own error display, so we don't need to catch here
     processFiles(validFiles).catch(error => {
       console.error('Error processing files:', error);
@@ -447,6 +503,7 @@ function handleFileUpload(files: File[]): void {
     });
   } else {
     showMessage('No valid PNG files to process', 'error');
+    showRecoveryActions();
   }
 }
 
@@ -677,14 +734,19 @@ async function processFiles(files: File[]): Promise<void> {
 
   isProcessing = true;
   currentFiles = files;
+  processingStartTime = performance.now();
 
   try {
     // Clear any previous messages and hide export panel
     clearMessages();
+    hideRecoveryActions();
     hideExportPanel();
 
     showProgress('Decoding images...');
     updateProgress(10, 'Decoding images...');
+
+    // Check memory usage before processing
+    checkMemoryUsage();
 
     // Import the core functions we need
     const { decodeAndValidateFiles } = await import(
@@ -787,12 +849,27 @@ async function processFiles(files: File[]): Promise<void> {
 
           updateProgress(100, 'Complete!');
 
+          // Update performance metrics
+          const processingTime = performance.now() - processingStartTime;
+          performanceMetrics.lastProcessingTime = processingTime;
+          performanceMetrics.processedFrameCount = packedFrames.length;
+
           setTimeout(() => {
             hideProgress();
-            showMessage(
-              `Successfully processed ${packedFrames.length} frame(s)`,
-              'success'
-            );
+
+            // Show performance info for large operations
+            if (processingTime > 2000 || files.length > 10) {
+              showMessage(
+                `Successfully processed ${packedFrames.length} frame(s) in ${(processingTime / 1000).toFixed(1)}s`,
+                'success'
+              );
+            } else {
+              showMessage(
+                `Successfully processed ${packedFrames.length} frame(s)`,
+                'success'
+              );
+            }
+
             // Show export panel when processing is complete
             showExportPanel();
           }, 500);
@@ -807,13 +884,66 @@ async function processFiles(files: File[]): Promise<void> {
     console.error('Error processing files:', error);
     hideProgress();
 
-    // Only show generic error if it's not a validation error (validation errors are already shown)
+    // Enhanced error handling with contextual messages
     const errorMessage =
       error instanceof Error ? error.message : 'Unknown error';
-    if (errorMessage !== 'Validation failed - see details above') {
+
+    if (errorMessage === 'Validation failed - see details above') {
+      // Validation errors are already shown by displayDecodingValidation
+      showRecoveryActions();
+    } else if (
+      errorMessage.includes('memory') ||
+      errorMessage.includes('allocation')
+    ) {
+      showErrorWithActions(
+        'Out of memory. Try processing fewer files or smaller images.',
+        [
+          { text: 'Clear Files', action: handleClearFiles },
+          {
+            text: 'Reduce Scale',
+            action: (): void => {
+              scale.value = '2';
+              handleScaleChange();
+            },
+          },
+        ]
+      );
+      showRecoveryActions();
+    } else if (
+      errorMessage.includes('network') ||
+      errorMessage.includes('fetch')
+    ) {
+      showErrorWithActions(
+        'Network error loading processing modules. Check your connection.',
+        [
+          { text: 'Retry', action: handleRetry },
+          { text: 'Reload Page', action: () => window.location.reload() },
+        ]
+      );
+      showRecoveryActions();
+    } else if (
+      errorMessage.includes('dimension') ||
+      errorMessage.includes('size')
+    ) {
+      showErrorWithActions(
+        "Image dimensions don't match the selected device preset.",
+        [
+          {
+            text: 'Try Different Preset',
+            action: () =>
+              showMessage(
+                'Try selecting a different device preset above.',
+                'info'
+              ),
+          },
+          { text: 'Clear Files', action: handleClearFiles },
+        ]
+      );
+      showRecoveryActions();
+    } else {
       showMessage(`Error: ${errorMessage}`, 'error');
+      showRecoveryActions();
     }
-    // For validation errors, the details are already shown by displayDecodingValidation
 
     // Clear stored frames and hide canvas on error
     currentPackedFrames = [];
@@ -872,7 +1002,7 @@ async function handleExportBinary(): Promise<void> {
     return;
   }
 
-  try {
+  await exportWithErrorHandling(async () => {
     showExportProgress('Generating binary files...');
 
     const { makeByteFiles } = await import('@tiny-screen-studios/core');
@@ -905,14 +1035,7 @@ async function handleExportBinary(): Promise<void> {
 
     hideExportProgress();
     showMessage(`Downloaded ${exportFiles.length} binary file(s)`, 'success');
-  } catch (error) {
-    hideExportProgress();
-    console.error('Error exporting binary files:', error);
-    showMessage(
-      `Export failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
-      'error'
-    );
-  }
+  }, 'binary files');
 }
 
 async function handleExportConcatenated(): Promise<void> {
@@ -921,7 +1044,7 @@ async function handleExportConcatenated(): Promise<void> {
     return;
   }
 
-  try {
+  await exportWithErrorHandling(async () => {
     showExportProgress('Generating concatenated binary...');
 
     const { makeConcatenatedByteFile } = await import(
@@ -941,14 +1064,7 @@ async function handleExportConcatenated(): Promise<void> {
 
     hideExportProgress();
     showMessage(`Downloaded ${exportFile.name}`, 'success');
-  } catch (error) {
-    hideExportProgress();
-    console.error('Error exporting concatenated binary:', error);
-    showMessage(
-      `Export failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
-      'error'
-    );
-  }
+  }, 'concatenated binary');
 }
 
 async function handleExportCArray(): Promise<void> {
@@ -957,7 +1073,7 @@ async function handleExportCArray(): Promise<void> {
     return;
   }
 
-  try {
+  await exportWithErrorHandling(async () => {
     showExportProgress('Generating C array...');
 
     const { toCRawArray } = await import('@tiny-screen-studios/core');
@@ -982,14 +1098,7 @@ async function handleExportCArray(): Promise<void> {
 
     hideExportProgress();
     showMessage(`Downloaded ${filename}`, 'success');
-  } catch (error) {
-    hideExportProgress();
-    console.error('Error exporting C array:', error);
-    showMessage(
-      `Export failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
-      'error'
-    );
-  }
+  }, 'C array');
 }
 
 async function handleExportCFiles(): Promise<void> {
@@ -998,7 +1107,7 @@ async function handleExportCFiles(): Promise<void> {
     return;
   }
 
-  try {
+  await exportWithErrorHandling(async () => {
     showExportProgress('Generating C files...');
 
     const { makeCArrayFiles } = await import('@tiny-screen-studios/core');
@@ -1035,14 +1144,7 @@ async function handleExportCFiles(): Promise<void> {
 
     hideExportProgress();
     showMessage(`Downloaded ${exportFiles.length} C file(s)`, 'success');
-  } catch (error) {
-    hideExportProgress();
-    console.error('Error exporting C files:', error);
-    showMessage(
-      `Export failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
-      'error'
-    );
-  }
+  }, 'C files');
 }
 
 // Export progress functions
@@ -1106,6 +1208,241 @@ function hideExportPanel(): void {
   exportConcatenatedBtn.disabled = true;
   exportCArrayBtn.disabled = true;
   exportCFilesBtn.disabled = true;
+}
+
+// Error handling and loading state functions
+
+// Show loading overlay on a specific panel
+function showPanelLoading(
+  panel: HTMLElement,
+  message: string = 'Processing...'
+): void {
+  const overlay = panel.querySelector('.loading-overlay') as HTMLElement;
+  const text = panel.querySelector('.loading-text') as HTMLElement;
+
+  if (overlay && text) {
+    text.textContent = message;
+    overlay.style.display = 'flex';
+    panel.classList.add('processing');
+  }
+}
+
+// Hide loading overlay on a specific panel
+function hidePanelLoading(panel: HTMLElement): void {
+  const overlay = panel.querySelector('.loading-overlay') as HTMLElement;
+
+  if (overlay) {
+    overlay.style.display = 'none';
+    panel.classList.remove('processing');
+  }
+}
+
+// Enhanced error message display with actions
+function showErrorWithActions(
+  message: string,
+  actions: Array<{ text: string; action: () => void }> = []
+): void {
+  clearValidationResults();
+
+  const errorItem = document.createElement('div');
+  errorItem.className = 'validation-item validation-error';
+
+  if (actions.length > 0) {
+    errorItem.className += ' error-with-actions';
+
+    const messageDiv = document.createElement('div');
+    messageDiv.textContent = message;
+
+    const actionsDiv = document.createElement('div');
+    actionsDiv.className = 'error-actions';
+
+    actions.forEach(({ text, action }) => {
+      const btn = document.createElement('button');
+      btn.className = 'error-action-btn';
+      btn.textContent = text;
+      btn.onclick = action;
+      actionsDiv.appendChild(btn);
+    });
+
+    errorItem.appendChild(messageDiv);
+    errorItem.appendChild(actionsDiv);
+  } else {
+    errorItem.textContent = message;
+  }
+
+  validationResults.appendChild(errorItem);
+}
+
+// Show recovery actions panel
+function showRecoveryActions(): void {
+  recoveryActions.style.display = 'block';
+}
+
+// Hide recovery actions panel
+function hideRecoveryActions(): void {
+  recoveryActions.style.display = 'none';
+}
+
+// Recovery action handlers
+function handleRetry(): void {
+  if (currentFiles.length > 0 && retryCount < MAX_RETRIES) {
+    retryCount++;
+    showMessage(`Retry attempt ${retryCount}/${MAX_RETRIES}...`, 'info');
+    hideRecoveryActions();
+
+    // Add small delay before retry
+    setTimeout(() => {
+      processFiles(currentFiles).catch(error => {
+        console.error('Retry failed:', error);
+      });
+    }, 500);
+  } else if (retryCount >= MAX_RETRIES) {
+    showMessage(
+      'Maximum retry attempts reached. Please try different files or settings.',
+      'error'
+    );
+  } else {
+    showMessage('No files to retry. Please upload files first.', 'warning');
+  }
+}
+
+function handleClearFiles(): void {
+  currentFiles = [];
+  currentPackedFrames = [];
+  fileInput.value = '';
+
+  // Clear UI state
+  clearMessages();
+  hideRecoveryActions();
+  hideExportPanel();
+
+  // Reset canvas
+  previewCanvas.style.display = 'none';
+  canvasPlaceholder.style.display = 'block';
+
+  // Clear file list
+  fileList.style.display = 'none';
+  fileList.innerHTML = '';
+
+  // Stop any animation
+  stopAnimation();
+  setupAnimationControls(0);
+
+  showMessage('Files cleared. Upload new files to continue.', 'info');
+}
+
+function handleResetSettings(): void {
+  // Reset all controls to defaults
+  devicePreset.value = 'SSD1306_128x32';
+  threshold.value = '128';
+  thresholdValue.textContent = '128';
+  invert.checked = false;
+  dithering.checked = false;
+  scale.value = '4';
+  scaleValue.textContent = '4x';
+  showGrid.checked = false;
+  fps.value = '10';
+  fpsValue.textContent = '10';
+
+  // Reset export settings
+  symbolName.value = 'display_data';
+  bytesPerRow.value = '16';
+  bytesPerRowValue.textContent = '16';
+  perFrame.checked = true;
+  includeMetadata.checked = true;
+
+  // Update current preset and canvas
+  currentPreset = 'SSD1306_128x32';
+  updateCanvasSize();
+
+  // Reprocess files if any are loaded
+  if (currentFiles.length > 0) {
+    processFiles(currentFiles).catch(error => {
+      console.error('Error after reset:', error);
+    });
+  }
+
+  showMessage('Settings reset to defaults.', 'success');
+}
+
+// Global error handlers
+function handleGlobalError(event: ErrorEvent): void {
+  console.error('Global error:', event.error);
+
+  const errorMsg = event.error?.message || 'An unexpected error occurred';
+  showErrorWithActions(`Unexpected error: ${errorMsg}`, [
+    { text: 'Reload Page', action: () => window.location.reload() },
+    { text: 'Clear Data', action: handleClearFiles },
+  ]);
+
+  // Stop any ongoing processing
+  isProcessing = false;
+  hidePanelLoading(inputPanel);
+  hidePanelLoading(previewPanel);
+  hidePanelLoading(exportPanel);
+}
+
+function handleUnhandledRejection(event: PromiseRejectionEvent): void {
+  console.error('Unhandled promise rejection:', event.reason);
+
+  const errorMsg = event.reason?.message || 'Promise rejection occurred';
+  showErrorWithActions(`Processing error: ${errorMsg}`, [
+    { text: 'Retry', action: handleRetry },
+    { text: 'Clear Files', action: handleClearFiles },
+  ]);
+}
+
+// Enhanced export error handling
+async function exportWithErrorHandling(
+  exportFn: () => Promise<void>,
+  exportType: string
+): Promise<void> {
+  try {
+    showPanelLoading(exportPanel, `Exporting ${exportType}...`);
+    await exportFn();
+  } catch (error) {
+    console.error(`Export ${exportType} failed:`, error);
+
+    const errorMsg =
+      error instanceof Error ? error.message : 'Unknown export error';
+
+    if (errorMsg.includes('quota') || errorMsg.includes('storage')) {
+      showMessage(
+        'Export failed: Not enough storage space for download.',
+        'error'
+      );
+    } else if (
+      errorMsg.includes('permission') ||
+      errorMsg.includes('blocked')
+    ) {
+      showMessage(
+        'Export blocked by browser. Please allow downloads and try again.',
+        'error'
+      );
+    } else {
+      showMessage(`Export failed: ${errorMsg}`, 'error');
+    }
+  } finally {
+    hidePanelLoading(exportPanel);
+  }
+}
+
+// Memory usage monitoring
+function checkMemoryUsage(): void {
+  if ('memory' in performance) {
+    const memory = (performance as { memory: { usedJSHeapSize: number } })
+      .memory;
+    performanceMetrics.memoryUsage = memory.usedJSHeapSize;
+
+    // Warn if memory usage is high
+    const memoryMB = memory.usedJSHeapSize / (1024 * 1024);
+    if (memoryMB > 100) {
+      showMessage(
+        `High memory usage detected (${memoryMB.toFixed(0)}MB). Consider processing fewer files.`,
+        'warning'
+      );
+    }
+  }
 }
 
 // Initialize the application when DOM is loaded

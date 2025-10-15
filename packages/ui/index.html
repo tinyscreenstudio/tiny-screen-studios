@@ -164,6 +164,19 @@
       margin-bottom: 8px;
       border-radius: 4px;
       font-size: 0.9em;
+      position: relative;
+      animation: slideIn 0.3s ease-out;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     .validation-error {
@@ -182,6 +195,253 @@
       background: #f0f9f0;
       border-left: 4px solid #27ae60;
       color: #155724;
+    }
+
+    .validation-info {
+      background: #e3f2fd;
+      border-left: 4px solid #2196f3;
+      color: #0d47a1;
+    }
+
+    /* Error message with action buttons */
+    .error-with-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .error-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .error-action-btn {
+      background: transparent;
+      border: 1px solid currentColor;
+      color: inherit;
+      padding: 4px 8px;
+      border-radius: 3px;
+      font-size: 0.8em;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+
+    .error-action-btn:hover {
+      background: rgba(0, 0, 0, 0.1);
+    }
+
+    /* Loading states */
+    .loading-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(255, 255, 255, 0.9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      z-index: 10;
+    }
+
+    .loading-spinner {
+      width: 32px;
+      height: 32px;
+      border: 3px solid #ecf0f1;
+      border-top: 3px solid #3498db;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .loading-text {
+      margin-left: 15px;
+      color: #2c3e50;
+      font-weight: 500;
+    }
+
+    /* Disabled state for panels during processing */
+    .panel.processing {
+      position: relative;
+      pointer-events: none;
+      opacity: 0.7;
+    }
+
+    .panel.processing .loading-overlay {
+      display: flex;
+    }
+
+    /* Help tooltips */
+    .help-tooltip {
+      position: relative;
+      display: inline-block;
+      margin-left: 5px;
+      cursor: help;
+    }
+
+    .help-icon {
+      width: 16px;
+      height: 16px;
+      background: #95a5a6;
+      color: white;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .help-content {
+      position: absolute;
+      bottom: 125%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #2c3e50;
+      color: white;
+      padding: 8px 12px;
+      border-radius: 4px;
+      font-size: 0.8em;
+      white-space: nowrap;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+      z-index: 1000;
+      max-width: 250px;
+      white-space: normal;
+      text-align: center;
+    }
+
+    .help-content::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 5px solid transparent;
+      border-top-color: #2c3e50;
+    }
+
+    .help-tooltip:hover .help-content {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    /* Retry and recovery buttons */
+    .recovery-actions {
+      margin-top: 15px;
+      padding: 15px;
+      background: #f8f9fa;
+      border-radius: 6px;
+      border-left: 4px solid #6c757d;
+    }
+
+    .recovery-actions h4 {
+      margin-bottom: 10px;
+      color: #495057;
+      font-size: 0.9em;
+    }
+
+    .recovery-buttons {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .recovery-btn {
+      background: #6c757d;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.8em;
+      transition: background-color 0.2s ease;
+    }
+
+    .recovery-btn:hover {
+      background: #5a6268;
+    }
+
+    .recovery-btn.primary {
+      background: #007bff;
+    }
+
+    .recovery-btn.primary:hover {
+      background: #0056b3;
+    }
+
+    /* Status indicators */
+    .status-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.8em;
+      padding: 2px 6px;
+      border-radius: 3px;
+    }
+
+    .status-indicator.processing {
+      background: #fff3cd;
+      color: #856404;
+    }
+
+    .status-indicator.success {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .status-indicator.error {
+      background: #f8d7da;
+      color: #721c24;
+    }
+
+    .status-indicator.idle {
+      background: #e2e3e5;
+      color: #6c757d;
+    }
+
+    /* Graceful degradation messages */
+    .degradation-notice {
+      background: #e7f3ff;
+      border: 1px solid #b3d9ff;
+      border-radius: 4px;
+      padding: 12px;
+      margin: 10px 0;
+      color: #0c5460;
+    }
+
+    .degradation-notice h4 {
+      margin-bottom: 5px;
+      color: #0a4c57;
+    }
+
+    /* Enhanced export status */
+    .export-status {
+      margin-top: 15px;
+      padding: 10px;
+      background: #f8f9fa;
+      border-radius: 4px;
+      border-left: 4px solid #3498db;
+      position: relative;
+    }
+
+    .export-status.error {
+      background: #fdf2f2;
+      border-left-color: #e74c3c;
+    }
+
+    .export-status.success {
+      background: #f0f9f0;
+      border-left-color: #27ae60;
     }
 
     .progress-container {
@@ -348,7 +608,11 @@
 
     <div class="main-content">
       <!-- Input and Controls Panel -->
-      <div class="panel">
+      <div class="panel" id="inputPanel">
+        <div class="loading-overlay" style="display: none;">
+          <div class="loading-spinner"></div>
+          <div class="loading-text">Processing...</div>
+        </div>
         <h2>Input & Settings</h2>
 
         <!-- File Input -->
@@ -377,9 +641,25 @@
         <!-- Validation Results -->
         <div class="validation-results" id="validationResults"></div>
 
+        <!-- Error Recovery Actions -->
+        <div class="recovery-actions" id="recoveryActions" style="display: none;">
+          <h4>Having trouble? Try these options:</h4>
+          <div class="recovery-buttons">
+            <button class="recovery-btn primary" id="retryBtn">Retry Processing</button>
+            <button class="recovery-btn" id="clearFilesBtn">Clear Files</button>
+            <button class="recovery-btn" id="resetSettingsBtn">Reset Settings</button>
+          </div>
+        </div>
+
         <!-- Device Preset Selection -->
         <div class="controls-group">
-          <label for="devicePreset">Device Preset:</label>
+          <label for="devicePreset">
+            Device Preset:
+            <span class="help-tooltip">
+              <span class="help-icon">?</span>
+              <div class="help-content">Choose your display type. SSD1306 is most common, SH1106 has slightly different dimensions.</div>
+            </span>
+          </label>
           <select id="devicePreset">
             <option value="SSD1306_128x32">SSD1306 128×32</option>
             <option value="SSD1306_128x64">SSD1306 128×64</option>
@@ -389,25 +669,43 @@
 
         <!-- Conversion Settings -->
         <div class="controls-group">
-          <label for="threshold">Threshold: <span id="thresholdValue">128</span></label>
+          <label for="threshold">
+            Threshold: <span id="thresholdValue">128</span>
+            <span class="help-tooltip">
+              <span class="help-icon">?</span>
+              <div class="help-content">Brightness cutoff for black/white conversion. Lower values = more black pixels.</div>
+            </span>
+          </label>
           <input type="range" id="threshold" min="0" max="255" value="128">
         </div>
 
         <div class="controls-group">
           <label>
             <input type="checkbox" id="invert"> Invert Output
+            <span class="help-tooltip">
+              <span class="help-icon">?</span>
+              <div class="help-content">Swap black and white pixels. Useful for different display polarities.</div>
+            </span>
           </label>
         </div>
 
         <div class="controls-group">
           <label>
             <input type="checkbox" id="dithering"> Enable Dithering
+            <span class="help-tooltip">
+              <span class="help-icon">?</span>
+              <div class="help-content">Use Bayer dithering to simulate grayscale with dot patterns. Better for photos.</div>
+            </span>
           </label>
         </div>
       </div>
 
       <!-- Preview Panel -->
-      <div class="panel">
+      <div class="panel" id="previewPanel">
+        <div class="loading-overlay" style="display: none;">
+          <div class="loading-spinner"></div>
+          <div class="loading-text">Rendering...</div>
+        </div>
         <h2>Preview</h2>
         <div class="canvas-container">
           <canvas id="previewCanvas" width="128" height="64" style="display: none;"></canvas>
@@ -418,19 +716,35 @@
 
         <!-- Preview Controls -->
         <div class="controls-group" style="margin-top: 15px;">
-          <label for="scale">Scale: <span id="scaleValue">4x</span></label>
+          <label for="scale">
+            Scale: <span id="scaleValue">4x</span>
+            <span class="help-tooltip">
+              <span class="help-icon">?</span>
+              <div class="help-content">Zoom level for preview. Higher values show more pixel detail.</div>
+            </span>
+          </label>
           <input type="range" id="scale" min="1" max="8" value="4">
         </div>
 
         <div class="controls-group">
           <label>
             <input type="checkbox" id="showGrid"> Show Grid
+            <span class="help-tooltip">
+              <span class="help-icon">?</span>
+              <div class="help-content">Overlay pixel grid lines to see individual pixels clearly.</div>
+            </span>
           </label>
         </div>
 
         <!-- Animation Controls -->
         <div class="controls-group" id="animationControls" style="display: none;">
-          <label for="fps">FPS: <span id="fpsValue">10</span></label>
+          <label for="fps">
+            FPS: <span id="fpsValue">10</span>
+            <span class="help-tooltip">
+              <span class="help-icon">?</span>
+              <div class="help-content">Animation speed in frames per second. Higher = faster animation.</div>
+            </span>
+          </label>
           <input type="range" id="fps" min="1" max="30" value="10">
         </div>
 
@@ -448,6 +762,10 @@
 
     <!-- Export Panel -->
     <div class="panel" id="exportPanel" style="display: none;">
+      <div class="loading-overlay" style="display: none;">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Exporting...</div>
+      </div>
       <h2>Export</h2>
       
       <!-- Export Options -->
