@@ -1,0 +1,303 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: 'Space Grotesk', 'Inter', system-ui, sans-serif;
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    @apply bg-gray-50 text-gray-900 antialiased;
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    background-attachment: fixed;
+  }
+  
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    @apply bg-gray-100;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    @apply bg-gray-300 rounded-full;
+    transition: background-color 0.2s ease;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-gray-400;
+  }
+}
+
+@layer components {
+  /* Clean modern cards */
+  .card {
+    @apply bg-white border border-gray-200 rounded-2xl shadow-sm;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .card-hover {
+    @apply card hover:shadow-lg hover:border-gray-300 hover:-translate-y-1;
+  }
+  
+  .card-elevated {
+    @apply bg-white border border-gray-200 rounded-2xl shadow-lg;
+  }
+  
+  /* Clean button styles */
+  .btn-primary {
+    @apply px-6 py-3 rounded-xl font-medium transition-all duration-300;
+    @apply bg-indigo-600 text-white hover:bg-indigo-700;
+    @apply disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply shadow-sm hover:shadow-md;
+  }
+  
+  .btn-secondary {
+    @apply px-6 py-3 rounded-xl font-medium transition-all duration-300;
+    @apply bg-gray-100 text-gray-700 hover:bg-gray-200;
+    @apply disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply border border-gray-200 hover:border-gray-300;
+  }
+  
+  .btn-ghost {
+    @apply px-6 py-3 rounded-xl font-medium transition-all duration-300;
+    @apply text-gray-600 hover:text-gray-900 hover:bg-gray-100;
+    @apply disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  
+  .btn-success {
+    @apply px-6 py-3 rounded-xl font-medium transition-all duration-300;
+    @apply bg-emerald-600 text-white hover:bg-emerald-700;
+    @apply disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply shadow-sm hover:shadow-md;
+  }
+  
+  .btn-export {
+    @apply px-4 py-3 rounded-xl font-medium transition-all duration-300;
+    @apply bg-gradient-to-r from-indigo-600 to-purple-600 text-white;
+    @apply hover:from-indigo-700 hover:to-purple-700;
+    @apply disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply shadow-lg hover:shadow-xl transform hover:-translate-y-0.5;
+    @apply border-2 border-transparent hover:border-indigo-300;
+  }
+  
+  /* Clean input fields */
+  .input-field {
+    @apply w-full px-4 py-3 bg-white border border-gray-200 rounded-xl;
+    @apply text-gray-900 placeholder-gray-400;
+    @apply focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20;
+    @apply transition-all duration-200;
+  }
+  
+  /* Dropdown/Select styling */
+  .select-field {
+    @apply w-full px-4 py-3 bg-white border-2 border-gray-300 rounded-xl;
+    @apply text-gray-900 font-semibold appearance-none cursor-pointer;
+    @apply focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20;
+    @apply transition-all duration-200;
+    @apply shadow-sm hover:shadow-md;
+  }
+  
+  .select-field option {
+    @apply text-gray-900 bg-white font-medium;
+    padding: 8px 12px;
+    color: #111827 !important;
+    background-color: #ffffff !important;
+  }
+  
+  .select-field:focus option {
+    @apply text-gray-900 bg-white;
+    color: #111827 !important;
+    background-color: #ffffff !important;
+  }
+  
+  /* Consistent panel styling */
+  .panel-card {
+    @apply card p-6 h-fit flex flex-col;
+  }
+  
+  .panel-header {
+    @apply flex items-center gap-3 mb-6 flex-shrink-0;
+  }
+  
+  .panel-content {
+    @apply flex flex-col;
+  }
+  
+  /* Equal height panels */
+  .equal-height-row {
+    @apply grid items-stretch;
+  }
+  
+  .equal-height-panel {
+    @apply flex flex-col h-full;
+  }
+  
+  .equal-height-panel .card {
+    @apply flex-1 flex flex-col;
+  }
+  
+  /* Clean sliders */
+  .slider {
+    @apply w-full h-2 bg-gray-200 rounded-full appearance-none cursor-pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .slider::-webkit-slider-thumb {
+    @apply appearance-none w-5 h-5 rounded-full cursor-pointer;
+    @apply bg-indigo-600 shadow-md;
+    @apply hover:bg-indigo-700 hover:scale-110;
+    transition: all 0.2s ease;
+  }
+  
+  .slider::-moz-range-thumb {
+    @apply w-5 h-5 rounded-full cursor-pointer border-0;
+    @apply bg-indigo-600;
+  }
+  
+  /* OLED Display - clean and minimal */
+  .oled-display {
+    @apply bg-gray-900 rounded-2xl p-6 relative overflow-hidden;
+    @apply border border-gray-700;
+    background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+    box-shadow: 
+      0 10px 25px rgba(0, 0, 0, 0.1),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+  
+  .oled-display.active {
+    @apply border-indigo-500;
+    box-shadow: 
+      0 10px 25px rgba(0, 0, 0, 0.1),
+      0 0 0 1px rgba(99, 102, 241, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+  
+  /* Upload zone - clean and inviting */
+  .upload-zone {
+    @apply card border-2 border-dashed border-gray-300 rounded-2xl p-8;
+    @apply hover:border-indigo-400 hover:bg-indigo-50/50 transition-all duration-300;
+    @apply cursor-pointer relative;
+  }
+  
+  .upload-zone.dragover {
+    @apply border-indigo-500 bg-indigo-50;
+    box-shadow: 0 0 0 1px rgba(99, 102, 241, 0.2);
+  }
+  
+  /* Status indicators - clean and clear */
+  .status-success {
+    @apply bg-emerald-50 border-l-4 border-emerald-500 text-emerald-700 p-4 rounded-r-xl;
+  }
+  
+  .status-warning {
+    @apply bg-amber-50 border-l-4 border-amber-500 text-amber-700 p-4 rounded-r-xl;
+  }
+  
+  .status-error {
+    @apply bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded-r-xl;
+  }
+  
+  .status-info {
+    @apply bg-blue-50 border-l-4 border-blue-500 text-blue-700 p-4 rounded-r-xl;
+  }
+  
+  /* Progress bars - smooth and elegant */
+  .progress-bar {
+    @apply w-full h-2 bg-gray-200 rounded-full overflow-hidden;
+  }
+  
+  .progress-fill {
+    @apply h-full rounded-full bg-gradient-to-r from-indigo-500 to-purple-600;
+    transition: width 0.3s ease;
+  }
+  
+  /* Navigation - clean and intuitive */
+  .nav-container {
+    @apply card p-1;
+  }
+  
+  .nav-item {
+    @apply px-6 py-3 rounded-lg font-medium transition-all duration-200;
+    @apply text-gray-600 hover:text-gray-900 hover:bg-gray-100;
+  }
+  
+  .nav-item.active {
+    @apply bg-indigo-600 text-white shadow-sm;
+  }
+  
+  /* Badges - subtle and informative */
+  .badge {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-medium;
+    @apply bg-gray-100 text-gray-700 border border-gray-200;
+  }
+  
+  .badge-primary {
+    @apply bg-indigo-100 text-indigo-700 border-indigo-200;
+  }
+  
+  /* Tooltips */
+  .tooltip {
+    @apply absolute z-50 px-3 py-2 text-sm rounded-lg shadow-lg;
+    @apply bg-gray-900 text-white border border-gray-700;
+  }
+}
+
+@layer utilities {
+  .pixelated {
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+  }
+  
+  .text-gradient {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  .animate-fade-in {
+    animation: fadeIn 0.6s ease-out;
+  }
+  
+  .animate-slide-up {
+    animation: slideUp 0.4s ease-out;
+  }
+  
+  .animate-scale-in {
+    animation: scaleIn 0.3s ease-out;
+  }
+}
+
+/* Keyframe animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}

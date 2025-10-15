@@ -56,15 +56,10 @@ Headless TypeScript library providing:
 - Export functionality
 - Validation and error handling
 
-### Web Interface (`@tiny-screen-studios/ui`)
-
-Browser-based application featuring:
-- Drag & drop file upload
-- Real-time preview with scaling
-- Adjustable conversion parameters
-- Animation playback controls
-- Multiple export formats
-- Batch processing capabilities
+### Web Interface (`@tiny-screen-studios/ui`)- Web-based user interface for image conversion and display configuration
+- Built with React and TypeScript
+- Utilizes the core library for processing and exporting
+- Supports drag-and-drop image upload and display configuration
 
 ## 🛠️ Development
 
