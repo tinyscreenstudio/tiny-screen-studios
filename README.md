@@ -1,32 +1,35 @@
 # 🖥️ Tiny Screen Studios
 
-> Convert pixel art and animations to tiny display formats for embedded devices
+> Professional toolkit for converting pixel art and animations to embedded display formats
 
-[![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![Vite](https://img.shields.io/badge/Vite-646CFF?style=flat-square&logo=vite&logoColor=white)](https://vitejs.dev/)
-[![pnpm](https://img.shields.io/badge/pnpm-F69220?style=flat-square&logo=pnpm&logoColor=white)](https://pnpm.io/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](https://opensource.org/licenses/MIT)
-
-Tiny Screen Studios is a powerful toolkit for converting pixel art and animations into formats optimized for tiny embedded displays like SSD1306 and SH1106 OLED screens. Perfect for Arduino projects, IoT devices, and retro gaming displays.
+Tiny Screen Studios is a powerful web-based application for converting pixel art and animations into formats optimized for tiny embedded displays like SSD1306 and SH1106 OLED screens. Designed for professionals working with Arduino projects, IoT devices, and embedded systems.
 
 ## ✨ Features
 
-- 🎨 **Pixel Art Conversion** - Transform images into monochrome bitmap formats
-- 🎬 **Animation Support** - Convert GIFs and sprite sheets to display-ready sequences
-- 📱 **Multiple Display Types** - Support for SSD1306, SH1106, and other monochrome displays
-- 🔧 **Headless Library** - Use programmatically in your own projects
-- 🌐 **Web Interface** - User-friendly browser-based tool
-- ⚡ **Fast Processing** - Optimized algorithms for quick conversion
-- 📦 **Multiple Formats** - Export as C arrays, binary data, or JSON
+- 🎨 **Professional Image Conversion** - Transform pixel art into optimized monochrome formats
+- 🎬 **Animation Processing** - Handle PNG sequences with frame timing and ordering
+- 📱 **Multi-Display Support** - Compatible with SSD1306, SH1106, and custom display configurations
+- 🔧 **Developer Integration** - TypeScript library for programmatic use
+- 🌐 **Web Application** - Intuitive browser-based interface
+- ⚡ **High Performance** - Optimized processing for large files and batch operations
+- 📦 **Flexible Export** - Multiple output formats including C arrays and binary files
 
-## 🚀 Quick Start
+## 🚀 Getting Started
 
-### Prerequisites
+### Web Application
+
+Access the web interface directly in your browser - no installation required. The application provides an intuitive drag-and-drop interface for converting images and animations.
+
+### Development Setup
+
+For developers working on the project:
+
+#### Prerequisites
 
 - Node.js 18+
 - pnpm 8+ (recommended) or npm
 
-### Installation
+#### Installation
 
 ```bash
 # Clone the repository
@@ -40,46 +43,38 @@ pnpm install
 pnpm dev
 ```
 
-The web interface will be available at `http://localhost:3000`
-
-## 📦 Packages
+## 📦 Architecture
 
 This is a monorepo containing two main packages:
 
-### `@tiny-screen-studios/core`
+### Core Library (`@tiny-screen-studios/core`)
 
-Headless TypeScript library for programmatic use:
+Headless TypeScript library providing:
+- Image decoding and processing
+- Monochrome conversion algorithms
+- Display-specific byte packing
+- Export functionality
+- Validation and error handling
 
-```typescript
-import { convertImage, DisplayType } from '@tiny-screen-studios/core';
+### Web Interface (`@tiny-screen-studios/ui`)
 
-const bitmap = await convertImage('path/to/image.png', {
-  displayType: DisplayType.SSD1306,
-  width: 128,
-  height: 64,
-  threshold: 128,
-});
-```
-
-### `@tiny-screen-studios/ui`
-
-Web-based interface for interactive conversion:
-
-- Drag & drop image upload
-- Real-time preview
-- Adjustable conversion settings
+Browser-based application featuring:
+- Drag & drop file upload
+- Real-time preview with scaling
+- Adjustable conversion parameters
+- Animation playback controls
 - Multiple export formats
-- Animation timeline editor
+- Batch processing capabilities
 
 ## 🛠️ Development
 
-### Setup
+### Build Commands
 
 ```bash
 # Install dependencies
 pnpm install
 
-# Start development mode (both packages)
+# Start development mode
 pnpm dev
 
 # Build all packages
@@ -88,65 +83,12 @@ pnpm build
 # Run tests
 pnpm test
 
-# Lint and format code
+# Code quality
 pnpm lint
 pnpm format
 ```
 
-### Package-Specific Commands
-
-#### Core Library
-
-```bash
-# Build the library
-pnpm --filter core build
-
-# Run tests with coverage
-pnpm --filter core test
-
-# Watch mode for development
-pnpm --filter core dev
-
-# Type checking
-pnpm --filter core type-check
-```
-
-#### Web Interface
-
-```bash
-# Start dev server (http://localhost:3000)
-pnpm --filter ui dev
-
-# Build for production
-pnpm --filter ui build
-
-# Preview production build
-pnpm --filter ui preview
-```
-
-### Project Structure
-
-```
-tiny-screen-studios/
-├── packages/
-│   ├── core/                 # Headless TypeScript library
-│   │   ├── src/
-│   │   │   ├── converters/   # Image conversion algorithms
-│   │   │   ├── displays/     # Display-specific configurations
-│   │   │   ├── types/        # TypeScript definitions
-│   │   │   └── utils/        # Utility functions
-│   │   └── dist/             # Built library files
-│   └── ui/                   # Web interface
-│       ├── src/
-│       │   ├── components/   # Vue/React components
-│       │   ├── stores/       # State management
-│       │   └── utils/        # UI utilities
-│       └── dist/             # Built web app
-├── docs/                     # Documentation
-└── examples/                 # Usage examples
-```
-
-## 🎯 Supported Display Types
+## 🎯 Supported Displays
 
 | Display | Resolution     | Notes                                      |
 | ------- | -------------- | ------------------------------------------ |
@@ -154,85 +96,39 @@ tiny-screen-studios/
 | SH1106  | 128×64         | Similar to SSD1306 with slight differences |
 | Custom  | Any size       | Define your own display parameters         |
 
-## 📖 Usage Examples
+## 🔧 Technical Specifications
 
-### Converting a Single Image
+### Input Formats
+- PNG images (single or sequences)
+- Automatic frame ordering and validation
+- Support for transparency
 
-```typescript
-import { convertImage, DisplayType } from '@tiny-screen-studios/core';
+### Processing Features
+- Configurable luminance thresholds
+- Bayer 4×4 dithering algorithm
+- Pixel inversion options
+- Real-time preview rendering
 
-const result = await convertImage('logo.png', {
-  displayType: DisplayType.SSD1306,
-  width: 128,
-  height: 64,
-  threshold: 128,
-  invert: false,
-});
+### Output Formats
+- C array code generation
+- Raw binary files
+- JSON data structures
+- Configurable formatting options
 
-// Export as C array for Arduino
-console.log(result.toCArray());
-```
-
-### Processing an Animation
-
-```typescript
-import { convertAnimation } from '@tiny-screen-studios/core';
-
-const frames = await convertAnimation('animation.gif', {
-  displayType: DisplayType.SSD1306,
-  width: 128,
-  height: 64,
-  maxFrames: 30,
-  frameDelay: 100,
-});
-
-// Export as frame sequence
-frames.forEach((frame, index) => {
-  console.log(`Frame ${index}:`, frame.toCArray());
-});
-```
-
-## 🤝 Contributing
-
-We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
-
-### Development Workflow
-
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature/amazing-feature`
-3. Make your changes
-4. Run tests: `pnpm test`
-5. Commit your changes: `git commit -m 'Add amazing feature'`
-6. Push to the branch: `git push origin feature/amazing-feature`
-7. Open a Pull Request
-
-### Code Style
-
-This project uses:
-
-- **TypeScript** with strict mode enabled
-- **ESLint** for code linting
-- **Prettier** for code formatting
-- **Conventional Commits** for commit messages
+### Performance
+- Web Worker support for large batches
+- Memory-efficient processing
+- Typed array optimizations
+- Progress tracking and validation
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🙏 Acknowledgments
-
-- Inspired by the embedded development community
-- Built with modern web technologies
-- Special thanks to all contributors
+This project is proprietary software. All rights reserved.
 
 ## 📞 Support
 
-- 📚 [Documentation](https://github.com/yourusername/tiny-screen-studios/wiki)
-- 🐛 [Issue Tracker](https://github.com/yourusername/tiny-screen-studios/issues)
-- 💬 [Discussions](https://github.com/yourusername/tiny-screen-studios/discussions)
+For technical support and inquiries:
 
----
-
-<p align="center">
-  Made with ❤️ for the maker community
-</p>
+- 📚 [Documentation](docs/)
+- 📧 Email: support@tiny-screen-studios.com
+- 🌐 Website: [tiny-screen-studios.com](https://tiny-screen-studios.com)
