@@ -27,7 +27,7 @@ export function Navigation({ currentPage, onPageChange }: NavigationProps) {
           }`}
         >
           <EyeIcon className="w-4 h-4" />
-          <span>OLED Preview</span>
+          <span>OLED Studio</span>
         </button>
       </div>
     </nav>

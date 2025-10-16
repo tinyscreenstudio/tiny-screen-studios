@@ -154,7 +154,7 @@ export function HomePage({ onNavigateToPreview }: HomePageProps) {
             className="btn-primary text-lg px-8 py-4 flex items-center gap-2 mx-auto"
           >
             <CubeIcon className="w-5 h-5" />
-            Open OLED Preview
+            Open OLED Studio
             <ArrowRightIcon className="w-4 h-4" />
           </button>
         </div>
