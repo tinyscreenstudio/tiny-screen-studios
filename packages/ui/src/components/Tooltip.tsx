@@ -31,8 +31,8 @@ export function Tooltip({ content, children, position = 'top' }: TooltipProps) {
     >
       {children}
       {isVisible && (
-        <div className={`absolute z-50 ${positionClasses[position]} animate-fade-in`}>
-          <div className="bg-gray-900 border border-gray-700 text-white text-xs py-2 px-3 w-48 sm:w-56 md:w-64 max-w-xs sm:max-w-sm whitespace-normal text-center shadow-xl rounded-lg">
+        <div className={`absolute z-50 ${positionClasses[position]}`}>
+          <div className="bg-gray-900 border border-gray-700 text-white text-xs py-2 px-3 w-max max-w-xs whitespace-nowrap text-center shadow-xl rounded-lg">
             {content}
             <div className={`absolute w-0 h-0 border-4 ${arrowClasses[position]}`} />
           </div>

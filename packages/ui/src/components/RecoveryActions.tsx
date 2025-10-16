@@ -9,13 +9,13 @@ export function RecoveryActions() {
     isProcessing,
     clearFiles, 
     resetSettings,
-    validationResults,
-    fileValidation 
+    validationResults
   } = useAppStore()
 
-  const hasErrors = validationResults?.errors.length || fileValidation?.fileErrors.size
+  const hasProcessingErrors = (validationResults?.errors?.length ?? 0) > 0
 
-  if (!hasErrors || isProcessing) return null
+  // Only show recovery actions for processing errors, not file validation errors
+  if (!hasProcessingErrors || isProcessing) return null
 
   const handleRetry = () => {
     if (currentFiles.length > 0) {
@@ -34,43 +34,59 @@ export function RecoveryActions() {
     }
   }
 
+  // Get the error message to display
+  const errorMessage = validationResults?.errors[0]?.message || 'An unknown error occurred during processing.'
+
   return (
-    <div className="mt-6 glass-panel border border-neon-yellow/30 bg-neon-yellow/5">
-      <div className="flex items-center gap-3 mb-4">
-        <ExclamationTriangleIcon className="w-5 h-5 text-neon-yellow" />
-        <h4 className="text-sm font-semibold text-dark-100">
-          Recovery Options
-        </h4>
-      </div>
-      
-      <p className="text-sm text-dark-300 mb-4">
-        Something went wrong during processing. Try one of these recovery options:
-      </p>
-      
-      <div className="flex flex-wrap gap-3">
-        <button
-          onClick={handleRetry}
-          className="btn-neon-primary flex items-center gap-2 text-sm"
-        >
-          <ArrowPathIcon className="w-4 h-4" />
-          Retry Processing
-        </button>
+    <div className="card mt-6 p-6 border-l-4 border-l-red-500 bg-red-50">
+      <div className="flex items-start gap-4">
+        <div className="flex-shrink-0">
+          <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
+            <ExclamationTriangleIcon className="w-6 h-6 text-red-600" />
+          </div>
+        </div>
         
-        <button
-          onClick={handleClearFiles}
-          className="btn-neon-secondary flex items-center gap-2 text-sm"
-        >
-          <TrashIcon className="w-4 h-4" />
-          Clear Files
-        </button>
-        
-        <button
-          onClick={handleResetSettings}
-          className="btn-neon flex items-center gap-2 text-sm"
-        >
-          <Cog6ToothIcon className="w-4 h-4" />
-          Reset Settings
-        </button>
+        <div className="flex-1">
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            Processing Failed
+          </h3>
+          <p className="text-red-700 mb-4 font-medium">
+            {errorMessage}
+          </p>
+          <p className="text-gray-600 mb-6">
+            Here are some quick solutions to get you back on track:
+          </p>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <button
+              onClick={handleRetry}
+              className="btn-primary flex items-center justify-center gap-2 py-3"
+            >
+              <ArrowPathIcon className="w-4 h-4" />
+              <span>Retry Processing</span>
+            </button>
+            
+            <button
+              onClick={handleResetSettings}
+              className="btn-secondary flex items-center justify-center gap-2 py-3"
+            >
+              <Cog6ToothIcon className="w-4 h-4" />
+              <span>Reset Settings</span>
+            </button>
+            
+            <button
+              onClick={handleClearFiles}
+              className="btn-outline flex items-center justify-center gap-2 py-3 text-gray-600 border-gray-300 hover:bg-gray-50"
+            >
+              <TrashIcon className="w-4 h-4" />
+              <span>Clear Files</span>
+            </button>
+          </div>
+          
+          <div className="mt-4 text-xs text-gray-500">
+            <p><strong>Tip:</strong> Most issues are resolved by retrying or resetting your display settings.</p>
+          </div>
+        </div>
       </div>
     </div>
   )

@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from 'react'
+import React, { useCallback, useRef, useState, useEffect } from 'react'
 import { CloudArrowUpIcon, DocumentIcon, PhotoIcon, FilmIcon } from '@heroicons/react/24/outline'
 import { useAppStore } from '../store/appStore'
 import { ValidationResults } from './ValidationResults'
@@ -19,8 +19,21 @@ export function FileUploadPanel() {
     setCurrentFiles,
   } = useAppStore()
 
+  // Reset file input when files are cleared
+  useEffect(() => {
+    if (currentFiles.length === 0 && fileInputRef.current) {
+      fileInputRef.current.value = ''
+    }
+  }, [currentFiles.length])
+
   const handleFileSelect = useCallback((files: File[]) => {
-    if (isProcessing || files.length === 0) return
+    console.log('handleFileSelect called with:', files.length, 'files')
+    console.log('isProcessing:', isProcessing)
+    
+    if (isProcessing || files.length === 0) {
+      console.log('Skipping file processing - isProcessing:', isProcessing, 'files.length:', files.length)
+      return
+    }
     
     setCurrentFiles(files)
     processFiles(files)

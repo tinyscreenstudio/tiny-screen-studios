@@ -1,11 +1,12 @@
 import React, { useRef, useEffect } from 'react'
-import { EyeIcon, PlayIcon, PauseIcon, FilmIcon } from '@heroicons/react/24/outline'
+import { EyeIcon, PlayIcon, PauseIcon, FilmIcon, ArrowUpTrayIcon } from '@heroicons/react/24/outline'
 import { QuestionMarkCircleIcon } from '@heroicons/react/16/solid'
 import { useAppStore } from '../store/appStore'
 import { Tooltip } from './Tooltip'
 
 export function OLEDPreviewCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const [resolution, setResolution] = React.useState<{ width: number; height: number } | null>(null)
   const {
     currentPackedFrames,
     fps,
@@ -16,6 +17,7 @@ export function OLEDPreviewCanvas() {
     setFps,
     setIsAnimationPlaying,
     setCurrentFrame,
+    clearFiles,
   } = useAppStore()
 
   const hasFrames = currentPackedFrames.length > 0
@@ -36,6 +38,9 @@ export function OLEDPreviewCanvas() {
           // Set canvas size
           canvasRef.current!.width = preset.width
           canvasRef.current!.height = preset.height
+
+          // Update resolution state
+          setResolution({ width: preset.width, height: preset.height })
 
           const renderOptions = {
             scale: 1,
@@ -87,12 +92,23 @@ export function OLEDPreviewCanvas() {
         <h2 className="text-xl font-semibold text-gray-900">
           OLED Preview
         </h2>
-        {hasFrames && (
-          <div className="ml-auto flex items-center gap-2 text-xs">
-            <div className="w-2 h-2 bg-success-500 rounded-full animate-pulse"></div>
-            <span className="text-gray-600 font-mono">ACTIVE</span>
-          </div>
-        )}
+        <div className="ml-auto flex items-center gap-3">
+          {hasFrames && (
+            <div className="flex items-center gap-2 text-xs">
+              <div className="w-2 h-2 bg-success-500 rounded-full animate-pulse"></div>
+              <span className="text-gray-600 font-mono">ACTIVE</span>
+            </div>
+          )}
+          <Tooltip content="Clear current files and start over">
+            <button
+              onClick={clearFiles}
+              className="text-gray-600 hover:text-gray-800 bg-gray-100 hover:bg-gray-200 p-2 rounded-lg transition-colors"
+              disabled={isProcessing}
+            >
+              <ArrowUpTrayIcon className="w-4 h-4" />
+            </button>
+          </Tooltip>
+        </div>
       </div>
 
       {/* Realistic OLED Hardware Emulator */}
@@ -111,11 +127,22 @@ export function OLEDPreviewCanvas() {
             </div>
 
             {/* Component Labels */}
-            <div className="absolute top-1 left-1 text-xs text-white font-mono opacity-60">SSD1306</div>
-            <div className="absolute bottom-1 right-1 text-xs text-white font-mono opacity-60">0.96"</div>
+            <div className="absolute bottom-1 right-10 text-xs text-white font-mono opacity-60">0.96"</div>
+
+            {/* Resolution Info - positioned on bottom left with proper spacing */}
+            {hasFrames && resolution && (
+              <div className="absolute bottom-1 left-16 text-xs text-white font-mono opacity-60">
+                <div className="flex items-center gap-1">
+                  <div className="w-1 h-1 bg-yellow-400 rounded-full"></div>
+                  <span>{devicePreset}</span>
+                </div>
+              </div>
+            )}
 
             {/* OLED Display Area */}
             <div className="bg-gray-700 p-4 rounded-lg shadow-inner">
+
+
               {/* Actual Display Area - Bigger responsive container */}
               <div className="relative bg-gray-600 rounded overflow-auto flex items-center justify-center p-4" style={{
                 width: 'min(500px, 100%)',
@@ -169,6 +196,8 @@ export function OLEDPreviewCanvas() {
               </div>
             </div>
 
+
+
             {/* Pin Headers */}
             <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 flex gap-0.5">
               {[...Array(4)].map((_, i) => (
@@ -177,10 +206,7 @@ export function OLEDPreviewCanvas() {
             </div>
           </div>
 
-          {/* Power LED */}
-          {hasFrames && (
-            <div className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full animate-pulse shadow-lg shadow-red-500/50"></div>
-          )}
+
         </div>
       </div>
 

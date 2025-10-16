@@ -1,6 +1,43 @@
 import { useAppStore } from '../store/appStore';
 import type { DevicePreset } from '@tiny-screen-studios/core';
 
+// Auto-detect device preset based on image dimensions
+async function detectDevicePreset(files: File[]): Promise<DevicePreset | null> {
+  if (files.length === 0) return null;
+
+  try {
+    // Import core functions
+    const { decodeImageFiles, DEVICE_PRESETS } = await import(
+      '@tiny-screen-studios/core'
+    );
+
+    // Decode just the first file to get dimensions
+    const firstFile = files[0];
+    if (!firstFile) return null;
+
+    const frames = await decodeImageFiles([firstFile]);
+
+    if (frames.length === 0) return null;
+
+    const firstFrame = frames[0];
+    if (!firstFrame?.dims) return null;
+
+    const { width, height } = firstFrame.dims;
+
+    // Find matching device preset
+    for (const [presetKey, config] of Object.entries(DEVICE_PRESETS)) {
+      if (config.width === width && config.height === height) {
+        return presetKey as DevicePreset;
+      }
+    }
+
+    return null; // No matching preset found
+  } catch (error) {
+    console.error('Error detecting device preset:', error);
+    return null;
+  }
+}
+
 let processingTimeout: ReturnType<typeof setTimeout> | null = null;
 
 export async function processFiles(files: File[]) {
@@ -29,6 +66,7 @@ async function doProcessFiles(files: File[]) {
     setShowExportPanel,
     setCurrentFrame,
     setIsAnimationPlaying,
+    setDevicePreset,
     devicePreset,
     threshold,
     invert,
@@ -57,6 +95,47 @@ async function doProcessFiles(files: File[]) {
       (_, index) => !fileValidation.fileErrors.has(index)
     );
 
+    // Auto-detect device preset based on image dimensions
+    setProgress('Detecting device type...', 20);
+    const detectedPreset = await detectDevicePreset(validFiles);
+
+    let finalDevicePreset = devicePreset;
+    if (detectedPreset) {
+      finalDevicePreset = detectedPreset;
+      setDevicePreset(detectedPreset);
+    } else {
+      // If no preset detected, get dimensions and show helpful error
+      try {
+        const { decodeImageFiles } = await import('@tiny-screen-studios/core');
+        const firstValidFile = validFiles[0];
+        if (!firstValidFile) return;
+
+        const frames = await decodeImageFiles([firstValidFile]);
+        if (frames.length > 0) {
+          const firstFrame = frames[0];
+          if (!firstFrame?.dims) return;
+
+          const { width, height } = firstFrame.dims;
+          throw new Error(
+            `Unsupported image dimensions: ${width}×${height}. ` +
+              `Supported sizes: 128×32 (SSD1306), 128×64 (SSD1306), 132×64 (SH1106)`
+          );
+        }
+      } catch (error) {
+        if (
+          error instanceof Error &&
+          error.message.includes('Unsupported image dimensions')
+        ) {
+          throw error;
+        }
+        // If we can't decode, continue with current preset and let normal validation handle it
+        console.warn(
+          'Could not detect image dimensions, using current preset:',
+          error
+        );
+      }
+    }
+
     setProgress('Decoding images...', 25);
 
     // Import core functions
@@ -67,7 +146,7 @@ async function doProcessFiles(files: File[]) {
     // Decode PNG files
     const { frames: rgbaFrames, validation } = await decodeAndValidateFiles(
       validFiles,
-      devicePreset as DevicePreset
+      finalDevicePreset as DevicePreset
     );
 
     setValidationResults(validation);
@@ -91,7 +170,7 @@ async function doProcessFiles(files: File[]) {
 
     // Pack frames for the selected device
     const packingOptions = {
-      preset: devicePreset as DevicePreset,
+      preset: finalDevicePreset as DevicePreset,
       invert: dithering ? invert : false, // Apply invert in packing if dithering
     };
 

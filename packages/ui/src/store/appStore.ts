@@ -143,5 +143,8 @@ export const useAppStore = create<AppState>(set => ({
       showExportPanel: false,
       isAnimationPlaying: false,
       currentFrame: 0,
+      isProcessing: false,
+      progressText: '',
+      progressPercentage: 0,
     }),
 }));
