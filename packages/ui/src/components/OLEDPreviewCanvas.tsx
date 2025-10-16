@@ -1,22 +1,18 @@
 import React, { useRef, useEffect } from 'react'
-import { EyeIcon, PlayIcon, PauseIcon, MagnifyingGlassIcon, FilmIcon } from '@heroicons/react/24/outline'
+import { EyeIcon, PlayIcon, PauseIcon, FilmIcon } from '@heroicons/react/24/outline'
+import { QuestionMarkCircleIcon } from '@heroicons/react/16/solid'
 import { useAppStore } from '../store/appStore'
 import { Tooltip } from './Tooltip'
-import { QuestionMarkCircleIcon } from '@heroicons/react/24/outline'
 
 export function OLEDPreviewCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const {
     currentPackedFrames,
-    scale,
-    showGrid,
     fps,
     isAnimationPlaying,
     currentFrame,
     devicePreset,
     isProcessing,
-    setScale,
-    setShowGrid,
     setFps,
     setIsAnimationPlaying,
     setCurrentFrame,
@@ -42,8 +38,8 @@ export function OLEDPreviewCanvas() {
           canvasRef.current!.height = preset.height
 
           const renderOptions = {
-            scale,
-            showGrid,
+            scale: 1,
+            showGrid: false,
           }
 
           const frameToRender = currentPackedFrames[currentFrame] || currentPackedFrames[0]
@@ -57,7 +53,7 @@ export function OLEDPreviewCanvas() {
     }
 
     renderFrame()
-  }, [currentPackedFrames, scale, showGrid, currentFrame, devicePreset, hasFrames])
+  }, [currentPackedFrames, currentFrame, devicePreset, hasFrames])
 
   // Animation effect
   useEffect(() => {
@@ -99,184 +95,176 @@ export function OLEDPreviewCanvas() {
         )}
       </div>
 
-      {/* OLED Display Container */}
-      <div className={`oled-display mb-6 ${hasFrames ? 'active' : ''}`}>
+      {/* Realistic OLED Hardware Emulator */}
+      <div className="flex justify-center mb-6">
         <div className="relative">
-          {hasFrames ? (
-            <div className="flex justify-center">
-              <canvas
-                ref={canvasRef}
-                className="pixelated rounded-lg shadow-lg"
-                style={{
-                  maxWidth: '100%',
-                  maxHeight: '400px',
-                  imageRendering: 'pixelated',
-                }}
-              />
+          {/* OLED Module PCB Background */}
+          <div className="bg-gradient-to-br from-green-800 to-green-900 p-6 rounded-xl shadow-2xl border-2 border-green-700">
+            {/* PCB Circuit Traces */}
+            <div className="absolute inset-0 opacity-20">
+              <div className="absolute top-2 left-2 w-8 h-0.5 bg-yellow-400 rounded"></div>
+              <div className="absolute top-2 right-2 w-6 h-0.5 bg-yellow-400 rounded"></div>
+              <div className="absolute bottom-2 left-2 w-10 h-0.5 bg-yellow-400 rounded"></div>
+              <div className="absolute bottom-2 right-2 w-4 h-0.5 bg-yellow-400 rounded"></div>
+              <div className="absolute top-4 left-1 w-0.5 h-6 bg-yellow-400 rounded"></div>
+              <div className="absolute top-4 right-1 w-0.5 h-8 bg-yellow-400 rounded"></div>
             </div>
-          ) : (
-            <div className="text-center py-16">
-              <EyeIcon className="w-20 h-20 mx-auto text-gray-300 mb-6" />
-              <h3 className="text-lg font-medium text-gray-600 mb-2">
-                No Preview Available
-              </h3>
-              <p className="text-gray-500 text-sm">
-                Upload PNG files to see your pixel art rendered on the OLED display
-              </p>
+
+            {/* Component Labels */}
+            <div className="absolute top-1 left-1 text-xs text-white font-mono opacity-60">SSD1306</div>
+            <div className="absolute bottom-1 right-1 text-xs text-white font-mono opacity-60">0.96"</div>
+
+            {/* OLED Display Area */}
+            <div className="bg-gray-700 p-4 rounded-lg shadow-inner">
+              {/* Actual Display Area - Bigger responsive container */}
+              <div className="relative bg-gray-600 rounded overflow-auto flex items-center justify-center p-4" style={{
+                width: 'min(500px, 100%)',
+                height: 'min(250px, 50vw)',
+                aspectRatio: '2/1'
+              }}>
+                {hasFrames ? (
+                  <div className="bg-black border-2 border-gray-400 rounded shadow-lg relative overflow-hidden" style={{
+                    width: '384px', // 128 * 3 for 3x scale
+                    height: '96px'  // 32 * 3 for 3x scale
+                  }}>
+                    {/* OLED Glow Effect */}
+                    <div className="absolute inset-0 bg-blue-500/5 rounded animate-pulse"></div>
+
+                    {/* Canvas Container */}
+                    <div className="relative w-full h-full flex items-center justify-center">
+                      <canvas
+                        ref={canvasRef}
+                        className="pixelated"
+                        style={{
+                          imageRendering: 'pixelated',
+                          filter: 'contrast(1.1) brightness(1.1)',
+                          transform: 'scale(3)',
+                          transformOrigin: 'center',
+                        }}
+                      />
+                    </div>
+
+                    {/* Subtle scan lines for authenticity */}
+                    <div className="absolute inset-0 pointer-events-none opacity-10">
+                      <div className="w-full h-full" style={{
+                        backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(255,255,255,0.1) 1px, rgba(255,255,255,0.1) 2px)',
+                      }}></div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="bg-black border-2 border-gray-400 rounded shadow-lg relative overflow-hidden flex items-center justify-center" style={{
+                    width: '384px', // 128 * 3 for 3x scale
+                    height: '96px'  // 32 * 3 for 3x scale
+                  }}>
+                    <div className="text-center">
+                      <div className="w-8 h-8 mx-auto mb-2 opacity-30">
+                        <svg fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+                        </svg>
+                      </div>
+                      <div className="text-xs font-mono opacity-50 text-gray-400">NO SIGNAL</div>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
+
+            {/* Pin Headers */}
+            <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 flex gap-0.5">
+              {[...Array(4)].map((_, i) => (
+                <div key={i} className="w-1 h-3 bg-yellow-600 rounded-sm shadow"></div>
+              ))}
+            </div>
+          </div>
+
+          {/* Power LED */}
+          {hasFrames && (
+            <div className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full animate-pulse shadow-lg shadow-red-500/50"></div>
           )}
         </div>
       </div>
 
-      {/* Preview Controls */}
-      <div className="space-y-6">
-        {/* Display Controls */}
-        <div>
+      {/* Animation Controls */}
+      {isMultiFrame && (
+        <div className="border-t border-gray-200 pt-6">
           <h3 className="text-sm font-medium text-gray-700 mb-4 flex items-center gap-2">
-            <MagnifyingGlassIcon className="w-4 h-4 text-primary-600" />
-            Display Controls
+            <FilmIcon className="w-4 h-4 text-success-600" />
+            Animation Controls
           </h3>
-          
+
           <div className="space-y-4">
-            {/* Scale Control */}
+            {/* FPS Control */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <span>Zoom Level</span>
-                    <Tooltip content="Zoom level for preview. Higher values show more pixel detail.">
+                    <span>Frame Rate</span>
+                    <Tooltip content="Animation speed in frames per second. Higher = faster animation.">
                       <QuestionMarkCircleIcon className="w-4 h-4 text-gray-400 hover:text-primary-600 transition-colors cursor-help" />
                     </Tooltip>
                   </div>
-                  <span className="font-mono text-primary-600 bg-primary-50 px-2 py-1 rounded text-sm">
-                    {scale}×
+                  <span className="font-mono text-success-600 bg-success-50 px-2 py-1 rounded text-sm">
+                    {fps} FPS
                   </span>
                 </div>
               </label>
-              
+
               <input
                 type="range"
                 min="1"
-                max="8"
-                value={scale}
-                onChange={(e) => setScale(parseInt(e.target.value))}
+                max="30"
+                value={fps}
+                onChange={(e) => setFps(parseInt(e.target.value))}
                 className="slider"
                 disabled={isProcessing}
               />
               <div className="flex justify-between text-xs text-gray-500 mt-2">
-                <span>1× Small</span>
-                <span>8× Large</span>
+                <span>1 FPS Slow</span>
+                <span>30 FPS Fast</span>
               </div>
             </div>
 
-            {/* Grid Toggle */}
-            <label className="flex items-center gap-3 cursor-pointer group">
+            {/* Playback Controls */}
+            <div className="card p-4 bg-gray-50">
+              <div className="flex items-center gap-4 mb-3">
+                <button
+                  onClick={handlePlayPause}
+                  className={`btn-primary flex items-center gap-2 ${isAnimationPlaying ? 'bg-warning-600 hover:bg-warning-700' : ''}`}
+                  disabled={isProcessing}
+                >
+                  {isAnimationPlaying ? (
+                    <>
+                      <PauseIcon className="w-4 h-4" />
+                      Pause
+                    </>
+                  ) : (
+                    <>
+                      <PlayIcon className="w-4 h-4" />
+                      Play
+                    </>
+                  )}
+                </button>
+
+                <div className="flex-1 text-center">
+                  <div className="text-sm text-gray-600 font-mono mb-1">
+                    Frame {currentFrame + 1} of {currentPackedFrames.length}
+                  </div>
+                </div>
+              </div>
+
               <input
-                type="checkbox"
-                checked={showGrid}
-                onChange={(e) => setShowGrid(e.target.checked)}
-                className="w-4 h-4 text-primary-600 bg-gray-100 border-gray-300 rounded focus:ring-primary-500 focus:ring-2"
+                type="range"
+                min="0"
+                max={currentPackedFrames.length - 1}
+                value={currentFrame}
+                onChange={(e) => handleFrameChange(parseInt(e.target.value))}
+                className="slider w-full"
                 disabled={isProcessing}
               />
-              <div className="flex-1">
-                <div className="flex items-center gap-2">
-                  <span className="text-sm font-medium text-gray-900 group-hover:text-primary-600 transition-colors">
-                    Show Pixel Grid
-                  </span>
-                  <Tooltip content="Overlay pixel grid lines to see individual pixels clearly.">
-                    <QuestionMarkCircleIcon className="w-4 h-4 text-gray-400 hover:text-primary-600 transition-colors cursor-help" />
-                  </Tooltip>
-                </div>
-                <p className="text-xs text-gray-500 mt-1">
-                  Overlay grid lines for pixel precision
-                </p>
-              </div>
-            </label>
-          </div>
-        </div>
-
-        {/* Animation Controls */}
-        {isMultiFrame && (
-          <div className="border-t border-gray-200 pt-6">
-            <h3 className="text-sm font-medium text-gray-700 mb-4 flex items-center gap-2">
-              <FilmIcon className="w-4 h-4 text-success-600" />
-              Animation Controls
-            </h3>
-            
-            <div className="space-y-4">
-              {/* FPS Control */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-3">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <span>Frame Rate</span>
-                      <Tooltip content="Animation speed in frames per second. Higher = faster animation.">
-                        <QuestionMarkCircleIcon className="w-4 h-4 text-gray-400 hover:text-primary-600 transition-colors cursor-help" />
-                      </Tooltip>
-                    </div>
-                    <span className="font-mono text-success-600 bg-success-50 px-2 py-1 rounded text-sm">
-                      {fps} FPS
-                    </span>
-                  </div>
-                </label>
-                
-                <input
-                  type="range"
-                  min="1"
-                  max="30"
-                  value={fps}
-                  onChange={(e) => setFps(parseInt(e.target.value))}
-                  className="slider"
-                  disabled={isProcessing}
-                />
-                <div className="flex justify-between text-xs text-gray-500 mt-2">
-                  <span>1 FPS Slow</span>
-                  <span>30 FPS Fast</span>
-                </div>
-              </div>
-
-              {/* Playback Controls */}
-              <div className="card p-4 bg-gray-50">
-                <div className="flex items-center gap-4 mb-3">
-                  <button
-                    onClick={handlePlayPause}
-                    className={`btn-primary flex items-center gap-2 ${isAnimationPlaying ? 'bg-warning-600 hover:bg-warning-700' : ''}`}
-                    disabled={isProcessing}
-                  >
-                    {isAnimationPlaying ? (
-                      <>
-                        <PauseIcon className="w-4 h-4" />
-                        Pause
-                      </>
-                    ) : (
-                      <>
-                        <PlayIcon className="w-4 h-4" />
-                        Play
-                      </>
-                    )}
-                  </button>
-                  
-                  <div className="flex-1 text-center">
-                    <div className="text-sm text-gray-600 font-mono mb-1">
-                      Frame {currentFrame + 1} of {currentPackedFrames.length}
-                    </div>
-                  </div>
-                </div>
-                
-                <input
-                  type="range"
-                  min="0"
-                  max={currentPackedFrames.length - 1}
-                  value={currentFrame}
-                  onChange={(e) => handleFrameChange(parseInt(e.target.value))}
-                  className="slider w-full"
-                  disabled={isProcessing}
-                />
-              </div>
             </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   )
 }
