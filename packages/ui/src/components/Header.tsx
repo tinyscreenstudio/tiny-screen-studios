@@ -1,9 +1,20 @@
 import React from 'react'
+import { useLocation } from 'react-router-dom'
 import { SparklesIcon } from '@heroicons/react/24/outline'
 import { useHeaderConfig } from '../hooks/useAppConfig'
 
 export function Header() {
   const headerConfig = useHeaderConfig()
+  const location = useLocation()
+
+  const handleTaglineClick = () => {
+    if (location.pathname === '/') {
+      const element = document.getElementById('oled-studio-section')
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' })
+      }
+    }
+  }
 
   return (
     <header style={{ backgroundColor: 'var(--color-bg)', borderBottom: `1px solid var(--color-border)` }}>
@@ -18,10 +29,17 @@ export function Header() {
             />
             
             <div className="min-w-0">
-              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gradient truncate">
+              <h1 
+                className={`text-xl sm:text-2xl md:text-3xl font-bold text-gradient truncate ${location.pathname === '/' ? 'cursor-pointer hover:opacity-80 transition-opacity duration-200' : ''}`}
+                onClick={location.pathname === '/' ? handleTaglineClick : undefined}
+              >
                 {headerConfig.title}
               </h1>
-              <p className="font-medium flex items-center gap-2 text-sm sm:text-base" style={{ color: 'var(--color-muted)' }}>
+              <p 
+                className={`font-medium flex items-center gap-2 text-sm sm:text-base ${location.pathname === '/' ? 'cursor-pointer hover:opacity-80 transition-opacity duration-200' : ''}`} 
+                style={{ color: 'var(--color-muted)' }}
+                onClick={location.pathname === '/' ? handleTaglineClick : undefined}
+              >
                 <SparklesIcon className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" style={{ color: 'var(--color-primary)' }} />
                 <span className="truncate">{headerConfig.subtitle}</span>
               </p>
@@ -40,7 +58,7 @@ export function Header() {
                 {headerConfig.showSupportedDevices && (
                   <div className="flex gap-2">
                     {headerConfig.supportedDevices.map((device) => (
-                      <div key={device} className="badge-primary text-xs">
+                      <div key={device} className="device-tag text-xs">
                         {device}
                       </div>
                     ))}

@@ -5,6 +5,7 @@ import { Navigation } from './components/Navigation'
 import { HomePage } from './components/HomePage'
 import { PreviewPage } from './components/PreviewPage'
 import { Footer } from './components/Footer'
+import { ScrollToTop } from './components/ScrollToTop'
 import { useAppStore } from './store/appStore'
 import { useFeatureFlags, useProcessingConfig, useUIConfig } from './hooks/useAppConfig'
 
@@ -20,6 +21,9 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
+      {/* Scroll to top on route change */}
+      <ScrollToTop />
+      
       {/* Header */}
       <Header />
 

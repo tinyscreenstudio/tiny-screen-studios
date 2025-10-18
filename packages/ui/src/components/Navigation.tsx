@@ -1,5 +1,5 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { HomeIcon, EyeIcon } from '@heroicons/react/24/outline'
 import { useNavigationConfig } from '../hooks/useAppConfig'
 
@@ -15,6 +15,11 @@ const iconMap = {
 
 export function Navigation({ currentPage }: NavigationProps) {
   const navigationItems = useNavigationConfig()
+  const navigate = useNavigate()
+
+  const handleNavigation = (item: any) => {
+    navigate(item.path)
+  }
 
   return (
     <nav className="nav-container">
@@ -25,16 +30,16 @@ export function Navigation({ currentPage }: NavigationProps) {
                           (currentPage === 'preview' && item.path === '/oled-studio')
           
           return (
-            <Link
+            <button
               key={item.id}
-              to={item.path}
+              onClick={() => handleNavigation(item)}
               className={`nav-item flex items-center gap-2 ${
                 isActive ? 'active' : ''
               }`}
             >
               {IconComponent && <IconComponent className="w-4 h-4" />}
               <span>{item.label}</span>
-            </Link>
+            </button>
           )
         })}
       </div>
