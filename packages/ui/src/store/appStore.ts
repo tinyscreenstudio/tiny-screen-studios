@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import type { DevicePreset, PackedFrame } from '@tiny-screen-studios/core';
+import { defaultConfig } from '../config/appConfig';
 
 export interface ValidationResult {
   isValid: boolean;
@@ -76,10 +77,10 @@ export const useAppStore = create<AppState>(set => ({
   // Initial state
   currentFiles: [],
   currentPackedFrames: [],
-  devicePreset: 'SSD1306_128x32',
-  threshold: 128,
-  invert: false,
-  dithering: false,
+  devicePreset: defaultConfig.device.defaultPreset,
+  threshold: defaultConfig.device.defaultSettings.threshold,
+  invert: defaultConfig.device.defaultSettings.invert,
+  dithering: defaultConfig.device.defaultSettings.dithering,
   scale: 4,
   showGrid: false,
   fps: 10,
@@ -121,10 +122,10 @@ export const useAppStore = create<AppState>(set => ({
 
   resetSettings: () =>
     set({
-      devicePreset: 'SSD1306_128x32',
-      threshold: 128,
-      invert: false,
-      dithering: false,
+      devicePreset: defaultConfig.device.defaultPreset,
+      threshold: defaultConfig.device.defaultSettings.threshold,
+      invert: defaultConfig.device.defaultSettings.invert,
+      dithering: defaultConfig.device.defaultSettings.dithering,
       scale: 4,
       showGrid: false,
       fps: 10,

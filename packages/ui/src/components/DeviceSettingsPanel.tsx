@@ -4,6 +4,7 @@ import { useAppStore } from '../store/appStore'
 import { DEVICE_PRESETS } from '@tiny-screen-studios/core'
 import { Tooltip } from './Tooltip'
 import { processFiles } from '../utils/fileProcessor'
+import { useDeviceConfig, useFeatureFlags } from '../hooks/useAppConfig'
 
 export function DeviceSettingsPanel() {
   const {
@@ -18,6 +19,9 @@ export function DeviceSettingsPanel() {
     setInvert,
     setDithering,
   } = useAppStore()
+  
+  const deviceConfig = useDeviceConfig()
+  const featureFlags = useFeatureFlags()
 
   const handlePresetChange = (preset: string) => {
     setDevicePreset(preset as any)
@@ -81,11 +85,14 @@ export function DeviceSettingsPanel() {
             className="select-field pr-10"
             disabled={isProcessing}
           >
-            {Object.entries(DEVICE_PRESETS).map(([key, preset]) => (
-              <option key={key} value={key}>
-                {key} ({preset.width}×{preset.height})
-              </option>
-            ))}
+            {deviceConfig.availablePresets.map((presetKey) => {
+              const preset = DEVICE_PRESETS[presetKey]
+              return (
+                <option key={presetKey} value={presetKey}>
+                  {presetKey} ({preset.width}×{preset.height})
+                </option>
+              )
+            })}
           </select>
           <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
             <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -152,9 +159,11 @@ export function DeviceSettingsPanel() {
               <span className="text-sm font-medium text-gray-900 group-hover:text-indigo-600 transition-colors">
                 Invert Output
               </span>
-              <Tooltip content="Swap black and white pixels. Useful for different display polarities.">
-                <QuestionMarkCircleIcon className="w-4 h-4 text-gray-400 hover:text-indigo-600 transition-colors cursor-help" />
-              </Tooltip>
+              {featureFlags.enableTooltips && (
+                <Tooltip content="Swap black and white pixels. Useful for different display polarities.">
+                  <QuestionMarkCircleIcon className="w-4 h-4 text-gray-400 hover:text-indigo-600 transition-colors cursor-help" />
+                </Tooltip>
+              )}
             </div>
             <p className="text-xs text-gray-500 mt-1">
               Swap black and white pixels
@@ -175,9 +184,11 @@ export function DeviceSettingsPanel() {
               <span className="text-sm font-medium text-gray-900 group-hover:text-indigo-600 transition-colors">
                 Bayer Dithering
               </span>
-              <Tooltip content="Use Bayer dithering to simulate grayscale with dot patterns. Better for photos.">
-                <QuestionMarkCircleIcon className="w-4 h-4 text-gray-400 hover:text-indigo-600 transition-colors cursor-help" />
-              </Tooltip>
+              {featureFlags.enableTooltips && (
+                <Tooltip content="Use Bayer dithering to simulate grayscale with dot patterns. Better for photos.">
+                  <QuestionMarkCircleIcon className="w-4 h-4 text-gray-400 hover:text-indigo-600 transition-colors cursor-help" />
+                </Tooltip>
+              )}
             </div>
             <p className="text-xs text-gray-500 mt-1">
               4×4 pattern for grayscale simulation

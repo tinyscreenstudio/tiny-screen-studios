@@ -6,10 +6,14 @@ import { HomePage } from './components/HomePage'
 import { PreviewPage } from './components/PreviewPage'
 import { Footer } from './components/Footer'
 import { useAppStore } from './store/appStore'
+import { useFeatureFlags, useProcessingConfig, useUIConfig } from './hooks/useAppConfig'
 
 function App() {
   const location = useLocation()
   const { isProcessing } = useAppStore()
+  const featureFlags = useFeatureFlags()
+  const processingConfig = useProcessingConfig()
+  const uiConfig = useUIConfig()
 
   // Determine current page based on URL
   const currentPage = location.pathname === '/oled-studio' ? 'preview' : 'home'
@@ -21,14 +25,14 @@ function App() {
 
       {/* Main content */}
       <main className="flex-1">
-        <div className="container mx-auto px-6 py-8 max-w-7xl">
+        <div className={`container mx-auto px-${uiConfig.layout.containerPadding} py-8 max-w-${uiConfig.layout.maxWidth}`}>
           {/* Navigation */}
           <div className="mb-8">
             <Navigation currentPage={currentPage} />
           </div>
 
           {/* Page Content */}
-          <div className="animate-fade-in">
+          <div className={uiConfig.animations.enabled ? "animate-fade-in" : ""}>
             <Routes>
               <Route path="/" element={<HomePage />} />
               <Route path="/oled-studio" element={<PreviewPage />} />
@@ -41,18 +45,27 @@ function App() {
       <Footer compact={currentPage === 'preview'} />
 
       {/* Processing overlay */}
-      {isProcessing && (
+      {isProcessing && featureFlags.showProcessingOverlay && processingConfig.showOverlay && (
         <div className="fixed inset-0 bg-white/80 backdrop-blur-sm z-50 flex items-center justify-center">
           <div className="card p-8 text-center max-w-md mx-4">
             <div className="w-16 h-16 mx-auto mb-4 relative">
               <div className="absolute inset-0 border-4 border-gray-200 rounded-full"></div>
               <div className="absolute inset-0 border-4 border-transparent border-t-indigo-600 rounded-full animate-spin"></div>
             </div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">Processing</h3>
-            <p className="text-gray-600">Converting your pixel art for tiny screens...</p>
-            <div className="mt-4 progress-bar">
-              <div className="progress-fill w-3/4"></div>
-            </div>
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">
+              {processingConfig.overlayMessages.title}
+            </h3>
+            <p className="text-gray-600">
+              {processingConfig.overlayMessages.description}
+            </p>
+            {processingConfig.progressBar.enabled && (
+              <div className="mt-4 progress-bar">
+                <div
+                  className="progress-fill"
+                  style={{ width: `${processingConfig.progressBar.defaultProgress}%` }}
+                ></div>
+              </div>
+            )}
           </div>
         </div>
       )}
