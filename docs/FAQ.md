@@ -8,7 +8,7 @@ Tiny Screen Studios is a browser-based toolkit for converting pixel art and anim
 
 ### Do I need to install anything to use it?
 
-No! You can use the web interface directly in your browser at [tiny-screen-studios.github.io](https://yourusername.github.io/tiny-screen-studios). For development or integration into your own projects, you can install the npm package.
+No! You can use the web interface directly in your browser at [tinyscreen.studio](https://tinyscreen.studio). For development or integration into your own projects, you can install the npm package.
 
 ### Is it free to use?
 
@@ -292,8 +292,8 @@ Just include the license notice in your distribution.
 ### Where can I get help?
 
 - **Documentation**: [docs/](.)
-- **GitHub Issues**: [Report bugs and request features](https://github.com/yourusername/tiny-screen-studios/issues)
-- **Discussions**: [Community discussions](https://github.com/yourusername/tiny-screen-studios/discussions)
+- **GitHub Issues**: [Report bugs and request features](https://github.com/tinyscreenstudio/tiny-screen-studios/issues)
+- **Discussions**: [Community discussions](https://github.com/tinyscreenstudio/tiny-screen-studios/discussions)
 - **Examples**: [Usage examples](examples/)
 
 ## Advanced Usage
@@ -352,4 +352,4 @@ This allows automatic generation of display assets during your build process.
 
 ---
 
-**Still have questions?** Check our [documentation](.) or [open an issue](https://github.com/yourusername/tiny-screen-studios/issues) on GitHub!
+**Still have questions?** Check our [documentation](.) or [open an issue](https://github.com/tinyscreenstudio/tiny-screen-studios/issues) on GitHub!

@@ -15,7 +15,7 @@ Thank you for your interest in contributing to Tiny Screen Studios! This documen
 1. Fork the repository on GitHub
 2. Clone your fork locally:
    ```bash
-   git clone https://github.com/yourusername/tiny-screen-studios.git
+   git clone https://github.com/tinyscreenstudio/tiny-screen-studios.git
    cd tiny-screen-studios
    ```
 3. Install dependencies:
@@ -131,8 +131,8 @@ Help improve our documentation:
 
 ## 📞 Getting Help
 
-- Check the [documentation](https://github.com/yourusername/tiny-screen-studios/wiki)
-- Search [existing issues](https://github.com/yourusername/tiny-screen-studios/issues)
-- Start a [discussion](https://github.com/yourusername/tiny-screen-studios/discussions)
+- Check the [documentation](https://github.com/tinyscreenstudio/tiny-screen-studios/wiki)
+- Search [existing issues](https://github.com/tinyscreenstudio/tiny-screen-studios/issues)
+- Start a [discussion](https://github.com/tinyscreenstudio/tiny-screen-studios/discussions)
 
 Thank you for contributing to Tiny Screen Studios! 🎉

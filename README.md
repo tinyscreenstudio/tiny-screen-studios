@@ -33,7 +33,7 @@ For developers working on the project:
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/tiny-screen-studios.git
+git clone https://github.com/tinyscreenstudio/tiny-screen-studios.git
 cd tiny-screen-studios
 
 # Install dependencies
@@ -125,5 +125,4 @@ This project is proprietary software. All rights reserved.
 For technical support and inquiries:
 
 - 📚 [Documentation](docs/)
-- 📧 Email: support@tiny-screen-studios.com
-- 🌐 Website: [tiny-screen-studios.com](https://tiny-screen-studios.com)
+- 🌐 Website: [tinyscreen.studio](https://tinyscreen.studio)

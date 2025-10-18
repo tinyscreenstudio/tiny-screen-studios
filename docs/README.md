@@ -89,7 +89,7 @@ For contributors and advanced users who want to modify or extend the library:
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/tiny-screen-studios.git
+git clone https://github.com/tinyscreenstudio/tiny-screen-studios.git
 cd tiny-screen-studios
 
 # Install dependencies
@@ -148,11 +148,10 @@ See [CONTRIBUTING.md](../CONTRIBUTING.md) for detailed guidelines.
 
 ### Links
 
-- **🌐 Web App**: [tiny-screen-studios.github.io](https://yourusername.github.io/tiny-screen-studios)
+- **🌐 Web App**: [tinyscreen.studio](https://tinyscreen.studio)
 - **📦 npm Package**: [@tiny-screen-studios/core](https://www.npmjs.com/package/@tiny-screen-studios/core)
-- **🐛 Issues**: [GitHub Issues](https://github.com/yourusername/tiny-screen-studios/issues)
-- **💬 Discussions**: [GitHub Discussions](https://github.com/yourusername/tiny-screen-studios/discussions)
-- **📧 Email**: support@tiny-screen-studios.com
+- **🐛 Issues**: [GitHub Issues](https://github.com/tinyscreenstudio/tiny-screen-studios/issues)
+- **💬 Discussions**: [GitHub Discussions](https://github.com/tinyscreenstudio/tiny-screen-studios/discussions)
 
 ## 📄 License
 
@@ -160,4 +159,4 @@ Tiny Screen Studios is released under the [MIT License](../LICENSE). You're free
 
 ---
 
-**Ready to get started?** Try the [web interface](https://yourusername.github.io/tiny-screen-studios) or check out the [basic usage examples](examples/basic-usage.md)!
+**Ready to get started?** Try the [web interface](https://tinyscreen.studio) or check out the [basic usage examples](examples/basic-usage.md)!

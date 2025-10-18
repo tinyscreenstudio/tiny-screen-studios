@@ -619,7 +619,7 @@ module.exports = {
 
 If you're still experiencing issues after trying these solutions:
 
-1. **Check the GitHub Issues:** [https://github.com/yourusername/tiny-screen-studios/issues](https://github.com/yourusername/tiny-screen-studios/issues)
+1. **Check the GitHub Issues:** [https://github.com/tinyscreenstudio/tiny-screen-studios/issues](https://github.com/tinyscreenstudio/tiny-screen-studios/issues)
 
 2. **Create a minimal reproduction:**
 ```typescript
