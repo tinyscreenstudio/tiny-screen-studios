@@ -1,14 +1,12 @@
-import React, { useState } from 'react'
-import { SparklesIcon, CogIcon } from '@heroicons/react/24/outline'
+import React from 'react'
+import { SparklesIcon } from '@heroicons/react/24/outline'
 import { useHeaderConfig } from '../hooks/useAppConfig'
-import { ConfigEditor } from './ConfigEditor'
 
 export function Header() {
   const headerConfig = useHeaderConfig()
-  const [showConfigEditor, setShowConfigEditor] = useState(false)
 
   return (
-    <header className="bg-white border-b border-gray-200">
+    <header style={{ backgroundColor: 'var(--color-bg)', borderBottom: `1px solid var(--color-border)` }}>
       <div className="container mx-auto px-4 sm:px-6 py-4 sm:py-6 max-w-7xl">
         <div className="flex items-center justify-between">
           {/* Logo and title */}
@@ -23,8 +21,8 @@ export function Header() {
               <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gradient truncate">
                 {headerConfig.title}
               </h1>
-              <p className="text-gray-600 font-medium flex items-center gap-2 text-sm sm:text-base">
-                <SparklesIcon className="w-3 h-3 sm:w-4 sm:h-4 text-indigo-500 flex-shrink-0" />
+              <p className="font-medium flex items-center gap-2 text-sm sm:text-base" style={{ color: 'var(--color-muted)' }}>
+                <SparklesIcon className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" style={{ color: 'var(--color-primary)' }} />
                 <span className="truncate">{headerConfig.subtitle}</span>
               </p>
             </div>
@@ -35,8 +33,8 @@ export function Header() {
             {headerConfig.showStatusIndicators && (
               <div className="hidden lg:flex items-center gap-4">
                 <div className="flex items-center gap-2 card px-3 py-2">
-                  <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
-                  <span className="text-sm text-gray-700 font-medium">Ready</span>
+                  <div className="w-2 h-2 rounded-full" style={{ backgroundColor: 'var(--color-success)' }}></div>
+                  <span className="text-sm font-medium" style={{ color: 'var(--color-text)' }}>Ready</span>
                 </div>
                 
                 {headerConfig.showSupportedDevices && (
@@ -51,23 +49,9 @@ export function Header() {
               </div>
             )}
             
-            {/* Config button */}
-            <button
-              onClick={() => setShowConfigEditor(true)}
-              className="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-gray-100 transition-colors group"
-              title="App Configuration"
-            >
-              <CogIcon className="w-5 h-5 text-gray-600 group-hover:text-indigo-600 transition-colors" />
-            </button>
           </div>
         </div>
       </div>
-      
-      {/* Config Editor Modal */}
-      <ConfigEditor 
-        isOpen={showConfigEditor} 
-        onClose={() => setShowConfigEditor(false)} 
-      />
     </header>
   )
 }

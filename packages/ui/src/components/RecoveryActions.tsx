@@ -38,22 +38,22 @@ export function RecoveryActions() {
   const errorMessage = validationResults?.errors[0]?.message || 'An unknown error occurred during processing.'
 
   return (
-    <div className="card mt-6 p-6 border-l-4 border-l-red-500 bg-red-50">
+    <div className="card mt-6 p-6" style={{ borderLeft: `4px solid var(--color-danger)`, backgroundColor: 'rgba(239, 68, 68, 0.05)' }}>
       <div className="flex items-start gap-4">
         <div className="flex-shrink-0">
-          <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
-            <ExclamationTriangleIcon className="w-6 h-6 text-red-600" />
+          <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: 'rgba(239, 68, 68, 0.1)' }}>
+            <ExclamationTriangleIcon className="w-6 h-6" style={{ color: 'var(--color-danger)' }} />
           </div>
         </div>
         
         <div className="flex-1">
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">
+          <h3 className="text-lg font-semibold mb-2" style={{ color: 'var(--color-text)' }}>
             Processing Failed
           </h3>
-          <p className="text-red-700 mb-4 font-medium">
+          <p className="mb-4 font-medium" style={{ color: 'var(--color-danger)' }}>
             {errorMessage}
           </p>
-          <p className="text-gray-600 mb-6">
+          <p className="mb-6" style={{ color: 'var(--color-muted)' }}>
             Here are some quick solutions to get you back on track:
           </p>
           
@@ -76,14 +76,14 @@ export function RecoveryActions() {
             
             <button
               onClick={handleClearFiles}
-              className="btn-outline flex items-center justify-center gap-2 py-3 text-gray-600 border-gray-300 hover:bg-gray-50"
+              className="btn-outline flex items-center justify-center gap-2 py-3"
             >
               <TrashIcon className="w-4 h-4" />
               <span>Clear Files</span>
             </button>
           </div>
           
-          <div className="mt-4 text-xs text-gray-500">
+          <div className="mt-4 text-xs" style={{ color: 'var(--color-muted)' }}>
             <p><strong>Tip:</strong> Most issues are resolved by retrying or resetting your display settings.</p>
           </div>
         </div>

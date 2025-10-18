@@ -55,25 +55,25 @@ export function DeviceSettingsPanel() {
   return (
     <div className="card p-6 flex-1 flex flex-col">
       <div className="flex items-center gap-3 mb-6">
-        <div className="w-10 h-10 bg-gradient-to-br from-emerald-100 to-emerald-200 rounded-xl flex items-center justify-center">
-          <CogIcon className="w-6 h-6 text-emerald-600" />
+        <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(16, 185, 129, 0.2) 100%)' }}>
+          <CogIcon className="w-6 h-6" style={{ color: 'var(--color-success)' }} />
         </div>
         <div>
-          <h2 className="text-xl font-semibold text-gray-900">
+          <h2 className="text-xl font-semibold" style={{ color: 'var(--color-text)' }}>
             Device Settings
           </h2>
-          <p className="text-gray-600 text-sm">Configure your display</p>
+          <p className="text-sm" style={{ color: 'var(--color-muted)' }}>Configure your display</p>
         </div>
       </div>
 
       {/* Device Preset Selection */}
       <div className="mb-6">
-        <label className="block text-sm font-medium text-gray-700 mb-3">
+        <label className="block text-sm font-medium mb-3" style={{ color: 'var(--color-text)' }}>
           <div className="flex items-center gap-2">
-            <CpuChipIcon className="w-4 h-4 text-indigo-600" />
+            <CpuChipIcon className="w-4 h-4" style={{ color: 'var(--color-primary)' }} />
             <span>Display Type</span>
             <Tooltip content="Choose your display type. SSD1306 is most common, SH1106 has slightly different dimensions.">
-              <QuestionMarkCircleIcon className="w-4 h-4 text-gray-400 hover:text-indigo-600 transition-colors cursor-help" />
+              <QuestionMarkCircleIcon className="w-4 h-4 transition-colors cursor-help" style={{ color: 'var(--color-muted)' }} />
             </Tooltip>
           </div>
         </label>
@@ -95,7 +95,7 @@ export function DeviceSettingsPanel() {
             })}
           </select>
           <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-            <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ color: 'var(--color-text)' }}>
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
             </svg>
           </div>
@@ -104,15 +104,15 @@ export function DeviceSettingsPanel() {
 
       {/* Threshold Slider */}
       <div className="mb-6">
-        <label className="block text-sm font-medium text-gray-700 mb-3">
+        <label className="block text-sm font-medium mb-3" style={{ color: 'var(--color-text)' }}>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <span>Brightness Threshold</span>
               <Tooltip content="Brightness cutoff for black/white conversion. Lower values = more black pixels.">
-                <QuestionMarkCircleIcon className="w-4 h-4 text-gray-400 hover:text-indigo-600 transition-colors cursor-help" />
+                <QuestionMarkCircleIcon className="w-4 h-4 transition-colors cursor-help" style={{ color: 'var(--color-muted)' }} />
               </Tooltip>
             </div>
-            <span className="font-mono text-indigo-600 bg-indigo-50 px-2 py-1 rounded text-sm">
+            <span className="px-2 py-1 rounded text-sm" style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-primary)', backgroundColor: 'rgba(99, 102, 241, 0.1)' }}>
               {threshold}
             </span>
           </div>
@@ -127,22 +127,22 @@ export function DeviceSettingsPanel() {
           className="slider"
           disabled={isProcessing}
         />
-        <div className="flex justify-between text-xs text-gray-500 mt-2">
+        <div className="flex justify-between text-xs mt-2" style={{ color: 'var(--color-muted)' }}>
           <span className="flex items-center gap-1">
-            <div className="w-2 h-2 bg-gray-900 rounded-full"></div>
+            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: 'var(--color-text)' }}></div>
             More Black
           </span>
           <span className="flex items-center gap-1">
             More White
-            <div className="w-2 h-2 bg-gray-100 rounded-full border border-gray-300"></div>
+            <div className="w-2 h-2 rounded-full border" style={{ backgroundColor: 'var(--color-bg)', borderColor: 'var(--color-border)' }}></div>
           </span>
         </div>
       </div>
 
       {/* Processing Options */}
       <div className="space-y-4">
-        <h3 className="text-sm font-medium text-gray-700 mb-3 flex items-center gap-2">
-          <div className="w-1 h-4 bg-gradient-to-b from-emerald-500 to-indigo-500 rounded-full"></div>
+        <h3 className="text-sm font-medium mb-3 flex items-center gap-2" style={{ color: 'var(--color-text)' }}>
+          <div className="w-1 h-4 rounded-full" style={{ background: 'linear-gradient(180deg, var(--color-success) 0%, var(--color-primary) 100%)' }}></div>
           Processing Options
         </h3>
 
@@ -156,16 +156,16 @@ export function DeviceSettingsPanel() {
           />
           <div className="flex-1">
             <div className="flex items-center gap-2">
-              <span className="text-sm font-medium text-gray-900 group-hover:text-indigo-600 transition-colors">
+              <span className="text-sm font-medium transition-colors" style={{ color: 'var(--color-text)' }}>
                 Invert Output
               </span>
               {featureFlags.enableTooltips && (
                 <Tooltip content="Swap black and white pixels. Useful for different display polarities.">
-                  <QuestionMarkCircleIcon className="w-4 h-4 text-gray-400 hover:text-indigo-600 transition-colors cursor-help" />
+                  <QuestionMarkCircleIcon className="w-4 h-4 transition-colors cursor-help" style={{ color: 'var(--color-muted)' }} />
                 </Tooltip>
               )}
             </div>
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs mt-1" style={{ color: 'var(--color-muted)' }}>
               Swap black and white pixels
             </p>
           </div>
@@ -181,16 +181,16 @@ export function DeviceSettingsPanel() {
           />
           <div className="flex-1">
             <div className="flex items-center gap-2">
-              <span className="text-sm font-medium text-gray-900 group-hover:text-indigo-600 transition-colors">
+              <span className="text-sm font-medium transition-colors" style={{ color: 'var(--color-text)' }}>
                 Bayer Dithering
               </span>
               {featureFlags.enableTooltips && (
                 <Tooltip content="Use Bayer dithering to simulate grayscale with dot patterns. Better for photos.">
-                  <QuestionMarkCircleIcon className="w-4 h-4 text-gray-400 hover:text-indigo-600 transition-colors cursor-help" />
+                  <QuestionMarkCircleIcon className="w-4 h-4 transition-colors cursor-help" style={{ color: 'var(--color-muted)' }} />
                 </Tooltip>
               )}
             </div>
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs mt-1" style={{ color: 'var(--color-muted)' }}>
               4×4 pattern for grayscale simulation
             </p>
           </div>

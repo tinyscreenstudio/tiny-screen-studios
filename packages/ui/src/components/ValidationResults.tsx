@@ -15,11 +15,11 @@ export function ValidationResults() {
     <div className="mt-6 space-y-3">
       {/* Only show success if no processing errors */}
       {fileValidation && fileValidation.validCount > 0 && !hasProcessingErrors && (
-        <div className="status-success">
-          <CheckCircleIcon className="w-5 h-5 flex-shrink-0 mt-0.5 text-emerald-600" />
+        <div className="status-success flex items-start gap-3">
+          <CheckCircleIcon className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: 'var(--color-success)' }} />
           <div>
-            <div className="font-medium text-emerald-800">Files Validated</div>
-            <div className="text-sm text-emerald-700 mt-1">
+            <div className="font-medium" style={{ color: 'var(--color-success)' }}>Files Validated</div>
+            <div className="text-sm mt-1" style={{ color: 'var(--color-success)' }}>
               {fileValidation.validCount} valid PNG file(s) ready for processing
             </div>
           </div>
@@ -28,11 +28,11 @@ export function ValidationResults() {
 
       {/* File errors */}
       {hasFileErrors && (
-        <div className="status-error">
-          <XCircleIcon className="w-5 h-5 flex-shrink-0 mt-0.5 text-red-600" />
+        <div className="status-error flex items-start gap-3">
+          <XCircleIcon className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: 'var(--color-danger)' }} />
           <div>
-            <div className="font-medium text-red-800">File Errors</div>
-            <div className="text-sm text-red-700 mt-1">
+            <div className="font-medium" style={{ color: 'var(--color-danger)' }}>File Errors</div>
+            <div className="text-sm mt-1" style={{ color: 'var(--color-danger)' }}>
               {fileValidation?.fileErrors.size} file(s) have errors and will be skipped
             </div>
           </div>
@@ -43,21 +43,21 @@ export function ValidationResults() {
 
       {/* Warnings */}
       {fileValidation?.warnings.map((warning, index) => (
-        <div key={index} className="status-warning">
-          <ExclamationTriangleIcon className="w-5 h-5 flex-shrink-0 mt-0.5 text-amber-600" />
+        <div key={index} className="status-warning flex items-start gap-3">
+          <ExclamationTriangleIcon className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: 'var(--color-warning)' }} />
           <div>
-            <div className="font-medium text-amber-800">Warning</div>
-            <div className="text-sm text-amber-700 mt-1">{warning}</div>
+            <div className="font-medium" style={{ color: 'var(--color-warning)' }}>Warning</div>
+            <div className="text-sm mt-1" style={{ color: 'var(--color-warning)' }}>{warning}</div>
           </div>
         </div>
       ))}
 
       {validationResults?.warnings.map((warning, index) => (
-        <div key={index} className="status-warning">
-          <ExclamationTriangleIcon className="w-5 h-5 flex-shrink-0 mt-0.5 text-amber-600" />
+        <div key={index} className="status-warning flex items-start gap-3">
+          <ExclamationTriangleIcon className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: 'var(--color-warning)' }} />
           <div>
-            <div className="font-medium text-amber-800">Processing Warning</div>
-            <div className="text-sm text-amber-700 mt-1">{warning.message}</div>
+            <div className="font-medium" style={{ color: 'var(--color-warning)' }}>Processing Warning</div>
+            <div className="text-sm mt-1" style={{ color: 'var(--color-warning)' }}>{warning.message}</div>
           </div>
         </div>
       ))}

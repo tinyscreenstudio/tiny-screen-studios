@@ -30,8 +30,8 @@ export default {
         },
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
-        mono: ['JetBrains Mono', 'SF Mono', 'Monaco', 'Consolas', 'monospace'],
+        sans: ['var(--font-sans)', 'Inter', 'system-ui', 'sans-serif'],
+        mono: ['var(--font-mono)', 'JetBrains Mono', 'SF Mono', 'Monaco', 'Consolas', 'monospace'],
       },
       animation: {
         'fade-in': 'fadeIn 0.5s ease-out',

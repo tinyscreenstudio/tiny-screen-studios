@@ -17,12 +17,12 @@ export function FileList() {
 
   return (
     <div className="mt-6">
-      <h3 className="text-sm font-medium text-dark-200 mb-3 flex items-center gap-2">
-        <PhotoIcon className="w-4 h-4 text-neon-cyan" />
+      <h3 className="text-sm font-medium mb-3 flex items-center gap-2" style={{ color: 'var(--color-text)' }}>
+        <PhotoIcon className="w-4 h-4" style={{ color: 'var(--color-info)' }} />
         Uploaded Files ({currentFiles.length})
       </h3>
       
-      <div className="glass-panel border border-dark-600/30 max-h-64 overflow-y-auto">
+      <div className="max-h-64 overflow-y-auto" style={{ backgroundColor: 'var(--color-surface)', border: `1px solid var(--color-border)`, borderRadius: 'var(--radius-md)' }}>
         {currentFiles.map((file, index) => {
           const hasError = fileValidation?.fileErrors.has(index)
           const errorMessage = fileValidation?.fileErrors.get(index)
@@ -30,28 +30,25 @@ export function FileList() {
           return (
             <div 
               key={index} 
-              className={`
-                flex items-center justify-between p-3 border-b border-dark-600/20 last:border-b-0
-                ${hasError ? 'bg-neon-pink/5' : 'bg-neon-green/5'}
-                hover:bg-dark-700/30 transition-colors duration-200
-              `}
+              className="flex items-center justify-between p-3 last:border-b-0 hover:opacity-80 transition-colors duration-200"
+              style={{ 
+                borderBottom: `1px solid var(--color-border)`,
+                backgroundColor: hasError ? 'rgba(239, 68, 68, 0.05)' : 'rgba(16, 185, 129, 0.05)'
+              }}
             >
               <div className="flex items-center gap-3 flex-1 min-w-0">
-                <div className={`
-                  w-8 h-8 rounded-lg flex items-center justify-center
-                  ${hasError 
-                    ? 'bg-neon-pink/20 border border-neon-pink/30' 
-                    : 'bg-neon-green/20 border border-neon-green/30'
-                  }
-                `}>
-                  <DocumentIcon className={`w-4 h-4 ${hasError ? 'text-neon-pink' : 'text-neon-green'}`} />
+                <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{
+                  backgroundColor: hasError ? 'rgba(239, 68, 68, 0.1)' : 'rgba(16, 185, 129, 0.1)',
+                  border: `1px solid ${hasError ? 'rgba(239, 68, 68, 0.3)' : 'rgba(16, 185, 129, 0.3)'}`
+                }}>
+                  <DocumentIcon className="w-4 h-4" style={{ color: hasError ? 'var(--color-danger)' : 'var(--color-success)' }} />
                 </div>
                 
                 <div className="min-w-0 flex-1">
-                  <p className="text-sm font-medium text-dark-100 truncate font-mono">
+                  <p className="text-sm font-medium truncate" style={{ color: 'var(--color-text)', fontFamily: 'var(--font-mono)' }}>
                     {file.name}
                   </p>
-                  <p className="text-xs text-dark-400 font-mono">
+                  <p className="text-xs" style={{ color: 'var(--color-muted)', fontFamily: 'var(--font-mono)' }}>
                     {formatFileSize(file.size)}
                   </p>
                 </div>
@@ -60,15 +57,15 @@ export function FileList() {
               <div className="flex items-center gap-2 flex-shrink-0">
                 {hasError ? (
                   <div className="flex items-center gap-2">
-                    <XCircleIcon className="w-4 h-4 text-neon-pink" />
-                    <span className="text-xs text-neon-pink font-medium max-w-32 truncate">
+                    <XCircleIcon className="w-4 h-4" style={{ color: 'var(--color-danger)' }} />
+                    <span className="text-xs font-medium max-w-32 truncate" style={{ color: 'var(--color-danger)' }}>
                       {errorMessage}
                     </span>
                   </div>
                 ) : (
                   <div className="flex items-center gap-2">
-                    <CheckCircleIcon className="w-4 h-4 text-neon-green" />
-                    <span className="text-xs text-neon-green font-medium">
+                    <CheckCircleIcon className="w-4 h-4" style={{ color: 'var(--color-success)' }} />
+                    <span className="text-xs font-medium" style={{ color: 'var(--color-success)' }}>
                       Valid
                     </span>
                   </div>

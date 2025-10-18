@@ -25,70 +25,82 @@ export function HomePage() {
         <div className="absolute inset-0">
           {/* Subtle pixel grid pattern */}
           <div className="absolute inset-0 opacity-30" style={{
-            backgroundImage: `radial-gradient(circle at 1px 1px, rgb(99 102 241) 1px, transparent 0)`,
+            backgroundImage: `radial-gradient(circle at 1px 1px, var(--color-primary) 1px, transparent 0)`,
             backgroundSize: '20px 20px'
           }}></div>
           
           {/* Floating pixel blocks - light theme */}
-          <div className="absolute top-20 left-10 w-6 h-6 bg-indigo-200 opacity-60 animate-float pixelated"></div>
-          <div className="absolute top-32 right-20 w-4 h-4 bg-purple-200 opacity-70 animate-float-delayed pixelated"></div>
-          <div className="absolute bottom-40 left-1/4 w-8 h-8 bg-blue-200 opacity-50 animate-float-slow pixelated"></div>
-          <div className="absolute bottom-20 right-1/3 w-5 h-5 bg-cyan-200 opacity-65 animate-pulse pixelated"></div>
+          <div className="absolute top-20 left-10 w-6 h-6 opacity-60 animate-float pixelated" style={{ backgroundColor: 'rgba(99, 102, 241, 0.3)' }}></div>
+          <div className="absolute top-32 right-20 w-4 h-4 opacity-70 animate-float-delayed pixelated" style={{ backgroundColor: 'rgba(139, 92, 246, 0.3)' }}></div>
+          <div className="absolute bottom-40 left-1/4 w-8 h-8 opacity-50 animate-float-slow pixelated" style={{ backgroundColor: 'rgba(59, 130, 246, 0.3)' }}></div>
+          <div className="absolute bottom-20 right-1/3 w-5 h-5 opacity-65 animate-pulse pixelated" style={{ backgroundColor: 'rgba(6, 182, 212, 0.3)' }}></div>
           
           {/* Light geometric shapes */}
-          <div className="absolute top-1/4 right-1/4 w-32 h-32 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-full opacity-40 blur-xl animate-float"></div>
-          <div className="absolute bottom-1/3 left-1/5 w-24 h-24 bg-gradient-to-br from-blue-100 to-cyan-100 rounded-full opacity-50 blur-xl animate-float-delayed"></div>
+          <div className="absolute top-1/4 right-1/4 w-32 h-32 rounded-full opacity-40 blur-xl animate-float" style={{ background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.2) 0%, rgba(139, 92, 246, 0.2) 100%)' }}></div>
+          <div className="absolute bottom-1/3 left-1/5 w-24 h-24 rounded-full opacity-50 blur-xl animate-float-delayed" style={{ background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(6, 182, 212, 0.2) 100%)' }}></div>
         </div>
 
         <div className="relative container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center py-20 lg:py-32">
             <div className="animate-fade-in">
               {/* Clean badge */}
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-sm border border-indigo-200 rounded-full text-sm font-medium text-indigo-700 mb-8 shadow-sm">
+              <div className="inline-flex items-center gap-2 px-4 py-2 backdrop-blur-sm rounded-full text-sm font-medium mb-8 shadow-sm" style={{ 
+                backgroundColor: 'rgba(255, 255, 255, 0.8)', 
+                border: `1px solid rgba(99, 102, 241, 0.3)`,
+                color: 'var(--color-primary)'
+              }}>
                 <SparklesIcon className="w-4 h-4" />
                 Professional OLED Tools
               </div>
               
-              <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold mb-6 leading-tight text-gray-900">
+              <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold mb-6 leading-tight" style={{ color: 'var(--color-text)' }}>
                 Transform Pixel Art for
-                <span className="block text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600">
+                <span className="block text-transparent bg-clip-text" style={{ background: 'linear-gradient(135deg, var(--color-primary) 0%, #8b5cf6 50%, var(--color-info) 100%)', WebkitBackgroundClip: 'text' }}>
                   Tiny Displays
                 </span>
               </h1>
               
-              <p className="text-lg sm:text-xl lg:text-2xl text-gray-600 max-w-4xl mx-auto mb-12 leading-relaxed font-light">
-                Convert your pixel art and animations into optimized formats for <span className="text-indigo-600 font-semibold">SSD1306</span>, <span className="text-purple-600 font-semibold">SH1106</span>, 
+              <p className="text-lg sm:text-xl lg:text-2xl max-w-4xl mx-auto mb-12 leading-relaxed font-light" style={{ color: 'var(--color-muted)' }}>
+                Convert your pixel art and animations into optimized formats for <span style={{ color: 'var(--color-primary)', fontWeight: '600' }}>SSD1306</span>, <span style={{ color: '#8b5cf6', fontWeight: '600' }}>SH1106</span>, 
                 and other embedded OLED displays. Professional tools for embedded developers.
               </p>
               
               <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center">
                 <button 
                   onClick={handleNavigateToPreview}
-                  className="group relative overflow-hidden bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-8 py-4 rounded-2xl font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 flex items-center gap-3"
+                  className="group relative overflow-hidden px-8 py-4 rounded-2xl font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 flex items-center gap-3"
+                  style={{ 
+                    background: `linear-gradient(135deg, var(--color-primary) 0%, #8b5cf6 100%)`,
+                    color: 'var(--color-primary-contrast)'
+                  }}
                 >
-                  <div className="absolute inset-0 bg-gradient-to-r from-indigo-700 to-purple-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.9) 0%, rgba(139, 92, 246, 0.9) 100%)' }}></div>
                   <EyeIcon className="w-5 h-5 relative z-10" />
                   <span className="relative z-10">Start Creating</span>
                   <ArrowRightIcon className="w-4 h-4 relative z-10 group-hover:translate-x-1 transition-transform duration-300" />
                 </button>
                 
-                <button className="group px-8 py-4 rounded-2xl font-semibold text-lg text-gray-700 bg-white/80 backdrop-blur-sm border border-gray-200 hover:bg-white hover:border-gray-300 transition-all duration-300 shadow-sm hover:shadow-md">
-                  <span className="group-hover:text-indigo-600 transition-colors duration-300">View Examples</span>
+                <button className="group px-8 py-4 rounded-2xl font-semibold text-lg backdrop-blur-sm transition-all duration-300 shadow-sm hover:shadow-md" style={{
+                  color: 'var(--color-text)',
+                  backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                  border: `1px solid var(--color-border)`
+                }}>
+                  <span className="group-hover:opacity-80 transition-opacity duration-300" style={{ color: 'var(--color-text)' }}>View Examples</span>
                 </button>
               </div>
               
               {/* Feature highlights - clean light style */}
-              <div className="flex flex-wrap justify-center gap-4 sm:gap-6 mt-16 text-sm text-gray-600">
-                <div className="flex items-center gap-2 bg-white/70 backdrop-blur-sm px-4 py-2 rounded-full border border-green-200 shadow-sm">
-                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+              <div className="flex flex-wrap justify-center gap-4 sm:gap-6 mt-16 text-sm" style={{ color: 'var(--color-muted)' }}>
+                <div className="flex items-center gap-2 backdrop-blur-sm px-4 py-2 rounded-full shadow-sm" style={{ backgroundColor: 'rgba(255, 255, 255, 0.7)', border: `1px solid rgba(16, 185, 129, 0.3)` }}>
+                  <div className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: 'var(--color-success)' }}></div>
                   Real-time Preview
                 </div>
-                <div className="flex items-center gap-2 bg-white/70 backdrop-blur-sm px-4 py-2 rounded-full border border-blue-200 shadow-sm">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                <div className="flex items-center gap-2 backdrop-blur-sm px-4 py-2 rounded-full shadow-sm" style={{ backgroundColor: 'rgba(255, 255, 255, 0.7)', border: `1px solid rgba(59, 130, 246, 0.3)` }}>
+                  <div className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: 'var(--color-info)' }}></div>
                   Multiple Formats
                 </div>
-                <div className="flex items-center gap-2 bg-white/70 backdrop-blur-sm px-4 py-2 rounded-full border border-purple-200 shadow-sm">
-                  <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse"></div>
+                <div className="flex items-center gap-2 backdrop-blur-sm px-4 py-2 rounded-full shadow-sm" style={{ backgroundColor: 'rgba(255, 255, 255, 0.7)', border: `1px solid rgba(139, 92, 246, 0.3)` }}>
+                  <div className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: '#8b5cf6' }}></div>
                   Smart Processing
                 </div>
               </div>
@@ -101,8 +113,8 @@ export function HomePage() {
       <section className="py-16 lg:py-24 bg-white">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">Powerful Features</h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            <h2 className="text-3xl lg:text-4xl font-bold mb-4" style={{ color: 'var(--color-text)' }}>Powerful Features</h2>
+            <p className="text-xl max-w-2xl mx-auto" style={{ color: 'var(--color-muted)' }}>
               Everything you need to convert and optimize your pixel art for embedded displays
             </p>
           </div>

@@ -13,30 +13,30 @@ export function StatusBar() {
   } = useAppStore()
 
   return (
-    <div className="border-b border-dark-700/50 bg-dark-800/30 backdrop-blur-sm">
+    <div style={{ borderBottom: `1px solid var(--color-border)`, backgroundColor: 'var(--color-surface)' }} className="backdrop-blur-sm">
       <div className="container mx-auto px-6 py-3 max-w-[1600px]">
         <div className="flex items-center justify-between text-sm">
           {/* Left side - File info */}
           <div className="flex items-center gap-6">
             <div className="flex items-center gap-2">
-              <DocumentIcon className="w-4 h-4 text-neon-cyan" />
-              <span className="text-dark-200 font-mono">
+              <DocumentIcon className="w-4 h-4" style={{ color: 'var(--color-info)' }} />
+              <span style={{ color: 'var(--color-text)', fontFamily: 'var(--font-mono)' }}>
                 {currentFiles.length} file{currentFiles.length !== 1 ? 's' : ''}
               </span>
             </div>
             
             {currentPackedFrames.length > 0 && (
               <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-neon-green rounded-full animate-pulse"></div>
-                <span className="text-dark-200 font-mono">
+                <div className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: 'var(--color-success)' }}></div>
+                <span style={{ color: 'var(--color-text)', fontFamily: 'var(--font-mono)' }}>
                   {currentPackedFrames.length} frame{currentPackedFrames.length !== 1 ? 's' : ''} ready
                 </span>
               </div>
             )}
             
             <div className="flex items-center gap-2">
-              <CpuChipIcon className="w-4 h-4 text-neon-pink" />
-              <span className="text-dark-200 font-mono">{devicePreset}</span>
+              <CpuChipIcon className="w-4 h-4" style={{ color: '#ec4899' }} />
+              <span style={{ color: 'var(--color-text)', fontFamily: 'var(--font-mono)' }}>{devicePreset}</span>
             </div>
           </div>
 
@@ -44,13 +44,16 @@ export function StatusBar() {
           {isProcessing && (
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-neon-yellow rounded-full animate-pulse"></div>
-                <span className="text-neon-yellow font-mono">{progressText}</span>
+                <div className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: 'var(--color-warning)' }}></div>
+                <span style={{ color: 'var(--color-warning)', fontFamily: 'var(--font-mono)' }}>{progressText}</span>
               </div>
-              <div className="w-32 h-1 bg-dark-700 rounded-full overflow-hidden">
+              <div className="w-32 h-1 rounded-full overflow-hidden" style={{ backgroundColor: 'var(--color-border)' }}>
                 <div 
-                  className="h-full bg-gradient-to-r from-neon-cyan to-neon-pink transition-all duration-300"
-                  style={{ width: `${progressPercentage}%` }}
+                  className="h-full transition-all duration-300"
+                  style={{ 
+                    width: `${progressPercentage}%`,
+                    background: 'linear-gradient(90deg, var(--color-info) 0%, #ec4899 100%)'
+                  }}
                 />
               </div>
             </div>
@@ -59,13 +62,13 @@ export function StatusBar() {
           {/* Right side - System info */}
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
-              <ClockIcon className="w-4 h-4 text-dark-400" />
-              <span className="text-dark-400 font-mono">
+              <ClockIcon className="w-4 h-4" style={{ color: 'var(--color-muted)' }} />
+              <span style={{ color: 'var(--color-muted)', fontFamily: 'var(--font-mono)' }}>
                 {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
               </span>
             </div>
             
-            <div className="text-dark-400 font-mono">
+            <div style={{ color: 'var(--color-muted)', fontFamily: 'var(--font-mono)' }}>
               v0.1.0
             </div>
           </div>

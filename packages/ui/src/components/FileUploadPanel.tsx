@@ -72,14 +72,14 @@ export function FileUploadPanel() {
   return (
     <div className="card p-6">
       <div className="flex items-center gap-3 mb-6">
-        <div className="w-10 h-10 bg-gradient-to-br from-indigo-100 to-indigo-200 rounded-xl flex items-center justify-center">
-          <DocumentIcon className="w-6 h-6 text-indigo-600" />
+        <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(99, 102, 241, 0.2) 100%)' }}>
+          <DocumentIcon className="w-6 h-6" style={{ color: 'var(--color-primary)' }} />
         </div>
         <div>
-          <h2 className="text-xl font-semibold text-gray-900">
+          <h2 className="text-xl font-semibold" style={{ color: 'var(--color-text)' }}>
             Upload Files
           </h2>
-          <p className="text-gray-600 text-sm">Drag & drop your pixel art</p>
+          <p className="text-sm" style={{ color: 'var(--color-muted)' }}>Drag & drop your pixel art</p>
         </div>
       </div>
 
@@ -96,12 +96,12 @@ export function FileUploadPanel() {
         onClick={!isProcessing ? openFileDialog : undefined}
       >
         <div className="text-center">
-          <CloudArrowUpIcon className="w-16 h-16 text-gray-400 mx-auto mb-4 group-hover:text-indigo-500 transition-colors duration-300" />
+          <CloudArrowUpIcon className="w-16 h-16 mx-auto mb-4 transition-colors duration-300" style={{ color: 'var(--color-muted)' }} />
           
-          <p className="text-lg font-medium text-gray-900 mb-2">
+          <p className="text-lg font-medium mb-2" style={{ color: 'var(--color-text)' }}>
             {isProcessing ? 'Processing files...' : 'Drop your pixel art here'}
           </p>
-          <p className="text-gray-600 mb-6">
+          <p className="mb-6" style={{ color: 'var(--color-muted)' }}>
             or click to browse your files
           </p>
           
@@ -117,14 +117,14 @@ export function FileUploadPanel() {
             </button>
           )}
           
-          <div className="flex items-center justify-center gap-6 text-sm text-gray-500">
-            <div className="flex items-center gap-2 bg-gray-50 px-3 py-2 rounded-lg">
-              <PhotoIcon className="w-4 h-4 text-indigo-500" />
+          <div className="flex items-center justify-center gap-6 text-sm" style={{ color: 'var(--color-muted)' }}>
+            <div className="flex items-center gap-2 px-3 py-2 rounded-lg" style={{ backgroundColor: 'var(--color-surface)' }}>
+              <PhotoIcon className="w-4 h-4" style={{ color: 'var(--color-primary)' }} />
               <span>PNG Images</span>
             </div>
-            <div className="w-px h-6 bg-gray-300"></div>
-            <div className="flex items-center gap-2 bg-gray-50 px-3 py-2 rounded-lg">
-              <FilmIcon className="w-4 h-4 text-purple-500" />
+            <div className="w-px h-6" style={{ backgroundColor: 'var(--color-border)' }}></div>
+            <div className="flex items-center gap-2 px-3 py-2 rounded-lg" style={{ backgroundColor: 'var(--color-surface)' }}>
+              <FilmIcon className="w-4 h-4" style={{ color: '#8b5cf6' }} />
               <span>Animations</span>
             </div>
           </div>

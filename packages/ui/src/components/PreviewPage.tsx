@@ -17,37 +17,37 @@ export function PreviewPage({ }: PreviewPageProps) {
         {/* Subtle Background Pattern */}
         <div className="absolute inset-0 opacity-5">
           <div className="absolute inset-0" style={{
-            backgroundImage: `radial-gradient(circle at 2px 2px, #6366f1 1px, transparent 0)`,
+            backgroundImage: `radial-gradient(circle at 2px 2px, var(--color-primary) 1px, transparent 0)`,
             backgroundSize: '32px 32px'
           }}></div>
         </div>
 
         {/* Subtle Animated Background Elements */}
-        <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-indigo-100/30 to-purple-100/30 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-0 left-0 w-80 h-80 bg-gradient-to-tr from-cyan-100/30 to-blue-100/30 rounded-full blur-3xl animate-pulse [animation-delay:1s]"></div>
+        <div className="absolute top-0 right-0 w-96 h-96 rounded-full blur-3xl animate-pulse" style={{ background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%)' }}></div>
+        <div className="absolute bottom-0 left-0 w-80 h-80 rounded-full blur-3xl animate-pulse [animation-delay:1s]" style={{ background: 'linear-gradient(135deg, rgba(6, 182, 212, 0.1) 0%, rgba(59, 130, 246, 0.1) 100%)' }}></div>
 
         <div className="relative text-center">
           {/* Hero Content */}
           <div className="max-w-4xl mx-auto">
-            <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-gray-900 via-indigo-800 to-purple-800 bg-clip-text text-transparent">
+            <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold mb-6 bg-clip-text text-transparent" style={{ background: `linear-gradient(135deg, var(--color-text) 0%, var(--color-primary) 50%, #8b5cf6 100%)`, WebkitBackgroundClip: 'text' }}>
               OLED Studio
             </h1>
-            <p className="text-gray-600 text-xl md:text-2xl leading-relaxed mb-8 max-w-3xl mx-auto">
+            <p className="text-xl md:text-2xl leading-relaxed mb-8 max-w-3xl mx-auto" style={{ color: 'var(--color-muted)' }}>
               Professional real-time display simulation and conversion tools for embedded OLED displays
             </p>
 
             {/* Feature Highlights */}
             <div className="flex flex-wrap justify-center items-center gap-6 mb-8">
-              <div className="flex items-center gap-2 text-gray-500">
-                <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
+              <div className="flex items-center gap-2" style={{ color: 'var(--color-muted)' }}>
+                <div className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: 'var(--color-success)' }}></div>
                 <span className="text-sm md:text-base">Real-time Preview</span>
               </div>
-              <div className="flex items-center gap-2 text-gray-500">
-                <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse [animation-delay:0.5s]"></div>
+              <div className="flex items-center gap-2" style={{ color: 'var(--color-muted)' }}>
+                <div className="w-2 h-2 rounded-full animate-pulse [animation-delay:0.5s]" style={{ backgroundColor: 'var(--color-info)' }}></div>
                 <span className="text-sm md:text-base">Hardware Accurate</span>
               </div>
-              <div className="flex items-center gap-2 text-gray-500">
-                <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse [animation-delay:1s]"></div>
+              <div className="flex items-center gap-2" style={{ color: 'var(--color-muted)' }}>
+                <div className="w-2 h-2 rounded-full animate-pulse [animation-delay:1s]" style={{ backgroundColor: '#8b5cf6' }}></div>
                 <span className="text-sm md:text-base">Multiple Formats</span>
               </div>
             </div>
@@ -56,13 +56,19 @@ export function PreviewPage({ }: PreviewPageProps) {
             {hasFrames && (
               <div className="flex justify-center">
                 <div className="flex items-center gap-6">
-                  <div className="bg-white/80 backdrop-blur-sm border border-indigo-200 rounded-xl px-6 py-4 text-center shadow-sm">
-                    <div className="text-3xl font-bold text-indigo-600">{currentPackedFrames.length}</div>
-                    <div className="text-sm text-gray-500">Frame{currentPackedFrames.length !== 1 ? 's' : ''}</div>
+                  <div className="backdrop-blur-sm rounded-xl px-6 py-4 text-center shadow-sm" style={{ 
+                    backgroundColor: 'rgba(255, 255, 255, 0.8)', 
+                    border: `1px solid rgba(99, 102, 241, 0.2)` 
+                  }}>
+                    <div className="text-3xl font-bold" style={{ color: 'var(--color-primary)' }}>{currentPackedFrames.length}</div>
+                    <div className="text-sm" style={{ color: 'var(--color-muted)' }}>Frame{currentPackedFrames.length !== 1 ? 's' : ''}</div>
                   </div>
-                  <div className="bg-white/80 backdrop-blur-sm border border-purple-200 rounded-xl px-6 py-4 text-center shadow-sm">
-                    <div className="text-xl font-bold text-purple-600">{devicePreset}</div>
-                    <div className="text-sm text-gray-500">Display</div>
+                  <div className="backdrop-blur-sm rounded-xl px-6 py-4 text-center shadow-sm" style={{ 
+                    backgroundColor: 'rgba(255, 255, 255, 0.8)', 
+                    border: `1px solid rgba(139, 92, 246, 0.2)` 
+                  }}>
+                    <div className="text-xl font-bold" style={{ color: '#8b5cf6' }}>{devicePreset}</div>
+                    <div className="text-sm" style={{ color: 'var(--color-muted)' }}>Display</div>
                   </div>
                 </div>
               </div>
@@ -98,8 +104,8 @@ export function PreviewPage({ }: PreviewPageProps) {
         /* Integrated Upload Section */
         <div className="card p-8">
           <div className="text-center mb-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Get Started with Your Pixel Art</h2>
-            <p className="text-gray-600">Upload your PNG images and convert them for OLED displays in seconds</p>
+            <h2 className="text-2xl font-bold mb-2" style={{ color: 'var(--color-text)' }}>Get Started with Your Pixel Art</h2>
+            <p style={{ color: 'var(--color-muted)' }}>Upload your PNG images and convert them for OLED displays in seconds</p>
           </div>
 
           {/* Upload Area */}

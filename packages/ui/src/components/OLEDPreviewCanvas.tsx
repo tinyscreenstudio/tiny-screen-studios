@@ -89,20 +89,32 @@ export function OLEDPreviewCanvas() {
         <div className="w-8 h-8 bg-warning-100 rounded-lg flex items-center justify-center">
           <EyeIcon className="w-5 h-5 text-warning-600" />
         </div>
-        <h2 className="text-xl font-semibold text-gray-900">
+        <h2 className="text-xl font-semibold" style={{ color: 'var(--color-text)' }}>
           OLED Preview
         </h2>
         <div className="ml-auto flex items-center gap-3">
           {hasFrames && (
             <div className="flex items-center gap-2 text-xs">
-              <div className="w-2 h-2 bg-success-500 rounded-full animate-pulse"></div>
-              <span className="text-gray-600 font-mono">ACTIVE</span>
+              <div className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: 'var(--color-success)' }}></div>
+              <span style={{ color: 'var(--color-muted)', fontFamily: 'var(--font-mono)' }}>ACTIVE</span>
             </div>
           )}
           <Tooltip content="Clear current files and start over">
             <button
               onClick={clearFiles}
-              className="text-gray-600 hover:text-gray-800 bg-gray-100 hover:bg-gray-200 p-2 rounded-lg transition-colors"
+              className="p-2 rounded-lg transition-colors"
+              style={{ 
+                color: 'var(--color-muted)', 
+                backgroundColor: 'var(--color-surface)' 
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.color = 'var(--color-text)'
+                e.currentTarget.style.backgroundColor = 'var(--color-border)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.color = 'var(--color-muted)'
+                e.currentTarget.style.backgroundColor = 'var(--color-surface)'
+              }}
               disabled={isProcessing}
             >
               <ArrowUpTrayIcon className="w-4 h-4" />

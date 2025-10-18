@@ -132,18 +132,18 @@ export function ExportControlsPanel() {
   return (
     <div className="card p-3">
       <div className="flex items-center gap-3 mb-3">
-        <div className="w-6 h-6 bg-gradient-to-br from-purple-100 to-purple-200 rounded-lg flex items-center justify-center">
-          <ArrowDownTrayIcon className="w-4 h-4 text-purple-600" />
+        <div className="w-6 h-6 rounded-lg flex items-center justify-center" style={{ background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(139, 92, 246, 0.2) 100%)' }}>
+          <ArrowDownTrayIcon className="w-4 h-4" style={{ color: '#8b5cf6' }} />
         </div>
         <div>
-          <h2 className="text-base font-semibold text-gray-900">
+          <h2 className="text-base font-semibold" style={{ color: 'var(--color-text)' }}>
             Export & Download
           </h2>
         </div>
         {hasFrames && (
           <div className="ml-auto flex items-center gap-2 text-xs">
-            <div className="w-2 h-2 bg-success-500 rounded-full"></div>
-            <span className="text-gray-600 font-mono">READY</span>
+            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: 'var(--color-success)' }}></div>
+            <span style={{ color: 'var(--color-muted)', fontFamily: 'var(--font-mono)' }}>READY</span>
           </div>
         )}
       </div>
@@ -154,12 +154,18 @@ export function ExportControlsPanel() {
         <div className="flex flex-wrap items-center gap-4">
           {/* Symbol Name */}
           <div className="flex items-center gap-2">
-            <label className="text-xs font-medium text-gray-700 whitespace-nowrap">Symbol Name:</label>
+            <label className="text-xs font-medium whitespace-nowrap" style={{ color: 'var(--color-text)' }}>Symbol Name:</label>
             <input
               type="text"
               value={symbolName}
               onChange={(e) => setSymbolName(e.target.value.replace(/[^a-zA-Z0-9_]/g, ''))}
-              className="w-32 px-2 py-1 text-xs bg-white border border-gray-200 rounded font-mono focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/20"
+              className="w-32 px-2 py-1 text-xs rounded focus:outline-none focus:ring-1"
+              style={{ 
+                backgroundColor: 'var(--color-bg)', 
+                border: `1px solid var(--color-border)`,
+                color: 'var(--color-text)',
+                fontFamily: 'var(--font-mono)'
+              }}
               placeholder="display_data"
               disabled={exportStatus.isExporting}
             />
@@ -167,7 +173,7 @@ export function ExportControlsPanel() {
 
           {/* Bytes per Row */}
           <div className="flex items-center gap-2">
-            <label className="text-xs font-medium text-gray-700 whitespace-nowrap">Bytes per Row:</label>
+            <label className="text-xs font-medium whitespace-nowrap" style={{ color: 'var(--color-text)' }}>Bytes per Row:</label>
             <input
               type="range"
               min="8"
@@ -177,7 +183,12 @@ export function ExportControlsPanel() {
               className="slider w-20"
               disabled={exportStatus.isExporting}
             />
-            <span className="font-mono text-xs text-primary-600 bg-white px-1 py-0.5 rounded border min-w-[2rem] text-center">
+            <span className="text-xs px-1 py-0.5 rounded border min-w-[2rem] text-center" style={{ 
+              fontFamily: 'var(--font-mono)', 
+              color: 'var(--color-primary)', 
+              backgroundColor: 'var(--color-bg)',
+              borderColor: 'var(--color-border)'
+            }}>
               {bytesPerRow}
             </span>
           </div>
@@ -189,35 +200,40 @@ export function ExportControlsPanel() {
                 type="checkbox"
                 checked={perFrame}
                 onChange={(e) => setPerFrame(e.target.checked)}
-                className="w-3 h-3 text-primary-600 rounded"
+                className="w-3 h-3 rounded"
                 disabled={exportStatus.isExporting}
               />
-              <span className="text-gray-700">Separate Arrays</span>
+              <span style={{ color: 'var(--color-text)' }}>Separate Arrays</span>
             </label>
             <label className="flex items-center gap-1 cursor-pointer text-xs">
               <input
                 type="checkbox"
                 checked={includeMetadata}
                 onChange={(e) => setIncludeMetadata(e.target.checked)}
-                className="w-3 h-3 text-primary-600 rounded"
+                className="w-3 h-3 rounded"
                 disabled={exportStatus.isExporting}
               />
-              <span className="text-gray-700">Include Metadata</span>
+              <span style={{ color: 'var(--color-text)' }}>Include Metadata</span>
             </label>
           </div>
         </div>
 
         {/* Download Row */}
-        <div className="flex items-center justify-between pt-2 border-t border-gray-200">
+        <div className="flex items-center justify-between pt-2" style={{ borderTop: `1px solid var(--color-border)` }}>
           <div className="flex items-center gap-2">
-            <ArrowDownTrayIcon className="w-4 h-4 text-gray-600" />
-            <span className="text-xs font-medium text-gray-700">Export as:</span>
+            <ArrowDownTrayIcon className="w-4 h-4" style={{ color: 'var(--color-muted)' }} />
+            <span className="text-xs font-medium" style={{ color: 'var(--color-text)' }}>Export as:</span>
           </div>
           <div className="flex items-center gap-2">
             <select
               value={selectedFormat}
               onChange={(e) => setSelectedFormat(e.target.value as 'binary' | 'concatenated' | 'carray' | 'cfiles')}
-              className="px-2 py-1 text-xs bg-white border border-gray-200 rounded focus:outline-none focus:border-indigo-500"
+              className="px-2 py-1 text-xs rounded focus:outline-none"
+              style={{ 
+                backgroundColor: 'var(--color-bg)', 
+                border: `1px solid var(--color-border)`,
+                color: 'var(--color-text)'
+              }}
               disabled={exportStatus.isExporting}
             >
               <option value="carray">C Array (.c file)</option>
@@ -228,7 +244,11 @@ export function ExportControlsPanel() {
             <button
               onClick={() => handleExport(selectedFormat)}
               disabled={!hasFrames || exportStatus.isExporting}
-              className="px-4 py-1 text-xs font-medium bg-indigo-600 text-white rounded hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-1"
+              className="px-4 py-1 text-xs font-medium rounded disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-1"
+              style={{ 
+                backgroundColor: 'var(--color-primary)', 
+                color: 'var(--color-primary-contrast)' 
+              }}
             >
               <ArrowDownTrayIcon className="w-3 h-3" />
               Download
