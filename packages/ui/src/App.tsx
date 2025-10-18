@@ -1,4 +1,5 @@
-import React, { useState } from 'react'
+import React from 'react'
+import { Routes, Route, useLocation } from 'react-router-dom'
 import { Header } from './components/Header'
 import { Navigation } from './components/Navigation'
 import { HomePage } from './components/HomePage'
@@ -7,39 +8,38 @@ import { Footer } from './components/Footer'
 import { useAppStore } from './store/appStore'
 
 function App() {
-  const [currentPage, setCurrentPage] = useState<'home' | 'preview'>('home')
+  const location = useLocation()
   const { isProcessing } = useAppStore()
+
+  // Determine current page based on URL
+  const currentPage = location.pathname === '/oled-studio' ? 'preview' : 'home'
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* Header */}
       <Header />
-      
+
       {/* Main content */}
       <main className="flex-1">
         <div className="container mx-auto px-6 py-8 max-w-7xl">
           {/* Navigation */}
           <div className="mb-8">
-            <Navigation 
-              currentPage={currentPage} 
-              onPageChange={setCurrentPage} 
-            />
+            <Navigation currentPage={currentPage} />
           </div>
-          
+
           {/* Page Content */}
           <div className="animate-fade-in">
-            {currentPage === 'home' ? (
-              <HomePage onNavigateToPreview={() => setCurrentPage('preview')} />
-            ) : (
-              <PreviewPage />
-            )}
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/oled-studio" element={<PreviewPage />} />
+            </Routes>
           </div>
         </div>
       </main>
-      
+
       {/* Footer */}
       <Footer compact={currentPage === 'preview'} />
-      
+
       {/* Processing overlay */}
       {isProcessing && (
         <div className="fixed inset-0 bg-white/80 backdrop-blur-sm z-50 flex items-center justify-center">

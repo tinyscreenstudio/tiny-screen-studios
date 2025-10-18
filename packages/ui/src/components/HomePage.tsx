@@ -1,4 +1,5 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 import { 
   CpuChipIcon, 
   PhotoIcon, 
@@ -10,11 +11,12 @@ import {
   CubeIcon
 } from '@heroicons/react/24/outline'
 
-interface HomePageProps {
-  onNavigateToPreview: () => void
-}
-
-export function HomePage({ onNavigateToPreview }: HomePageProps) {
+export function HomePage() {
+  const navigate = useNavigate()
+  
+  const handleNavigateToPreview = () => {
+    navigate('/oled-studio')
+  }
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
@@ -61,7 +63,7 @@ export function HomePage({ onNavigateToPreview }: HomePageProps) {
               
               <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center">
                 <button 
-                  onClick={onNavigateToPreview}
+                  onClick={handleNavigateToPreview}
                   className="group relative overflow-hidden bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-8 py-4 rounded-2xl font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 flex items-center gap-3"
                 >
                   <div className="absolute inset-0 bg-gradient-to-r from-indigo-700 to-purple-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -267,7 +269,7 @@ export function HomePage({ onNavigateToPreview }: HomePageProps) {
                 </p>
                 
                 <button 
-                  onClick={onNavigateToPreview}
+                  onClick={handleNavigateToPreview}
                   className="group relative overflow-hidden bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-8 py-4 rounded-2xl font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 flex items-center gap-3 mx-auto"
                 >
                   <div className="absolute inset-0 bg-gradient-to-r from-indigo-700 to-purple-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>

@@ -1,34 +1,34 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 import { HomeIcon, EyeIcon } from '@heroicons/react/24/outline'
 
 interface NavigationProps {
   currentPage: 'home' | 'preview'
-  onPageChange: (page: 'home' | 'preview') => void
 }
 
-export function Navigation({ currentPage, onPageChange }: NavigationProps) {
+export function Navigation({ currentPage }: NavigationProps) {
   return (
     <nav className="nav-container">
       <div className="flex items-center gap-1 p-1">
-        <button
-          onClick={() => onPageChange('home')}
+        <Link
+          to="/"
           className={`nav-item flex items-center gap-2 ${
             currentPage === 'home' ? 'active' : ''
           }`}
         >
           <HomeIcon className="w-4 h-4" />
           <span>Home</span>
-        </button>
+        </Link>
         
-        <button
-          onClick={() => onPageChange('preview')}
+        <Link
+          to="/oled-studio"
           className={`nav-item flex items-center gap-2 ${
             currentPage === 'preview' ? 'active' : ''
           }`}
         >
           <EyeIcon className="w-4 h-4" />
           <span>OLED Studio</span>
-        </button>
+        </Link>
       </div>
     </nav>
   )
