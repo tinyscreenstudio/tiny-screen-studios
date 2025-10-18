@@ -1,4 +1,4 @@
-name: CI
+name: Test & Build
 
 on:
   push:
@@ -81,3 +81,9 @@ jobs:
         with:
           name: ui-build
           path: packages/ui/dist/
+          retention-days: 1
+
+      - name: Build summary
+        run: |
+          echo "✅ All tests passed and UI built successfully"
+          echo "📦 Build artifacts uploaded for deployment"

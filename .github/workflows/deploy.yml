@@ -1,7 +1,10 @@
 name: Deploy to GitHub Pages
 
 on:
-  push:
+  workflow_run:
+    workflows: ["Test & Build"]
+    types:
+      - completed
     branches: [main]
   workflow_dispatch:
 
@@ -15,7 +18,50 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  build:
+  deploy:
+    # Only run if the CI workflow succeeded
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Download UI build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: ui-build
+          path: ./dist
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ github.event.workflow_run.id }}
+
+      - name: Verify build artifacts
+        run: |
+          echo "Checking build artifacts..."
+          ls -la ./dist
+          if [ ! -f "./dist/index.html" ]; then
+            echo "Error: index.html not found in build artifacts"
+            exit 1
+          fi
+          echo "✅ Build artifacts verified successfully"
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./dist
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+  # Separate job for manual deployment
+  manual-deploy:
+    if: ${{ github.event_name == 'workflow_dispatch' }}
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -49,13 +95,6 @@ jobs:
         with:
           path: packages/ui/dist
 
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
