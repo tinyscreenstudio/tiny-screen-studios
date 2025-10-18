@@ -5,7 +5,7 @@ import react from '@vitejs/plugin-react';
 export default defineConfig({
   plugins: [react()],
   root: '.',
-  base: './', // Use relative paths for GitHub Pages compatibility
+  base: '/', // Use absolute paths for custom domain
   build: {
     outDir: 'dist',
     rollupOptions: {
