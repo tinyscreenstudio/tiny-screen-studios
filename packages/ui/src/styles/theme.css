@@ -5,18 +5,29 @@
 
 /* CSS Variables - Design Tokens */
 :root {
-    /* Colors - Semantic tokens */
-    --color-bg: #ffffff;
-    --color-surface: #f8fafc;
-    --color-border: #e2e8f0;
-    --color-text: #1e293b;
-    --color-muted: #64748b;
-    --color-primary: #6366f1;
+    /* Colors - TinyScreen.Studios Brand Palette */
+    --color-bg: #fafbfc;
+    --color-surface: #ffffff;
+    --color-border: #e1e8ed;
+    --color-text: #0d1117;
+    --color-muted: #656d76;
+    --color-primary: #ff6b35;
+    /* Vibrant OLED orange */
+    --color-primary-hover: #e55a2b;
     --color-primary-contrast: #ffffff;
-    --color-success: #10b981;
-    --color-warning: #f59e0b;
-    --color-danger: #ef4444;
-    --color-info: #3b82f6;
+    --color-accent: #00d9ff;
+    /* Electric cyan for highlights */
+    --color-accent-muted: rgba(0, 217, 255, 0.1);
+    --color-success: #00c896;
+    --color-warning: #ffab00;
+    --color-danger: #ff5252;
+    --color-info: #2196f3;
+
+    /* OLED-inspired gradients */
+    --gradient-primary: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+    --gradient-accent: linear-gradient(135deg, #00d9ff 0%, #0099cc 100%);
+    --gradient-surface: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    --gradient-glow: radial-gradient(circle at center, rgba(255, 107, 53, 0.15) 0%, transparent 70%);
 
     /* Typography */
     --font-sans: 'Space Grotesk', 'Inter', ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
@@ -42,17 +53,29 @@
     --tracking-normal: 0;
     --tracking-wide: 0.01em;
 
-    /* Border radius */
-    --radius-sm: 6px;
-    --radius-md: 10px;
-    --radius-lg: 14px;
-    --radius-xl: 18px;
-    --radius-2xl: 24px;
+    /* Border radius - Softer, more modern */
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 20px;
+    --radius-2xl: 28px;
+    --radius-full: 9999px;
 
-    /* Shadows */
-    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
-    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+    /* Shadows - More dramatic, OLED-inspired */
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+    --shadow-md: 0 8px 16px rgba(0, 0, 0, 0.08), 0 4px 8px rgba(0, 0, 0, 0.04);
+    --shadow-lg: 0 16px 32px rgba(0, 0, 0, 0.12), 0 8px 16px rgba(0, 0, 0, 0.06);
+    --shadow-glow: 0 0 20px rgba(255, 107, 53, 0.3), 0 0 40px rgba(255, 107, 53, 0.1);
+    --shadow-accent-glow: 0 0 20px rgba(0, 217, 255, 0.3), 0 0 40px rgba(0, 217, 255, 0.1);
+
+    /* Spacing scale - More refined */
+    --space-xs: 0.25rem;
+    --space-sm: 0.5rem;
+    --space-md: 1rem;
+    --space-lg: 1.5rem;
+    --space-xl: 2rem;
+    --space-2xl: 3rem;
+    --space-3xl: 4rem;
 
     /* Code highlighting */
     --code-bg: #f8fafc;
@@ -65,32 +88,46 @@
     --code-number: #dc2626;
 }
 
-/* Dark theme overrides */
+/* Dark theme overrides - True OLED aesthetic */
 :root[data-theme="dark"] {
-    --color-bg: #0f1115;
-    --color-surface: #161a22;
-    --color-border: #262b36;
-    --color-text: #e6eaf2;
-    --color-muted: #a6adbb;
-    --color-primary: #7aa2f7;
-    --color-primary-contrast: #0b1020;
-    --color-success: #73daca;
-    --color-warning: #e0af68;
-    --color-danger: #f7768e;
-    --color-info: #7dcfff;
+    --color-bg: #000000;
+    /* Pure OLED black */
+    --color-surface: #0a0a0a;
+    --color-border: #1a1a1a;
+    --color-text: #ffffff;
+    --color-muted: #888888;
+    --color-primary: #ff6b35;
+    /* Keep brand orange */
+    --color-primary-hover: #ff8555;
+    --color-primary-contrast: #000000;
+    --color-accent: #00d9ff;
+    /* Electric cyan pops on OLED */
+    --color-accent-muted: rgba(0, 217, 255, 0.15);
+    --color-success: #00ff88;
+    --color-warning: #ffcc00;
+    --color-danger: #ff4444;
+    --color-info: #44aaff;
 
-    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.2);
-    --shadow-md: 0 6px 16px rgba(0, 0, 0, 0.25);
-    --shadow-lg: 0 14px 30px rgba(0, 0, 0, 0.35);
+    /* OLED-optimized gradients */
+    --gradient-primary: linear-gradient(135deg, #ff6b35 0%, #ff8555 100%);
+    --gradient-accent: linear-gradient(135deg, #00d9ff 0%, #00aacc 100%);
+    --gradient-surface: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+    --gradient-glow: radial-gradient(circle at center, rgba(255, 107, 53, 0.3) 0%, transparent 70%);
 
-    --code-bg: #0b0e14;
-    --code-border: #1b2230;
-    --code-text: #e6eaf2;
-    --code-keyword: #c099ff;
-    --code-string: #a6e3a1;
-    --code-func: #7aa2f7;
-    --code-comment: #6b7280;
-    --code-number: #f8bd96;
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.6);
+    --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.8);
+    --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.9);
+    --shadow-glow: 0 0 30px rgba(255, 107, 53, 0.5), 0 0 60px rgba(255, 107, 53, 0.2);
+    --shadow-accent-glow: 0 0 30px rgba(0, 217, 255, 0.5), 0 0 60px rgba(0, 217, 255, 0.2);
+
+    --code-bg: #000000;
+    --code-border: #1a1a1a;
+    --code-text: #ffffff;
+    --code-keyword: #ff6b35;
+    --code-string: #00ff88;
+    --code-func: #00d9ff;
+    --code-comment: #666666;
+    --code-number: #ffcc00;
 }
 
 /* =============================================================================
@@ -253,16 +290,45 @@ pre code {
 }
 
 .btn-primary {
-    background-color: var(--color-primary);
+    background: var(--gradient-primary);
     color: var(--color-primary-contrast);
-    border-color: var(--color-primary);
-    box-shadow: var(--shadow-sm);
+    border-color: transparent;
+    box-shadow: var(--shadow-md);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-primary::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s ease;
 }
 
 .btn-primary:hover:not(:disabled) {
-    opacity: 0.9;
+    background: var(--color-primary-hover);
+    box-shadow: var(--shadow-glow);
+    transform: translateY(-2px);
+}
+
+.btn-primary:hover:not(:disabled)::before {
+    left: 100%;
+}
+
+.btn-accent {
+    background: var(--gradient-accent);
+    color: var(--color-primary-contrast);
+    border-color: transparent;
     box-shadow: var(--shadow-md);
-    transform: translateY(-1px);
+}
+
+.btn-accent:hover:not(:disabled) {
+    box-shadow: var(--shadow-accent-glow);
+    transform: translateY(-2px);
 }
 
 .btn-outline {
@@ -307,16 +373,57 @@ pre code {
 
 /* Cards */
 .card {
-    background-color: var(--color-bg);
+    background: var(--gradient-surface);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-xl);
     box-shadow: var(--shadow-sm);
-    transition: all 0.3s ease;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: var(--gradient-accent);
+    opacity: 0;
+    transition: opacity 0.3s ease;
 }
 
 .card:hover {
-    box-shadow: var(--shadow-md);
-    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-4px);
+    border-color: var(--color-accent);
+}
+
+.card:hover::before {
+    opacity: 1;
+}
+
+.card-glow {
+    position: relative;
+}
+
+.card-glow::after {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: var(--gradient-primary);
+    border-radius: var(--radius-xl);
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.card-glow:hover::after {
+    opacity: 0.1;
 }
 
 /* Tables */
@@ -376,4 +483,330 @@ pre code {
     background-color: rgba(239, 68, 68, 0.1);
     border-color: var(--color-danger);
     color: var(--color-danger);
+}
+
+/* =
+============================================================================
+   TinyScreen.Studios Brand Components
+   ============================================================================= */
+
+/* Pixel-perfect elements */
+.pixel-border {
+    border: 2px solid var(--color-primary);
+    border-image: repeating-linear-gradient(45deg,
+            var(--color-primary) 0px,
+            var(--color-primary) 2px,
+            transparent 2px,
+            transparent 4px) 2;
+}
+
+/* OLED glow effects */
+.glow-primary {
+    box-shadow: var(--shadow-glow);
+    animation: pulse-glow 2s ease-in-out infinite alternate;
+}
+
+.glow-accent {
+    box-shadow: var(--shadow-accent-glow);
+}
+
+@keyframes pulse-glow {
+    from {
+        box-shadow: var(--shadow-glow);
+    }
+
+    to {
+        box-shadow: 0 0 30px rgba(255, 107, 53, 0.6), 0 0 60px rgba(255, 107, 53, 0.3);
+    }
+}
+
+/* Tiny screen aesthetic elements */
+.screen-frame {
+    background: #1a1a1a;
+    border: 3px solid #333;
+    border-radius: var(--radius-md);
+    padding: var(--space-sm);
+    position: relative;
+}
+
+.screen-frame::before {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 20px;
+    height: 2px;
+    background: #666;
+    border-radius: var(--radius-full);
+}
+
+.screen-content {
+    background: var(--color-bg);
+    border-radius: var(--radius-sm);
+    min-height: 200px;
+    overflow: hidden;
+}
+
+/* Retro terminal styling */
+.terminal {
+    background: #000;
+    color: #00ff00;
+    font-family: var(--font-mono);
+    padding: var(--space-lg);
+    border-radius: var(--radius-md);
+    border: 2px solid #333;
+    position: relative;
+}
+
+.terminal::before {
+    content: '● ● ●';
+    position: absolute;
+    top: var(--space-sm);
+    left: var(--space-sm);
+    color: #666;
+    font-size: var(--font-size-xs);
+}
+
+.terminal-content {
+    margin-top: var(--space-lg);
+}
+
+/* Animated background patterns */
+.bg-circuit {
+    background-image:
+        radial-gradient(circle at 25% 25%, rgba(255, 107, 53, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 75% 75%, rgba(0, 217, 255, 0.1) 0%, transparent 50%);
+    background-size: 100px 100px;
+    animation: circuit-flow 20s linear infinite;
+}
+
+@keyframes circuit-flow {
+    0% {
+        background-position: 0% 0%, 0% 0%;
+    }
+
+    100% {
+        background-position: 100% 100%, -100% -100%;
+    }
+}
+
+/* Status indicators */
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: var(--radius-full);
+    display: inline-block;
+    margin-right: var(--space-sm);
+}
+
+.status-online {
+    background: var(--color-success);
+    box-shadow: 0 0 10px var(--color-success);
+    animation: pulse-dot 2s ease-in-out infinite;
+}
+
+.status-offline {
+    background: var(--color-muted);
+}
+
+@keyframes pulse-dot {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+}
+
+/* Interactive elements */
+.interactive-hover {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+}
+
+.interactive-hover:hover {
+    transform: scale(1.02);
+    filter: brightness(1.1);
+}
+
+/* Typography enhancements */
+.text-gradient {
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 700;
+}
+
+.text-accent-gradient {
+    background: var(--gradient-accent);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 700;
+}
+
+/* Loading states */
+.loading-shimmer {
+    background: linear-gradient(90deg,
+            var(--color-surface) 25%,
+            var(--color-border) 50%,
+            var(--color-surface) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+/* Micro-interactions */
+.bounce-in {
+    animation: bounceIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes bounceIn {
+    0% {
+        opacity: 0;
+        transform: scale(0.3);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1.05);
+    }
+
+    70% {
+        transform: scale(0.9);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.slide-up {
+    animation: slideUp 0.4s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Focus states with brand colors */
+.focus-ring:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--color-accent-muted);
+}
+
+/* Brand-specific utilities */
+.brand-orange {
+    color: var(--color-primary);
+}
+
+.brand-cyan {
+    color: var(--color-accent);
+}
+
+.bg-brand-orange {
+    background-color: var(--color-primary);
+}
+
+.bg-brand-cyan {
+    background-color: var(--color-accent);
+}
+
+/* Responsive glow effects */
+@media (prefers-reduced-motion: no-preference) {
+    .auto-glow:hover {
+        box-shadow: var(--shadow-glow);
+        transition: box-shadow 0.3s ease;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .glow-primary,
+    .auto-glow:hover {
+        animation: none;
+        box-shadow: var(--shadow-md);
+    }
+}
+/*
+ Additional HomePage animations */
+.animate-float {
+    animation: float 6s ease-in-out infinite;
+}
+
+.animate-float-delayed {
+    animation: float 6s ease-in-out 3s infinite;
+}
+
+.animate-float-slow {
+    animation: float 8s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-20px);
+    }
+}
+
+.animate-fade-in {
+    animation: fadeIn 1s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-scale-in {
+    animation: scaleIn 0.5s ease-out;
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Pixelated effect for retro elements */
+.pixelated {
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
 }

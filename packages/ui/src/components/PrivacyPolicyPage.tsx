@@ -6,7 +6,7 @@ import { Navigation } from './Navigation'
 
 export function PrivacyPolicyPage() {
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="min-h-screen flex flex-col">
       {/* Header */}
       <Header />
 
@@ -18,60 +18,75 @@ export function PrivacyPolicyPage() {
             <Navigation currentPage="home" />
           </div>
 
-          {/* Hero Section */}
-          <section className="relative overflow-hidden bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 rounded-3xl mb-8">
-            {/* Light pixel-art inspired background */}
+          {/* Hero Section - OLED Dark Theme */}
+          <section className="relative overflow-hidden rounded-3xl mb-8" style={{
+            background: 'linear-gradient(135deg, #000000 0%, #0a0a0a 50%, #000000 100%)',
+            border: '2px solid var(--color-primary)'
+          }}>
+            {/* OLED pixel grid */}
+            <div className="absolute inset-0 opacity-20" style={{
+              backgroundImage: `
+                linear-gradient(0deg, transparent 24%, rgba(255, 107, 53, 0.05) 25%, rgba(255, 107, 53, 0.05) 26%, transparent 27%, transparent 74%, rgba(255, 107, 53, 0.05) 75%, rgba(255, 107, 53, 0.05) 76%, transparent 77%, transparent),
+                linear-gradient(90deg, transparent 24%, rgba(255, 107, 53, 0.05) 25%, rgba(255, 107, 53, 0.05) 26%, transparent 27%, transparent 74%, rgba(255, 107, 53, 0.05) 75%, rgba(255, 107, 53, 0.05) 76%, transparent 77%, transparent)
+              `,
+              backgroundSize: '4px 4px'
+            }}></div>
+
+            {/* Glowing OLED pixels */}
             <div className="absolute inset-0">
-              {/* Subtle pixel grid pattern */}
-              <div className="absolute inset-0 opacity-30" style={{
-                backgroundImage: `radial-gradient(circle at 1px 1px, var(--color-primary) 1px, transparent 0)`,
-                backgroundSize: '20px 20px'
-              }}></div>
-
-              {/* Floating pixel blocks - light theme */}
-              <div className="absolute top-20 left-10 w-6 h-6 opacity-60 animate-float pixelated" style={{ backgroundColor: 'rgba(99, 102, 241, 0.3)' }}></div>
-              <div className="absolute top-32 right-20 w-4 h-4 opacity-70 animate-float-delayed pixelated" style={{ backgroundColor: 'rgba(139, 92, 246, 0.3)' }}></div>
-              <div className="absolute bottom-40 left-1/4 w-8 h-8 opacity-50 animate-float-slow pixelated" style={{ backgroundColor: 'rgba(59, 130, 246, 0.3)' }}></div>
-              <div className="absolute bottom-20 right-1/3 w-5 h-5 opacity-65 animate-pulse pixelated" style={{ backgroundColor: 'rgba(6, 182, 212, 0.3)' }}></div>
-
-              {/* Light geometric shapes */}
-              <div className="absolute top-1/4 right-1/4 w-32 h-32 rounded-full opacity-40 blur-xl animate-float" style={{ background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.2) 0%, rgba(139, 92, 246, 0.2) 100%)' }}></div>
-              <div className="absolute bottom-1/3 left-1/5 w-24 h-24 rounded-full opacity-50 blur-xl animate-float-delayed" style={{ background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(6, 182, 212, 0.2) 100%)' }}></div>
+              <div className="absolute top-20 left-10 w-2 h-2 glow-primary" style={{ backgroundColor: 'var(--color-primary)' }}></div>
+              <div className="absolute top-32 right-20 w-2 h-2 glow-accent" style={{ backgroundColor: 'var(--color-accent)' }}></div>
+              <div className="absolute bottom-40 left-1/4 w-2 h-2 glow-primary" style={{ backgroundColor: 'var(--color-primary)' }}></div>
+              <div className="absolute bottom-20 right-1/3 w-2 h-2 glow-accent" style={{ backgroundColor: 'var(--color-accent)' }}></div>
             </div>
 
+            {/* Gradient glow effects */}
+            <div className="absolute top-0 left-1/4 w-96 h-96 opacity-30 blur-3xl" style={{ background: 'radial-gradient(circle, var(--color-primary) 0%, transparent 70%)' }}></div>
+            <div className="absolute bottom-0 right-1/4 w-96 h-96 opacity-30 blur-3xl" style={{ background: 'radial-gradient(circle, var(--color-accent) 0%, transparent 70%)' }}></div>
+
             <div className="relative w-full px-4 sm:px-6 lg:px-8">
-              <div className="text-center py-20 lg:py-32">
-                <div className="animate-fade-in">
-                  {/* Clean badge */}
-                  <div className="inline-flex items-center gap-2 px-4 py-2 backdrop-blur-sm rounded-full text-sm font-medium mb-8 shadow-sm" style={{
-                    backgroundColor: 'rgba(255, 255, 255, 0.8)',
-                    border: `1px solid rgba(99, 102, 241, 0.3)`,
-                    color: 'var(--color-primary)'
+              <div className="text-center py-16 lg:py-24">
+                <div className="bounce-in">
+                  {/* OLED badge */}
+                  <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium mb-8" style={{
+                    backgroundColor: 'rgba(255, 107, 53, 0.1)',
+                    border: '1px solid var(--color-primary)',
+                    color: 'var(--color-primary)',
+                    boxShadow: '0 0 20px rgba(255, 107, 53, 0.3)'
                   }}>
                     <SparklesIcon className="w-4 h-4" />
                     Professional OLED Tools
                   </div>
 
-                  <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold mb-6 leading-tight" style={{ color: 'var(--color-text)' }}>
+                  <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 leading-tight text-white">
                     Privacy Policy
                   </h1>
 
-                  <p className="text-lg sm:text-xl lg:text-2xl max-w-4xl mx-auto mb-12 leading-relaxed font-light" style={{ color: 'var(--color-muted)' }}>
-                    Your privacy is important to us with <span style={{ color: 'var(--color-primary)', fontWeight: '600' }}>TinyScreen.Studios</span>. <span style={{ color: '#8b5cf6', fontWeight: '600' }}>Transparent policies</span> for how we handle your data with care and professional tools for embedded developers.
+                  <p className="text-lg sm:text-xl lg:text-2xl max-w-4xl mx-auto mb-12 leading-relaxed" style={{ color: '#888888' }}>
+                    Your privacy is important to us with <span className="brand-orange font-semibold">TinyScreen.Studios</span>. <span className="brand-cyan font-semibold">Transparent policies</span> for how we handle your data with care and professional tools for embedded developers.
                   </p>
 
-                  {/* Feature highlights - clean light style */}
-                  <div className="flex flex-wrap justify-center gap-4 sm:gap-6 text-sm" style={{ color: 'var(--color-muted)' }}>
-                    <div className="flex items-center gap-2 backdrop-blur-sm px-4 py-2 rounded-full shadow-sm" style={{ backgroundColor: 'rgba(255, 255, 255, 0.7)', border: `1px solid rgba(16, 185, 129, 0.3)` }}>
-                      <div className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: 'var(--color-success)' }}></div>
+                  {/* Feature highlights - OLED style */}
+                  <div className="flex flex-wrap justify-center gap-4 sm:gap-6 text-sm text-white">
+                    <div className="flex items-center gap-2 px-4 py-2 rounded-full" style={{
+                      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                      border: '1px solid rgba(255, 255, 255, 0.1)'
+                    }}>
+                      <div className="w-2 h-2 rounded-full" style={{ backgroundColor: 'var(--color-success)' }}></div>
                       Data Protection
                     </div>
-                    <div className="flex items-center gap-2 backdrop-blur-sm px-4 py-2 rounded-full shadow-sm" style={{ backgroundColor: 'rgba(255, 255, 255, 0.7)', border: `1px solid rgba(59, 130, 246, 0.3)` }}>
-                      <div className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: 'var(--color-info)' }}></div>
+                    <div className="flex items-center gap-2 px-4 py-2 rounded-full" style={{
+                      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                      border: '1px solid rgba(255, 255, 255, 0.1)'
+                    }}>
+                      <div className="w-2 h-2 rounded-full" style={{ backgroundColor: 'var(--color-accent)' }}></div>
                       Transparency
                     </div>
-                    <div className="flex items-center gap-2 backdrop-blur-sm px-4 py-2 rounded-full shadow-sm" style={{ backgroundColor: 'rgba(255, 255, 255, 0.7)', border: `1px solid rgba(139, 92, 246, 0.3)` }}>
-                      <div className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: '#8b5cf6' }}></div>
+                    <div className="flex items-center gap-2 px-4 py-2 rounded-full" style={{
+                      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                      border: '1px solid rgba(255, 255, 255, 0.1)'
+                    }}>
+                      <div className="w-2 h-2 rounded-full" style={{ backgroundColor: 'var(--color-primary)' }}></div>
                       User Control
                     </div>
                   </div>
@@ -89,10 +104,10 @@ export function PrivacyPolicyPage() {
                 {/* Data Collection */}
                 <section className="card p-8">
                   <div className="flex items-center gap-3 mb-4">
-                    <EyeIcon className="w-6 h-6 text-indigo-600" />
-                    <h2 className="text-2xl font-semibold text-gray-900">What We Collect</h2>
+                    <EyeIcon className="w-6 h-6 brand-orange" />
+                    <h2 className="text-2xl font-semibold" style={{ color: 'var(--color-text)' }}>What We Collect</h2>
                   </div>
-                  <div className="space-y-4 text-gray-700">
+                  <div className="space-y-4" style={{ color: 'var(--color-muted)' }}>
                     <p>
                       TinyScreen.Studios is designed with privacy in mind. We collect minimal data to provide our services:
                     </p>
@@ -107,10 +122,10 @@ export function PrivacyPolicyPage() {
                 {/* Data Processing */}
                 <section className="card p-8">
                   <div className="flex items-center gap-3 mb-4">
-                    <ServerIcon className="w-6 h-6 text-purple-600" />
-                    <h2 className="text-2xl font-semibold text-gray-900">How We Process Your Data</h2>
+                    <ServerIcon className="w-6 h-6 brand-cyan" />
+                    <h2 className="text-2xl font-semibold" style={{ color: 'var(--color-text)' }}>How We Process Your Data</h2>
                   </div>
-                  <div className="space-y-4 text-gray-700">
+                  <div className="space-y-4" style={{ color: 'var(--color-muted)' }}>
                     <p>
                       Your privacy is our priority. Here's how we handle your data:
                     </p>
@@ -126,10 +141,10 @@ export function PrivacyPolicyPage() {
                 {/* Your Rights */}
                 <section className="card p-8">
                   <div className="flex items-center gap-3 mb-4">
-                    <UserIcon className="w-6 h-6 text-emerald-600" />
-                    <h2 className="text-2xl font-semibold text-gray-900">Your Rights</h2>
+                    <UserIcon className="w-6 h-6" style={{ color: 'var(--color-success)' }} />
+                    <h2 className="text-2xl font-semibold" style={{ color: 'var(--color-text)' }}>Your Rights</h2>
                   </div>
-                  <div className="space-y-4 text-gray-700">
+                  <div className="space-y-4" style={{ color: 'var(--color-muted)' }}>
                     <p>
                       You have full control over your data:
                     </p>
@@ -143,12 +158,14 @@ export function PrivacyPolicyPage() {
                 </section>
 
                 {/* Contact */}
-                <section className="card p-8 bg-gradient-to-r from-indigo-50 to-purple-50">
-                  <h2 className="text-2xl font-semibold text-gray-900 mb-4">Questions?</h2>
-                  <p className="text-gray-700 mb-4">
+                <section className="card p-8" style={{
+                  background: 'linear-gradient(135deg, rgba(255, 107, 53, 0.05) 0%, rgba(0, 217, 255, 0.05) 100%)'
+                }}>
+                  <h2 className="text-2xl font-semibold mb-4" style={{ color: 'var(--color-text)' }}>Questions?</h2>
+                  <p className="mb-4" style={{ color: 'var(--color-muted)' }}>
                     If you have any questions about this privacy policy or how we handle your data, please reach out to us.
                   </p>
-                  <p className="text-gray-600">
+                  <p style={{ color: 'var(--color-muted)' }}>
                     This policy may be updated from time to time. We'll notify users of any significant changes.
                   </p>
                 </section>
