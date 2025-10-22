@@ -4,6 +4,8 @@ import { Header } from './components/Header'
 import { Navigation } from './components/Navigation'
 import { HomePage } from './components/HomePage'
 import { PreviewPage } from './components/PreviewPage'
+import { PrivacyPolicyPage } from './components/PrivacyPolicyPage'
+import { TermsOfServicePage } from './components/TermsOfServicePage'
 import { Footer } from './components/Footer'
 import { ScrollToTop } from './components/ScrollToTop'
 import { useAppStore } from './store/appStore'
@@ -18,6 +20,24 @@ function App() {
 
   // Determine current page based on URL
   const currentPage = location.pathname === '/oled-studio' ? 'preview' : 'home'
+  
+  // Check if we're on a legal page (privacy/terms) to hide navigation
+  const isLegalPage = location.pathname === '/privacy-policy' || location.pathname === '/terms-of-service'
+
+  // Legal pages handle their own layout completely
+  if (isLegalPage) {
+    return (
+      <>
+        <ScrollToTop />
+        <div className={uiConfig.animations.enabled ? "animate-fade-in" : ""}>
+          <Routes>
+            <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+            <Route path="/terms-of-service" element={<TermsOfServicePage />} />
+          </Routes>
+        </div>
+      </>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
@@ -46,7 +66,7 @@ function App() {
       </main>
 
       {/* Footer */}
-      <Footer compact={currentPage === 'preview'} />
+      <Footer />
 
       {/* Processing overlay */}
       {isProcessing && featureFlags.showProcessingOverlay && processingConfig.showOverlay && (

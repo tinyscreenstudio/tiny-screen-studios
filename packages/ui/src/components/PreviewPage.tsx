@@ -1,4 +1,5 @@
 import React from 'react'
+import { SparklesIcon } from '@heroicons/react/24/outline'
 import { OLEDPreviewCanvas } from './OLEDPreviewCanvas'
 import { FileUploadPanel } from './FileUploadPanel'
 import { DeviceSettingsPanel } from './DeviceSettingsPanel'
@@ -7,75 +8,74 @@ import { useAppStore } from '../store/appStore'
 interface PreviewPageProps { }
 
 export function PreviewPage({ }: PreviewPageProps) {
-  const { currentPackedFrames, devicePreset, showExportPanel } = useAppStore()
+  const { currentPackedFrames, showExportPanel } = useAppStore()
   const hasFrames = currentPackedFrames.length > 0
 
   return (
-    <div className="space-y-8">
-      {/* OLED Studio Hero Section */}
-      <div className="relative bg-gradient-to-br from-white via-gray-50 to-indigo-50 rounded-3xl py-16 px-8 shadow-xl overflow-hidden border border-gray-200">
-        {/* Subtle Background Pattern */}
-        <div className="absolute inset-0 opacity-5">
-          <div className="absolute inset-0" style={{
-            backgroundImage: `radial-gradient(circle at 2px 2px, var(--color-primary) 1px, transparent 0)`,
-            backgroundSize: '32px 32px'
+    <>
+      {/* Hero Section */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 rounded-3xl mb-8">
+        {/* Light pixel-art inspired background */}
+        <div className="absolute inset-0">
+          {/* Subtle pixel grid pattern */}
+          <div className="absolute inset-0 opacity-30" style={{
+            backgroundImage: `radial-gradient(circle at 1px 1px, var(--color-primary) 1px, transparent 0)`,
+            backgroundSize: '20px 20px'
           }}></div>
+
+          {/* Floating pixel blocks - light theme */}
+          <div className="absolute top-20 left-10 w-6 h-6 opacity-60 animate-float pixelated" style={{ backgroundColor: 'rgba(99, 102, 241, 0.3)' }}></div>
+          <div className="absolute top-32 right-20 w-4 h-4 opacity-70 animate-float-delayed pixelated" style={{ backgroundColor: 'rgba(139, 92, 246, 0.3)' }}></div>
+          <div className="absolute bottom-40 left-1/4 w-8 h-8 opacity-50 animate-float-slow pixelated" style={{ backgroundColor: 'rgba(59, 130, 246, 0.3)' }}></div>
+          <div className="absolute bottom-20 right-1/3 w-5 h-5 opacity-65 animate-pulse pixelated" style={{ backgroundColor: 'rgba(6, 182, 212, 0.3)' }}></div>
+
+          {/* Light geometric shapes */}
+          <div className="absolute top-1/4 right-1/4 w-32 h-32 rounded-full opacity-40 blur-xl animate-float" style={{ background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.2) 0%, rgba(139, 92, 246, 0.2) 100%)' }}></div>
+          <div className="absolute bottom-1/3 left-1/5 w-24 h-24 rounded-full opacity-50 blur-xl animate-float-delayed" style={{ background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(6, 182, 212, 0.2) 100%)' }}></div>
         </div>
 
-        {/* Subtle Animated Background Elements */}
-        <div className="absolute top-0 right-0 w-96 h-96 rounded-full blur-3xl animate-pulse" style={{ background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%)' }}></div>
-        <div className="absolute bottom-0 left-0 w-80 h-80 rounded-full blur-3xl animate-pulse [animation-delay:1s]" style={{ background: 'linear-gradient(135deg, rgba(6, 182, 212, 0.1) 0%, rgba(59, 130, 246, 0.1) 100%)' }}></div>
-
-        <div className="relative text-center">
-          {/* Hero Content */}
-          <div className="max-w-4xl mx-auto">
-            <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold mb-6 bg-clip-text text-transparent" style={{ background: `linear-gradient(135deg, var(--color-text) 0%, var(--color-primary) 50%, #8b5cf6 100%)`, WebkitBackgroundClip: 'text' }}>
-              OLED Studio
-            </h1>
-            <p className="text-xl md:text-2xl leading-relaxed mb-8 max-w-3xl mx-auto" style={{ color: 'var(--color-muted)' }}>
-              Professional real-time display simulation and conversion tools for embedded OLED displays
-            </p>
-
-            {/* Feature Highlights */}
-            <div className="flex flex-wrap justify-center items-center gap-6 mb-8">
-              <div className="flex items-center gap-2" style={{ color: 'var(--color-muted)' }}>
-                <div className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: 'var(--color-success)' }}></div>
-                <span className="text-sm md:text-base">Real-time Preview</span>
+        <div className="relative w-full px-4 sm:px-6 lg:px-8">
+          <div className="text-center py-20 lg:py-32">
+            <div className="animate-fade-in">
+              {/* Clean badge */}
+              <div className="inline-flex items-center gap-2 px-4 py-2 backdrop-blur-sm rounded-full text-sm font-medium mb-8 shadow-sm" style={{
+                backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                border: `1px solid rgba(99, 102, 241, 0.3)`,
+                color: 'var(--color-primary)'
+              }}>
+                <SparklesIcon className="w-4 h-4" />
+                Professional OLED Tools
               </div>
-              <div className="flex items-center gap-2" style={{ color: 'var(--color-muted)' }}>
-                <div className="w-2 h-2 rounded-full animate-pulse [animation-delay:0.5s]" style={{ backgroundColor: 'var(--color-info)' }}></div>
-                <span className="text-sm md:text-base">Hardware Accurate</span>
-              </div>
-              <div className="flex items-center gap-2" style={{ color: 'var(--color-muted)' }}>
-                <div className="w-2 h-2 rounded-full animate-pulse [animation-delay:1s]" style={{ backgroundColor: '#8b5cf6' }}></div>
-                <span className="text-sm md:text-base">Multiple Formats</span>
-              </div>
-            </div>
 
-            {/* Project Stats */}
-            {hasFrames && (
-              <div className="flex justify-center">
-                <div className="flex items-center gap-6">
-                  <div className="backdrop-blur-sm rounded-xl px-6 py-4 text-center shadow-sm" style={{ 
-                    backgroundColor: 'rgba(255, 255, 255, 0.8)', 
-                    border: `1px solid rgba(99, 102, 241, 0.2)` 
-                  }}>
-                    <div className="text-3xl font-bold" style={{ color: 'var(--color-primary)' }}>{currentPackedFrames.length}</div>
-                    <div className="text-sm" style={{ color: 'var(--color-muted)' }}>Frame{currentPackedFrames.length !== 1 ? 's' : ''}</div>
-                  </div>
-                  <div className="backdrop-blur-sm rounded-xl px-6 py-4 text-center shadow-sm" style={{ 
-                    backgroundColor: 'rgba(255, 255, 255, 0.8)', 
-                    border: `1px solid rgba(139, 92, 246, 0.2)` 
-                  }}>
-                    <div className="text-xl font-bold" style={{ color: '#8b5cf6' }}>{devicePreset}</div>
-                    <div className="text-sm" style={{ color: 'var(--color-muted)' }}>Display</div>
-                  </div>
+              <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold mb-6 leading-tight" style={{ color: 'var(--color-text)' }}>
+                OLED Studio
+              </h1>
+
+              <p className="text-lg sm:text-xl lg:text-2xl max-w-4xl mx-auto mb-12 leading-relaxed font-light" style={{ color: 'var(--color-muted)' }}>
+                Professional real-time display simulation and conversion tools for <span style={{ color: 'var(--color-primary)', fontWeight: '600' }}>embedded OLED</span> displays. <span style={{ color: '#8b5cf6', fontWeight: '600' }}>Hardware accurate</span> tools for embedded developers.
+              </p>
+
+              {/* Feature highlights - clean light style */}
+              <div className="flex flex-wrap justify-center gap-4 sm:gap-6 text-sm" style={{ color: 'var(--color-muted)' }}>
+                <div className="flex items-center gap-2 backdrop-blur-sm px-4 py-2 rounded-full shadow-sm" style={{ backgroundColor: 'rgba(255, 255, 255, 0.7)', border: `1px solid rgba(16, 185, 129, 0.3)` }}>
+                  <div className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: 'var(--color-success)' }}></div>
+                  Real-time Preview
+                </div>
+                <div className="flex items-center gap-2 backdrop-blur-sm px-4 py-2 rounded-full shadow-sm" style={{ backgroundColor: 'rgba(255, 255, 255, 0.7)', border: `1px solid rgba(59, 130, 246, 0.3)` }}>
+                  <div className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: 'var(--color-info)' }}></div>
+                  Hardware Accurate
+                </div>
+                <div className="flex items-center gap-2 backdrop-blur-sm px-4 py-2 rounded-full shadow-sm" style={{ backgroundColor: 'rgba(255, 255, 255, 0.7)', border: `1px solid rgba(139, 92, 246, 0.3)` }}>
+                  <div className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: '#8b5cf6' }}></div>
+                  Multiple Formats
                 </div>
               </div>
-            )}
+            </div>
           </div>
         </div>
-      </div>
+      </section>
+
+      <div className="space-y-8">
 
       {hasFrames ? (
         /* 2-Row Layout: Settings+Preview (top), Export (bottom) */
@@ -170,6 +170,7 @@ export function PreviewPage({ }: PreviewPageProps) {
           </div>
         </div>
       )}
-    </div>
+      </div>
+    </>
   )
 }
