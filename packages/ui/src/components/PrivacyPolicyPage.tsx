@@ -46,49 +46,47 @@ export function PrivacyPolicyPage() {
 
             <div className="relative w-full px-4 sm:px-6 lg:px-8">
               <div className="text-center py-16 lg:py-24">
-                <div className="bounce-in">
-                  {/* OLED badge */}
-                  <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium mb-8" style={{
-                    backgroundColor: 'rgba(255, 107, 53, 0.1)',
-                    border: '1px solid var(--color-primary)',
-                    color: 'var(--color-primary)',
-                    boxShadow: '0 0 20px rgba(255, 107, 53, 0.3)'
+                {/* OLED badge */}
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium mb-8" style={{
+                  backgroundColor: 'rgba(255, 107, 53, 0.1)',
+                  border: '1px solid var(--color-primary)',
+                  color: 'var(--color-primary)',
+                  boxShadow: '0 0 20px rgba(255, 107, 53, 0.3)'
+                }}>
+                  <SparklesIcon className="w-4 h-4" />
+                  Professional OLED Tools
+                </div>
+
+                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 leading-tight text-white">
+                  Privacy Policy
+                </h1>
+
+                <p className="text-lg sm:text-xl lg:text-2xl max-w-4xl mx-auto mb-12 leading-relaxed" style={{ color: '#888888' }}>
+                  Your privacy is important to us with <span className="brand-orange font-semibold">TinyScreen.Studios</span>. <span className="brand-cyan font-semibold">Transparent policies</span> for how we handle your data with care and professional tools for embedded developers.
+                </p>
+
+                {/* Feature highlights - OLED style */}
+                <div className="flex flex-wrap justify-center gap-4 sm:gap-6 text-sm text-white">
+                  <div className="flex items-center gap-2 px-4 py-2 rounded-full" style={{
+                    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                    border: '1px solid rgba(255, 255, 255, 0.1)'
                   }}>
-                    <SparklesIcon className="w-4 h-4" />
-                    Professional OLED Tools
+                    <div className="w-2 h-2 rounded-full" style={{ backgroundColor: 'var(--color-success)' }}></div>
+                    Data Protection
                   </div>
-
-                  <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 leading-tight text-white">
-                    Privacy Policy
-                  </h1>
-
-                  <p className="text-lg sm:text-xl lg:text-2xl max-w-4xl mx-auto mb-12 leading-relaxed" style={{ color: '#888888' }}>
-                    Your privacy is important to us with <span className="brand-orange font-semibold">TinyScreen.Studios</span>. <span className="brand-cyan font-semibold">Transparent policies</span> for how we handle your data with care and professional tools for embedded developers.
-                  </p>
-
-                  {/* Feature highlights - OLED style */}
-                  <div className="flex flex-wrap justify-center gap-4 sm:gap-6 text-sm text-white">
-                    <div className="flex items-center gap-2 px-4 py-2 rounded-full" style={{
-                      backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                      border: '1px solid rgba(255, 255, 255, 0.1)'
-                    }}>
-                      <div className="w-2 h-2 rounded-full" style={{ backgroundColor: 'var(--color-success)' }}></div>
-                      Data Protection
-                    </div>
-                    <div className="flex items-center gap-2 px-4 py-2 rounded-full" style={{
-                      backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                      border: '1px solid rgba(255, 255, 255, 0.1)'
-                    }}>
-                      <div className="w-2 h-2 rounded-full" style={{ backgroundColor: 'var(--color-accent)' }}></div>
-                      Transparency
-                    </div>
-                    <div className="flex items-center gap-2 px-4 py-2 rounded-full" style={{
-                      backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                      border: '1px solid rgba(255, 255, 255, 0.1)'
-                    }}>
-                      <div className="w-2 h-2 rounded-full" style={{ backgroundColor: 'var(--color-primary)' }}></div>
-                      User Control
-                    </div>
+                  <div className="flex items-center gap-2 px-4 py-2 rounded-full" style={{
+                    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                    border: '1px solid rgba(255, 255, 255, 0.1)'
+                  }}>
+                    <div className="w-2 h-2 rounded-full" style={{ backgroundColor: 'var(--color-accent)' }}></div>
+                    Transparency
+                  </div>
+                  <div className="flex items-center gap-2 px-4 py-2 rounded-full" style={{
+                    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                    border: '1px solid rgba(255, 255, 255, 0.1)'
+                  }}>
+                    <div className="w-2 h-2 rounded-full" style={{ backgroundColor: 'var(--color-primary)' }}></div>
+                    User Control
                   </div>
                 </div>
               </div>

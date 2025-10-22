@@ -31,14 +31,14 @@ export function HomePage() {
           backgroundSize: '4px 4px'
         }}></div>
 
-        {/* Glowing OLED pixels */}
+        {/* Simple glowing pixels */}
         <div className="absolute inset-0">
-          <div className="absolute top-20 left-10 w-2 h-2 glow-primary" style={{ backgroundColor: 'var(--color-primary)' }}></div>
-          <div className="absolute top-32 right-20 w-2 h-2 glow-accent" style={{ backgroundColor: 'var(--color-accent)' }}></div>
-          <div className="absolute bottom-40 left-1/4 w-2 h-2 glow-primary" style={{ backgroundColor: 'var(--color-primary)' }}></div>
-          <div className="absolute bottom-20 right-1/3 w-2 h-2 glow-accent" style={{ backgroundColor: 'var(--color-accent)' }}></div>
-          <div className="absolute top-1/2 left-1/5 w-2 h-2 glow-primary" style={{ backgroundColor: 'var(--color-primary)' }}></div>
-          <div className="absolute top-1/3 right-1/4 w-2 h-2 glow-accent" style={{ backgroundColor: 'var(--color-accent)' }}></div>
+          <div className="absolute top-20 left-10 w-2 h-2 animate-pulse" style={{ backgroundColor: 'var(--color-primary)' }}></div>
+          <div className="absolute top-32 right-20 w-2 h-2 animate-pulse" style={{ backgroundColor: 'var(--color-accent)', animationDelay: '0.5s' }}></div>
+          <div className="absolute bottom-40 left-1/4 w-2 h-2 animate-pulse" style={{ backgroundColor: 'var(--color-primary)', animationDelay: '1s' }}></div>
+          <div className="absolute bottom-20 right-1/3 w-2 h-2 animate-pulse" style={{ backgroundColor: 'var(--color-accent)', animationDelay: '1.5s' }}></div>
+          <div className="absolute top-1/2 left-1/5 w-2 h-2 animate-pulse" style={{ backgroundColor: 'var(--color-primary)', animationDelay: '2s' }}></div>
+          <div className="absolute top-1/3 right-1/4 w-2 h-2 animate-pulse" style={{ backgroundColor: 'var(--color-accent)', animationDelay: '2.5s' }}></div>
         </div>
 
         {/* Gradient glow effects */}
@@ -47,77 +47,75 @@ export function HomePage() {
 
         <div className="relative w-full px-4 sm:px-6 lg:px-8">
           <div className="text-center py-20 lg:py-32">
-            <div className="bounce-in">
-              {/* Maker badge */}
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium mb-8" style={{
-                backgroundColor: 'rgba(255, 107, 53, 0.1)',
-                border: '1px solid var(--color-primary)',
-                color: 'var(--color-primary)',
-                boxShadow: '0 0 20px rgba(255, 107, 53, 0.3)'
+            {/* Maker badge */}
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium mb-8 animate-pulse-slow" style={{
+              backgroundColor: 'rgba(255, 107, 53, 0.1)',
+              border: '1px solid var(--color-primary)',
+              color: 'var(--color-primary)',
+              boxShadow: '0 0 20px rgba(255, 107, 53, 0.3)'
+            }}>
+              <BoltIcon className="w-4 h-4 animate-pulse" />
+              Made for Makers & Hackers
+            </div>
+
+            <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold mb-6 leading-tight text-white">
+              Figma for
+              <span className="block text-gradient" style={{
+                background: 'linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text'
               }}>
-                <BoltIcon className="w-4 h-4" />
-                Made for Makers & Hackers
+                1-bit OLEDs
+              </span>
+            </h1>
+
+            <p className="text-lg sm:text-xl lg:text-2xl max-w-4xl mx-auto mb-12 leading-relaxed" style={{ color: '#888888' }}>
+              Turn your pixel art into <span className="brand-orange font-semibold">hardware-ready code</span> for tiny displays.
+              Built for custom keyboards, IoT dashboards, and embedded projects that <span className="brand-cyan font-semibold">glow in the dark</span>.
+            </p>
+
+            <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center">
+              <button
+                onClick={handleNavigateToPreview}
+                className="btn btn-primary group px-8 py-4 text-lg flex items-center gap-3"
+              >
+                <CubeIcon className="w-5 h-5 group-hover:rotate-12 transition-transform duration-300" />
+                <span>Launch Studio</span>
+                <ArrowRightIcon className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
+              </button>
+
+              <button className="btn btn-outline group px-8 py-4 text-lg" style={{
+                backgroundColor: 'rgba(0, 217, 255, 0.05)',
+                borderColor: 'var(--color-accent)',
+                color: 'var(--color-accent)'
+              }}>
+                <span className="group-hover:opacity-80 transition-opacity duration-300">Browse Gallery</span>
+              </button>
+            </div>
+
+            {/* Status indicators - OLED style */}
+            <div className="flex flex-wrap justify-center gap-4 sm:gap-6 mt-16 text-sm text-white">
+              <div className="flex items-center gap-2 px-4 py-2 rounded-full" style={{
+                backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                border: '1px solid rgba(255, 255, 255, 0.1)'
+              }}>
+                <div className="status-dot status-online"></div>
+                Zero Install
               </div>
-
-              <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold mb-6 leading-tight text-white">
-                Figma for
-                <span className="block text-gradient" style={{
-                  background: 'linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  backgroundClip: 'text'
-                }}>
-                  1-bit OLEDs
-                </span>
-              </h1>
-
-              <p className="text-lg sm:text-xl lg:text-2xl max-w-4xl mx-auto mb-12 leading-relaxed" style={{ color: '#888888' }}>
-                Turn your pixel art into <span className="brand-orange font-semibold">hardware-ready code</span> for tiny displays.
-                Built for custom keyboards, IoT dashboards, and embedded projects that <span className="brand-cyan font-semibold">glow in the dark</span>.
-              </p>
-
-              <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center">
-                <button
-                  onClick={handleNavigateToPreview}
-                  className="btn btn-primary group px-8 py-4 text-lg flex items-center gap-3"
-                >
-                  <CubeIcon className="w-5 h-5" />
-                  <span>Launch Studio</span>
-                  <ArrowRightIcon className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
-                </button>
-
-                <button className="btn btn-outline group px-8 py-4 text-lg" style={{
-                  backgroundColor: 'rgba(0, 217, 255, 0.05)',
-                  borderColor: 'var(--color-accent)',
-                  color: 'var(--color-accent)'
-                }}>
-                  <span className="group-hover:opacity-80 transition-opacity duration-300">Browse Gallery</span>
-                </button>
+              <div className="flex items-center gap-2 px-4 py-2 rounded-full" style={{
+                backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                border: '1px solid rgba(255, 255, 255, 0.1)'
+              }}>
+                <div className="status-dot status-online"></div>
+                Pixel Perfect
               </div>
-
-              {/* Status indicators - OLED style */}
-              <div className="flex flex-wrap justify-center gap-4 sm:gap-6 mt-16 text-sm text-white">
-                <div className="flex items-center gap-2 px-4 py-2 rounded-full" style={{
-                  backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                  border: '1px solid rgba(255, 255, 255, 0.1)'
-                }}>
-                  <div className="status-dot status-online"></div>
-                  Zero Install
-                </div>
-                <div className="flex items-center gap-2 px-4 py-2 rounded-full" style={{
-                  backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                  border: '1px solid rgba(255, 255, 255, 0.1)'
-                }}>
-                  <div className="status-dot status-online"></div>
-                  Pixel Perfect
-                </div>
-                <div className="flex items-center gap-2 px-4 py-2 rounded-full" style={{
-                  backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                  border: '1px solid rgba(255, 255, 255, 0.1)'
-                }}>
-                  <div className="status-dot status-online"></div>
-                  Export Ready
-                </div>
+              <div className="flex items-center gap-2 px-4 py-2 rounded-full" style={{
+                backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                border: '1px solid rgba(255, 255, 255, 0.1)'
+              }}>
+                <div className="status-dot status-online"></div>
+                Export Ready
               </div>
             </div>
           </div>
@@ -136,7 +134,7 @@ export function HomePage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <div className="group card card-glow p-8 text-center slide-up interactive-hover">
-              <div className="screen-frame mx-auto mb-6 w-20 h-20 flex items-center justify-center">
+              <div className="screen-frame mx-auto mb-6 w-20 h-20 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                 <PhotoIcon className="w-10 h-10 brand-orange" />
               </div>
               <h3 className="text-xl font-semibold mb-4 brand-orange">Drag & Drop Magic</h3>
@@ -146,8 +144,8 @@ export function HomePage() {
             </div>
 
             <div className="group card card-glow p-8 text-center slide-up interactive-hover" style={{ animationDelay: '0.1s' }}>
-              <div className="terminal mx-auto mb-6 w-20 h-20 flex items-center justify-center relative">
-                <CodeBracketIcon className="w-10 h-10" style={{ color: '#00ff00' }} />
+              <div className="terminal mx-auto mb-6 w-20 h-20 flex items-center justify-center relative group-hover:scale-110 transition-transform duration-300">
+                <CodeBracketIcon className="w-10 h-10 brand-cyan" />
               </div>
               <h3 className="text-xl font-semibold mb-4 brand-cyan">Code Export</h3>
               <p className="leading-relaxed" style={{ color: 'var(--color-muted)' }}>
@@ -156,8 +154,8 @@ export function HomePage() {
             </div>
 
             <div className="group card card-glow p-8 text-center slide-up interactive-hover" style={{ animationDelay: '0.2s' }}>
-              <div className="mx-auto mb-6 w-20 h-20 flex items-center justify-center rounded-2xl glow-primary" style={{ backgroundColor: 'var(--color-primary)' }}>
-                <BoltIcon className="w-10 h-10 text-white" />
+              <div className="mx-auto mb-6 w-20 h-20 flex items-center justify-center rounded-2xl group-hover:scale-110 transition-transform duration-300" style={{ backgroundColor: 'var(--color-primary)' }}>
+                <BoltIcon className="w-10 h-10 text-white group-hover:rotate-12 transition-transform duration-300" />
               </div>
               <h3 className="text-xl font-semibold mb-4" style={{ color: 'var(--color-text)' }}>Live OLED Preview</h3>
               <p className="leading-relaxed" style={{ color: 'var(--color-muted)' }}>
@@ -221,12 +219,12 @@ export function HomePage() {
                 border: `1px solid ${device.borderColor}`,
                 transition: 'all 0.3s ease'
               }}>
-                <div className="w-20 h-20 mx-auto mb-6 rounded-2xl flex items-center justify-center relative" style={{
+                <div className="w-20 h-20 mx-auto mb-6 rounded-2xl flex items-center justify-center relative group-hover:scale-110 transition-transform duration-300 animate-pulse-slow" style={{
                   backgroundColor: device.bgColor,
                   border: `2px solid ${device.borderColor}`,
                   boxShadow: `0 0 20px ${device.glowColor}`
                 }}>
-                  <CpuChipIcon className="w-10 h-10" style={{ color: device.color }} />
+                  <CpuChipIcon className="w-10 h-10 group-hover:rotate-12 transition-transform duration-300" style={{ color: device.color }} />
                   <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity" style={{
                     background: `radial-gradient(circle at center, ${device.glowColor}, transparent)`
                   }}></div>

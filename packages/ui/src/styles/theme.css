@@ -394,16 +394,6 @@ pre code {
     transition: opacity 0.3s ease;
 }
 
-.card:hover {
-    box-shadow: var(--shadow-lg);
-    transform: translateY(-4px);
-    border-color: var(--color-accent);
-}
-
-.card:hover::before {
-    opacity: 1;
-}
-
 .card-glow {
     position: relative;
 }
