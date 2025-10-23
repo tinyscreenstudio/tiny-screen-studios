@@ -1,20 +1,20 @@
-# 🖥️ Tiny Screen Studios
+# Tiny Screen Studios
 
 > Professional toolkit for converting pixel art and animations to embedded display formats
 
-Tiny Screen Studios is a powerful web-based application for converting pixel art and animations into formats optimized for tiny embedded displays like SSD1306 and SH1106 OLED screens. Designed for professionals working with Arduino projects, IoT devices, and embedded systems.
+Tiny Screen Studios is a powerful web-based application for converting pixel art and animations into formats optimized for tiny embedded displays like SSD1306 and SH1106 OLED screens. Built for developers working with Arduino projects, IoT devices, and embedded systems.
 
-## ✨ Features
+## Features
 
-- 🎨 **Professional Image Conversion** - Transform pixel art into optimized monochrome formats
-- 🎬 **Animation Processing** - Handle PNG sequences with frame timing and ordering
-- 📱 **Multi-Display Support** - Compatible with SSD1306, SH1106, and custom display configurations
-- 🔧 **Developer Integration** - TypeScript library for programmatic use
-- 🌐 **Web Application** - Intuitive browser-based interface
-- ⚡ **High Performance** - Optimized processing for large files and batch operations
-- 📦 **Flexible Export** - Multiple output formats including C arrays and binary files
+- **Professional Image Conversion** - Transform pixel art into optimized monochrome formats
+- **Animation Processing** - Handle PNG sequences with frame timing and ordering
+- **Multi-Display Support** - Compatible with SSD1306, SH1106, and custom display configurations
+- **Developer Integration** - TypeScript library for programmatic use
+- **Web Application** - Intuitive browser-based interface
+- **High Performance** - Optimized processing for large files and batch operations
+- **Flexible Export** - Multiple output formats including C arrays and binary files
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Web Application
 
@@ -43,7 +43,7 @@ pnpm install
 pnpm dev
 ```
 
-## 📦 Architecture
+## Architecture
 
 This is a monorepo containing two main packages:
 
@@ -56,12 +56,14 @@ Headless TypeScript library providing:
 - Export functionality
 - Validation and error handling
 
-### Web Interface (`@tiny-screen-studios/ui`)- Web-based user interface for image conversion and display configuration
+### Web Interface (`@tiny-screen-studios/ui`)
+
+Web-based user interface for image conversion and display configuration
 - Built with React and TypeScript
 - Utilizes the core library for processing and exporting
 - Supports drag-and-drop image upload and display configuration
 
-## 🛠️ Development
+## Development
 
 ### Build Commands
 
@@ -83,7 +85,7 @@ pnpm lint
 pnpm format
 ```
 
-## 🎯 Supported Displays
+## Supported Displays
 
 | Display | Resolution     | Notes                                      |
 | ------- | -------------- | ------------------------------------------ |
@@ -91,7 +93,7 @@ pnpm format
 | SH1106  | 128×64         | Similar to SSD1306 with slight differences |
 | Custom  | Any size       | Define your own display parameters         |
 
-## 🔧 Technical Specifications
+## Technical Specifications
 
 ### Input Formats
 - PNG images (single or sequences)
@@ -116,13 +118,13 @@ pnpm format
 - Typed array optimizations
 - Progress tracking and validation
 
-## 📄 License
+## License
 
 This project is proprietary software. All rights reserved.
 
-## 📞 Support
+## Support
 
 For technical support and inquiries:
 
-- 📚 [Documentation](docs/)
-- 🌐 Website: [tinyscreen.studio](https://tinyscreen.studio)
+- [Documentation](docs/)
+- Website: [tinyscreen.studio](https://tinyscreen.studio)

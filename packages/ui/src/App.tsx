@@ -1,15 +1,17 @@
 import React from 'react'
-import { Routes, Route, useLocation } from 'react-router-dom'
+import { Routes, Route, useLocation, Navigate } from 'react-router-dom'
 import { Header } from './components/Header'
 import { Navigation } from './components/Navigation'
 import { HomePage } from './components/HomePage'
 import { PreviewPage } from './components/PreviewPage'
+import { DocumentationPage } from './components/DocumentationPage'
 import { PrivacyPolicyPage } from './components/PrivacyPolicyPage'
 import { TermsOfServicePage } from './components/TermsOfServicePage'
 import { Footer } from './components/Footer'
 import { ScrollToTop } from './components/ScrollToTop'
 import { useAppStore } from './store/appStore'
 import { useFeatureFlags, useProcessingConfig, useUIConfig } from './hooks/useAppConfig'
+import { useDocumentationPreloader } from './hooks/useDocumentationPreloader'
 
 function App() {
   const location = useLocation()
@@ -17,6 +19,9 @@ function App() {
   const featureFlags = useFeatureFlags()
   const processingConfig = useProcessingConfig()
   const uiConfig = useUIConfig()
+  
+  // Initialize documentation preloading
+  useDocumentationPreloader()
 
   // Determine current page based on URL
   const currentPage = location.pathname === '/oled-studio' ? 'preview' : 'home'
@@ -60,6 +65,9 @@ function App() {
             <Routes>
               <Route path="/" element={<HomePage />} />
               <Route path="/oled-studio" element={<PreviewPage />} />
+              <Route path="/docs" element={<Navigate to="/docs/getting-started" replace />} />
+              <Route path="/docs/:section" element={<DocumentationPage />} />
+              <Route path="/docs/:section/:topic" element={<DocumentationPage />} />
             </Routes>
           </div>
         </div>

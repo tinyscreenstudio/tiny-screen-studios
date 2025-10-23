@@ -16,6 +16,7 @@ export default defineConfig({
     sourcemap: true,
     target: 'es2022',
     assetsDir: 'assets',
+    copyPublicDir: true,
   },
   server: {
     port: 3000,
@@ -30,6 +31,7 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'jsdom',
-    setupFiles: [],
+    setupFiles: ['./src/test-setup.ts'],
   },
+  assetsInclude: ['**/*.md'],
 });

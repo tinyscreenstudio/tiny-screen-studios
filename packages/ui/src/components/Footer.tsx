@@ -82,10 +82,10 @@ export function Footer({ compact = false }: FooterProps) {
                 </Link>
               </li>
               <li>
-                <a href="#" className="transition-colors flex items-center gap-2" style={{ color: 'var(--color-muted)' }} onMouseEnter={(e) => e.currentTarget.style.color = 'var(--color-primary)'} onMouseLeave={(e) => e.currentTarget.style.color = 'var(--color-muted)'}>
+                <Link to="/docs" className="transition-colors flex items-center gap-2" style={{ color: 'var(--color-muted)' }} onMouseEnter={(e) => e.currentTarget.style.color = 'var(--color-primary)'} onMouseLeave={(e) => e.currentTarget.style.color = 'var(--color-muted)'}>
                   <DocumentTextIcon className="w-4 h-4" />
                   Documentation
-                </a>
+                </Link>
               </li>
               <li>
                 <a href="#" className="transition-colors flex items-center gap-2" style={{ color: 'var(--color-muted)' }} onMouseEnter={(e) => e.currentTarget.style.color = 'var(--color-primary)'} onMouseLeave={(e) => e.currentTarget.style.color = 'var(--color-muted)'}>

@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import url('https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -469,6 +470,81 @@
     background-color: #1f2937;
     color: #ffffff;
     border: 1px solid #374151;
+  }
+
+  /* Syntax highlighting overrides for markdown */
+  .prose pre {
+    background-color: #f8f9fa !important;
+    border: 1px solid #e9ecef;
+    border-radius: var(--radius-lg);
+    padding: 1rem;
+    overflow-x: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+
+  .prose code {
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .prose pre code {
+    background-color: transparent !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+    font-size: inherit;
+  }
+
+  /* Highlight.js theme customization */
+  .hljs {
+    background: #f8f9fa !important;
+    color: #24292e;
+  }
+
+  .hljs-comment,
+  .hljs-quote {
+    color: #6a737d;
+    font-style: italic;
+  }
+
+  .hljs-keyword,
+  .hljs-selector-tag,
+  .hljs-type {
+    color: #d73a49;
+  }
+
+  .hljs-string,
+  .hljs-doctag {
+    color: #032f62;
+  }
+
+  .hljs-title,
+  .hljs-section,
+  .hljs-selector-id {
+    color: #6f42c1;
+    font-weight: 600;
+  }
+
+  .hljs-subst {
+    color: #24292e;
+  }
+
+  .hljs-number,
+  .hljs-literal,
+  .hljs-variable,
+  .hljs-template-variable,
+  .hljs-tag .hljs-attr {
+    color: #005cc5;
+  }
+
+  .hljs-built_in,
+  .hljs-builtin-name {
+    color: #e36209;
+  }
+
+  .hljs-attr,
+  .hljs-attribute {
+    color: #6f42c1;
   }
 }
 
