@@ -19,7 +19,6 @@ const docSections = [
     icon: PlayIcon,
     description: 'Quick start guide and basic concepts',
     items: [
-      { id: 'overview', title: 'Overview', path: '/docs/getting-started' },
       { id: 'first-image', title: 'Your First Image', path: '/docs/getting-started/first-image' },
       { id: 'arduino-setup', title: 'Arduino Setup', path: '/docs/getting-started/arduino' }
     ]

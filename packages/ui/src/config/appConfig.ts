@@ -106,6 +106,14 @@ export const defaultConfig: AppConfig = {
       enabled: true,
       order: 2,
     },
+    {
+      id: 'docs',
+      label: 'Documentation',
+      path: '/docs',
+      icon: 'DocumentIcon',
+      enabled: true,
+      order: 3,
+    },
   ],
 
   header: {

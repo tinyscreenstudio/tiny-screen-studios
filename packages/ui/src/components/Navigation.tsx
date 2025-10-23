@@ -1,16 +1,17 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
-import { HomeIcon, EyeIcon } from '@heroicons/react/24/outline'
+import { HomeIcon, EyeIcon, DocumentIcon } from '@heroicons/react/24/outline'
 import { useNavigationConfig } from '../hooks/useAppConfig'
 
 interface NavigationProps {
-  currentPage: 'home' | 'preview'
+  currentPage: 'home' | 'preview' | 'docs'
 }
 
 // Icon mapping for dynamic icon rendering
 const iconMap = {
   HomeIcon,
   EyeIcon,
+  DocumentIcon,
 }
 
 export function Navigation({ currentPage }: NavigationProps) {
@@ -27,7 +28,8 @@ export function Navigation({ currentPage }: NavigationProps) {
         {navigationItems.map((item) => {
           const IconComponent = iconMap[item.icon as keyof typeof iconMap]
           const isActive = (currentPage === 'home' && item.path === '/') || 
-                          (currentPage === 'preview' && item.path === '/oled-studio')
+                          (currentPage === 'preview' && item.path === '/oled-studio') ||
+                          (currentPage === 'docs' && item.path === '/docs')
           
           return (
             <button

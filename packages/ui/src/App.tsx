@@ -24,7 +24,8 @@ function App() {
   useDocumentationPreloader()
 
   // Determine current page based on URL
-  const currentPage = location.pathname === '/oled-studio' ? 'preview' : 'home'
+  const currentPage = location.pathname === '/oled-studio' ? 'preview' : 
+                     location.pathname.startsWith('/docs') ? 'docs' : 'home'
   
   // Check if we're on a legal page (privacy/terms) to hide navigation
   const isLegalPage = location.pathname === '/privacy-policy' || location.pathname === '/terms-of-service'
