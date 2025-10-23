@@ -1,71 +1,116 @@
 # Export & Integration Guide
 
-Tiny Screen Studios exports your processed pixel art and animations into **firmware-ready** formats.
+Tiny Screen Studios exports your processed pixel art and animations into **firmware-ready** formats for embedded displays.
 
-This guide explains each export option, where to use it, and how to extend it (CircuitPython, Rust, QMK, etc.).
+This guide will help you understand how the export system works and how to integrate your graphics into various platforms.
 
----
 
-## 1. Overview
+## What Gets Exported
 
-### Export Controls
+When you export your pixel art or animation, Tiny Screen Studios converts it into a format that's ready to use on SSD1306/SH1106 OLED displays. The data is already **device-packed** in the exact memory layout these displays expect.
 
-* **Symbol Name** – Identifier used in generated code (e.g., `display_data`)
-* **Bytes per Row** – Formatting width for hex output (cosmetic only)
-* **Separate Arrays** – One array per frame instead of a combined array
-* **Include Metadata** – Adds comments describing preset, bytes per frame, FPS, and bit layout
+### Understanding the Data Format
 
-### Available Formats
+Your graphics are exported in **SSD1306 page/column format**:
 
-| Format                  | Output                        | Typical Use                             |
+- **Pages** – Groups of 8 vertical pixels (each byte = one column in a page)
+- **Columns** – Left-to-right byte order within each page
+- **Bits** – bit0 = top pixel (LSB-Top layout)
+- **Polarity** – 1 = pixel ON (white)
+
+This means you can send the exported data directly to your display without any conversion or repacking.
+
+### Example Metadata
+
+Each export includes metadata describing the format:
+
+```
+Preset: SSD1306 128×32
+Layout: Pages Top→Down · Columns Left→Right · Bits LSB-Top · ON=1
+Bytes per Frame: 512
+```
+
+> **Note:** If your display driver expects a different format (e.g., HLSB), you'll be able to normalize the layout in a future update.
+
+
+## Export Configuration Options
+
+Before exporting, you can configure several options to match your project needs:
+
+### Symbol Name
+
+The identifier used in generated C code (e.g., `display_data`, `my_animation`). This becomes the variable name in your firmware.
+
+### Bytes per Row
+
+Controls how many bytes appear per line in hex output. This is purely cosmetic and doesn't affect functionality—use it to make the generated code more readable.
+
+### Separate Arrays
+
+- **Enabled**: Creates one array per frame (`frame_0[]`, `frame_1[]`, etc.)
+- **Disabled**: Combines all frames into a single array
+
+Choose based on whether you want to access frames individually or iterate through a combined buffer.
+
+### Include Metadata
+
+Adds helpful comments to the generated code describing:
+- Display preset (e.g., SSD1306 128×32)
+- Bytes per frame
+- Frame rate (FPS)
+- Bit layout details
+
+Recommended for documentation and future reference.
+
+
+## Available Export Formats
+
+Choose the format that best matches your development environment:
+
+| Format                  | Output                        | Best For                                |
 | ----------------------- | ----------------------------- | --------------------------------------- |
 | **C Array (.c)**        | Single `.c` file with arrays  | QMK, Arduino, Adafruit-GFX, LVGL        |
 | **C Files (.c + .h)**   | Header + implementation       | Modular firmware projects               |
 | **Raw Binary (.bin)**   | One `.bin` per frame          | CircuitPython, Rust, MicroPython        |
 | **Concatenated (.bin)** | Single binary with all frames | Streaming or `include_bytes!` workflows |
 
-> All exports are **device-packed** (SSD1306 page/column order, LSB-top bits). No repacking required for typical SSD1306/SH1106 displays.
+### C Array (.c)
 
----
+A single C file containing all frame data as arrays. Quick and simple for small projects.
 
-## 2. Bit Layout
+### C Files (.c + .h)
 
-**Example metadata badge**
+Separate header and implementation files. Better for larger projects where you want clean separation and can include the header in multiple source files.
 
-Preset: SSD1306 128×32
-Layout: Pages Top→Down · Columns Left→Right · Bits LSB-Top · ON=1
-Bytes per Frame: 512
+### Raw Binary (.bin)
 
-**Terminology**
+Individual binary files for each frame. Perfect for dynamic languages like Python where you can read files at runtime.
 
-* **Pages** – Groups of 8 vertical pixels (each byte = one column in a page)
-* **Columns** – Left-to-right byte order within each page
-* **Bits** – bit0 = top pixel (LSB-Top layout)
-* **Polarity** – 1 = pixel ON (white)
+### Concatenated (.bin)
 
-If your display driver expects a different format (e.g., HLSB), you'll be able to normalize layout in a future update.
+All frames in a single binary file. Ideal for Rust's `include_bytes!` macro or when you want to stream frame data sequentially.
 
----
 
-## 3. Choosing the Right Export
+## Choosing the Right Format
 
-| Target Environment            | Recommended Export           |
-| ----------------------------- | ---------------------------- |
-| QMK / ZMK firmware            | C Array or C Files (.c + .h) |
-| Arduino + Adafruit-GFX / U8g2 | C Array / C Files            |
-| CircuitPython / MicroPython   | Raw Binary (.bin)            |
-| Rust (embedded-graphics)      | Concatenated `.bin`          |
-| Desktop Tools                 | Raw or Concatenated `.bin`   |
+Pick your export format based on what you're building:
 
----
+| What You're Building              | Recommended Format           | Why                                                    |
+| --------------------------------- | ---------------------------- | ------------------------------------------------------ |
+| QMK / ZMK keyboard firmware       | C Array or C Files (.c + .h) | Integrates directly with OLED driver APIs              |
+| Arduino + Adafruit-GFX / U8g2     | C Array or C Files           | Works with `drawBitmap()` and similar functions        |
+| CircuitPython / MicroPython       | Raw Binary (.bin)            | Easy to load with `open()` and `framebuf`              |
+| Rust embedded (embedded-graphics) | Concatenated (.bin)          | Use with `include_bytes!` macro for zero-cost includes |
+| Desktop tools / testing           | Raw or Concatenated (.bin)   | Universal format, easy to parse                        |
 
-## 4. Usage Examples
 
-Below are example integrations for common environments.
+## Integration Examples
 
-Replace values such as `WIDTH`, `HEIGHT`, `FRAME_BYTES`, and symbol names with those from your export header.
+Here's how to use your exported graphics in different environments.
 
-### 4.1 QMK (C Arrays)
+> **Note:** Replace `WIDTH`, `HEIGHT`, `FRAME_BYTES`, and symbol names with values from your export.
+
+### QMK Keyboard Firmware
 
 ```c
 #include "quantum.h"
@@ -87,7 +132,7 @@ bool oled_task_user(void) {
 }
 ```
 
-### 4.2 Arduino (Adafruit-GFX)
+### Arduino with Adafruit-GFX
 
 ```cpp
 #include <Adafruit_GFX.h>
@@ -106,7 +151,7 @@ void setup() {
 void loop() {}
 ```
 
-### 4.3 CircuitPython
+### CircuitPython
 
 ```python
 import board, busio
@@ -127,7 +172,7 @@ display.blit(fb, 0, 0)
 display.show()
 ```
 
-### 4.4 MicroPython
+### MicroPython
 
 ```python
 from machine import I2C, Pin
@@ -145,7 +190,7 @@ oled.blit(fb, 0, 0)
 oled.show()
 ```
 
-### 4.5 Rust (embedded-graphics + ssd1306)
+### Rust with embedded-graphics
 
 ```rust
 use embedded_graphics::image::{Image, ImageRaw};
@@ -166,78 +211,35 @@ where
 }
 ```
 
----
+## Troubleshooting
 
-## 5. Zip Export (Recommended)
+| Issue                  | Likely Cause                                                    | Solution                                                      |
+| ---------------------- | --------------------------------------------------------------- | ------------------------------------------------------------- |
+| Image appears inverted | Polarity mismatch                                               | Enable *Invert Output* in export settings or flip in code     |
+| Garbled display        | Bit-layout mismatch                                             | Verify driver expects MONO_VLSB format (not row-major)        |
+| Nothing shows          | Display not initialized or wrong address                        | Check I²C/SPI address, init sequence, contrast, and frame size |
+| Partial image          | Buffer size mismatch                                            | Verify `FRAME_BYTES` matches your display dimensions          |
 
-Each export can optionally include a **Zip package** containing:
 
-```
-/display_data.c
-/display_data.h
-/frames/
-    frame_000.bin ... frame_NNN.bin
-/preview.gif
-manifest.json
-README_TARGET.md
-```
+## Quality & Safety Features
 
-### Example manifest.json
+Tiny Screen Studios ensures your exports are production-ready:
 
-```json
-{
-  "name": "typing_cat",
-  "preset": "SSD1306_128x32",
-  "frames": 6,
-  "bytes_per_frame": 512,
-  "fps": 12,
-  "packing": {
-    "page": "top-down",
-    "column": "left-right",
-    "bit": "lsb-top",
-    "polarity": "on=1"
-  }
-}
-```
+- Valid identifier checks for symbol names
+- Clean header guards and `extern "C"` for C++ compatibility
+- Layout badge in UI and export comments
+- Preview GIF included for quick validation
+- Consistent zero-padded filenames (`frame_000.bin`)
 
----
 
-## 6. Target Presets (Planned Enhancement)
+## Coming Soon
 
-A **Target Environment** selector will automatically format code and include a sample snippet for:
+Future enhancements to the export system:
 
-* QMK (AVR / ARM)
-* Arduino / Adafruit-GFX / U8g2
-* CircuitPython / MicroPython
-* Rust (embedded-graphics)
-* LVGL (planned)
-
----
-
-## 7. Quality & Safety Features
-
-* Valid identifier checks for symbol names
-* Clean header guards, `extern "C"` for C++
-* Layout badge in UI and export comments
-* Included preview GIF for quick validation
-* Consistent zero-padded filenames (`frame_000.bin`)
-
----
-
-## 8. Roadmap
-
-* **Packing normalization** – Convert to target-expected bit order
-* **Sprite sheet export** (WxH × N) with JSON atlas
-* **Compression** options (RLE / LZ4)
-* **Code template tabs** in UI for quick copy
-* **Marketplace manifest** support for community sharing
-
----
-
-## 9. Troubleshooting
-
-| Issue                  | Likely Cause                                                    |
-| ---------------------- | --------------------------------------------------------------- |
-| Image appears inverted | Enable *Invert Output* or flip polarity in code                 |
-| Garbled display        | Bit-layout mismatch (check MONO_VLSB vs row-major)              |
-| Nothing shows          | Verify I²C/SPI address, init sequence, contrast, and frame size |
+- **Zip Package Export** – Download all formats, frames, preview GIF, and manifest in one package
+- **Target Environment Presets** – Auto-generate code snippets for QMK, Arduino, CircuitPython, Rust, and LVGL
+- **Packing Normalization** – Convert to different bit orders (HLSB, row-major, etc.)
+- **Sprite Sheet Export** – Generate texture atlases with JSON metadata
+- **Compression Options** – RLE and LZ4 compression for larger animations
+- **Code Template Tabs** – Copy-paste ready snippets directly in the UI
+- **Marketplace Support** – Share and download community graphics
