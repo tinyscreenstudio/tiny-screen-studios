@@ -1,6 +1,6 @@
 import React from 'react'
 import { DocumentIcon, CheckCircleIcon, XCircleIcon, PhotoIcon } from '@heroicons/react/24/outline'
-import { useAppStore } from '../store/appStore'
+import { useAppStore } from '../../store/appStore'
 
 export function FileList() {
   const { currentFiles, fileValidation } = useAppStore()

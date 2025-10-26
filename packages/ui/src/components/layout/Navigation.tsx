@@ -1,7 +1,7 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { HomeIcon, EyeIcon, DocumentIcon } from '@heroicons/react/24/outline'
-import { useNavigationConfig } from '../hooks/useAppConfig'
+import { useNavigationConfig } from '../../hooks/useAppConfig'
 
 interface NavigationProps {
   currentPage: 'home' | 'preview' | 'docs'

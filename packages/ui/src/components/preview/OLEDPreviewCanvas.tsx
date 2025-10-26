@@ -1,8 +1,8 @@
 import React, { useRef, useEffect } from 'react'
 import { EyeIcon, PlayIcon, PauseIcon, FilmIcon, ArrowUpTrayIcon } from '@heroicons/react/24/outline'
 import { QuestionMarkCircleIcon } from '@heroicons/react/16/solid'
-import { useAppStore } from '../store/appStore'
-import { Tooltip } from './Tooltip'
+import { useAppStore } from '../../store/appStore'
+import { Tooltip } from '../ui'
 
 export function OLEDPreviewCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null)

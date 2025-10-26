@@ -1,10 +1,10 @@
 import React from 'react'
 import { CogIcon, QuestionMarkCircleIcon, CpuChipIcon } from '@heroicons/react/24/outline'
-import { useAppStore } from '../store/appStore'
+import { useAppStore } from '../../store/appStore'
 import { DEVICE_PRESETS } from '@tiny-screen-studios/core'
-import { Tooltip } from './Tooltip'
-import { processFiles } from '../utils/fileProcessor'
-import { useDeviceConfig, useFeatureFlags } from '../hooks/useAppConfig'
+import { Tooltip } from '../ui'
+import { processFiles } from '../../utils/fileProcessor'
+import { useDeviceConfig, useFeatureFlags } from '../../hooks/useAppConfig'
 
 export function DeviceSettingsPanel() {
   const {

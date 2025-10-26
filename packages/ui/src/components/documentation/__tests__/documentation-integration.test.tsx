@@ -1,12 +1,11 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { render, screen, waitFor } from '@testing-library/react'
 import { BrowserRouter } from 'react-router-dom'
-import { DocumentationContent } from '../components/DocumentationContent'
-import { DocumentationPage } from '../components/DocumentationPage'
-import { documentationLoader } from '../utils/documentationLoader'
+import { DocumentationContent, DocumentationPage } from '../'
+import { documentationLoader } from '../../../utils/documentationLoader'
 
 // Mock the documentation loader for controlled testing
-vi.mock('../utils/documentationLoader', () => ({
+vi.mock('../../../utils/documentationLoader', () => ({
   documentationLoader: {
     loadContent: vi.fn(),
     preloadRelatedContent: vi.fn(),
@@ -241,7 +240,7 @@ function example${i}() {
       mockLoader.preloadCommonContent.mockResolvedValue(undefined)
 
       // Import and test the preloader hook
-      const { useDocumentationPreloader } = await import('../hooks/useDocumentationPreloader')
+      const { useDocumentationPreloader } = await import('../../../hooks/useDocumentationPreloader')
       
       const TestComponent = () => {
         useDocumentationPreloader()

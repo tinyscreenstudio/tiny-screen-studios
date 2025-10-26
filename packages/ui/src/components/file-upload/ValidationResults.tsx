@@ -1,6 +1,6 @@
 import React from 'react'
 import { CheckCircleIcon, ExclamationTriangleIcon, XCircleIcon } from '@heroicons/react/24/outline'
-import { useAppStore } from '../store/appStore'
+import { useAppStore } from '../../store/appStore'
 
 export function ValidationResults() {
   const { validationResults, fileValidation } = useAppStore()

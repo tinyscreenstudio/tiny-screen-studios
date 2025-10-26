@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import { documentationLoader } from '../utils/documentationLoader'
-import { MarkdownRenderer } from './MarkdownRenderer'
-import { DocumentationSystemError } from '../types/documentation'
+import { documentationLoader } from '../../utils/documentationLoader'
+import { MarkdownRenderer } from '../markdown'
+import { DocumentationSystemError } from '../../types/documentation'
 
 interface DocumentationContentProps {
   section?: string

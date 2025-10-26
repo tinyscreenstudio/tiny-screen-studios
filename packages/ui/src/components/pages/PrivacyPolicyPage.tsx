@@ -1,8 +1,8 @@
 import React from 'react'
 import { EyeIcon, ServerIcon, UserIcon, SparklesIcon } from '@heroicons/react/24/outline'
-import { Header } from './Header'
-import { Footer } from './Footer'
-import { Navigation } from './Navigation'
+import { Header } from '../layout'
+import { Footer } from '../layout'
+import { Navigation } from '../layout'
 
 export function PrivacyPolicyPage() {
   return (

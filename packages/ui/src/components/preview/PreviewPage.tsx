@@ -1,10 +1,10 @@
 import React from 'react'
 import { SparklesIcon } from '@heroicons/react/24/outline'
 import { OLEDPreviewCanvas } from './OLEDPreviewCanvas'
-import { FileUploadPanel } from './FileUploadPanel'
+import { FileUploadPanel } from '../file-upload'
 import { DeviceSettingsPanel } from './DeviceSettingsPanel'
 import { ExportControlsPanel } from './ExportControlsPanel'
-import { useAppStore } from '../store/appStore'
+import { useAppStore } from '../../store/appStore'
 interface PreviewPageProps { }
 
 export function PreviewPage({ }: PreviewPageProps) {

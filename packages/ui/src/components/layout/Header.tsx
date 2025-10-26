@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { SparklesIcon } from '@heroicons/react/24/outline'
-import { useHeaderConfig } from '../hooks/useAppConfig'
+import { useHeaderConfig } from '../../hooks/useAppConfig'
 
 export function Header() {
   const headerConfig = useHeaderConfig()

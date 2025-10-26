@@ -1,11 +1,11 @@
 import React, { useCallback, useRef, useState, useEffect } from 'react'
 import { CloudArrowUpIcon, DocumentIcon, PhotoIcon, FilmIcon } from '@heroicons/react/24/outline'
-import { useAppStore } from '../store/appStore'
+import { useAppStore } from '../../store/appStore'
 import { ValidationResults } from './ValidationResults'
 import { ProgressIndicator } from './ProgressIndicator'
 import { FileList } from './FileList'
 import { RecoveryActions } from './RecoveryActions'
-import { processFiles } from '../utils/fileProcessor'
+import { processFiles } from '../../utils/fileProcessor'
 
 export function FileUploadPanel() {
   const fileInputRef = useRef<HTMLInputElement>(null)
