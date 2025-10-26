@@ -222,6 +222,48 @@ export function OLEDPreviewCanvas() {
         </div>
       </div>
 
+      {/* Live Size Estimate */}
+      {hasFrames && (() => {
+        const bytesPerFrame = currentPackedFrames[0]?.bytes.length || 0
+        const totalBytes = currentPackedFrames.reduce((sum, frame) => sum + frame.bytes.length, 0)
+        const frameCount = currentPackedFrames.length
+        
+        // Calculate animation info
+        const hasDelays = currentPackedFrames.some(f => f.delayMs !== undefined)
+        const avgDelay = hasDelays 
+          ? currentPackedFrames.reduce((sum, f) => sum + (f.delayMs ?? 100), 0) / frameCount
+          : 100
+        const estimatedFPS = frameCount > 1 ? Math.round(1000 / avgDelay) : 0
+
+        return (
+          <div className="mb-6 p-3 rounded-lg text-sm space-y-2" style={{
+            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+            border: '1px solid rgba(59, 130, 246, 0.3)',
+          }}>
+            <div className="flex items-center justify-between">
+              <span style={{ color: 'var(--color-muted)' }}>Bytes per frame:</span>
+              <span style={{ color: 'var(--color-text)', fontFamily: 'var(--font-mono)', fontWeight: 600 }}>
+                {bytesPerFrame.toLocaleString()} bytes
+              </span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span style={{ color: 'var(--color-muted)' }}>Total export size:</span>
+              <span style={{ color: 'var(--color-text)', fontFamily: 'var(--font-mono)', fontWeight: 600 }}>
+                {totalBytes.toLocaleString()} bytes
+              </span>
+            </div>
+            {frameCount > 1 && (
+              <div className="flex items-center justify-between">
+                <span style={{ color: 'var(--color-muted)' }}>Animation:</span>
+                <span style={{ color: 'var(--color-text)', fontFamily: 'var(--font-mono)', fontWeight: 600 }}>
+                  {estimatedFPS} FPS × {frameCount} frames
+                </span>
+              </div>
+            )}
+          </div>
+        )
+      })()}
+
       {/* Animation Controls */}
       {isMultiFrame && (
         <div className="border-t border-gray-200 pt-6">

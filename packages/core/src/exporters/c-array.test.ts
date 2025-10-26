@@ -56,7 +56,10 @@ describe('C Array Exporter', () => {
 
     it('should format bytes with configurable bytes per row', () => {
       const frame = createTestFrame(8, 8, [0x01, 0x02, 0x03, 0x04, 0x05, 0x06]);
-      const result = toCRawArray([frame], 'test', { bytesPerRow: 3 });
+      const result = toCRawArray([frame], 'test', {
+        bytesPerRow: 3,
+        autoLineWrap: false,
+      });
 
       const lines = result.split('\n');
       const dataLines = lines.filter(line => line.includes('0x'));
@@ -139,12 +142,12 @@ describe('C Array Exporter', () => {
 
     it('should throw error for invalid bytesPerRow', () => {
       const frame = createTestFrame(8, 8, [0x01]);
-      expect(() => toCRawArray([frame], 'test', { bytesPerRow: 0 })).toThrow(
-        'bytesPerRow must be between 1 and 32'
-      );
-      expect(() => toCRawArray([frame], 'test', { bytesPerRow: 33 })).toThrow(
-        'bytesPerRow must be between 1 and 32'
-      );
+      expect(() =>
+        toCRawArray([frame], 'test', { bytesPerRow: 0, autoLineWrap: false })
+      ).toThrow('bytesPerRow must be between 1 and 256');
+      expect(() =>
+        toCRawArray([frame], 'test', { bytesPerRow: 257, autoLineWrap: false })
+      ).toThrow('bytesPerRow must be between 1 and 256');
     });
 
     it('should handle different device presets', () => {
@@ -174,7 +177,10 @@ describe('C Array Exporter', () => {
       // Create a frame with 32 bytes to test line wrapping
       const bytes = Array.from({ length: 32 }, (_, i) => i);
       const frame = createTestFrame(32, 8, bytes);
-      const result = toCRawArray([frame], 'large', { bytesPerRow: 8 });
+      const result = toCRawArray([frame], 'large', {
+        bytesPerRow: 8,
+        autoLineWrap: false,
+      });
 
       const lines = result.split('\n');
       const dataLines = lines.filter(line => line.includes('0x'));
@@ -279,7 +285,7 @@ describe('C Array Exporter', () => {
     it('should reject invalid bytesPerRow', () => {
       expect(validateCExportOptions({ bytesPerRow: 0 })).toBe(false);
       expect(validateCExportOptions({ bytesPerRow: -1 })).toBe(false);
-      expect(validateCExportOptions({ bytesPerRow: 33 })).toBe(false);
+      expect(validateCExportOptions({ bytesPerRow: 257 })).toBe(false);
     });
 
     it('should accept valid bytesPerRow range', () => {

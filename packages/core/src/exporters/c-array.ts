@@ -2,7 +2,11 @@ import type {
   PackedFrame,
   CExportOptions,
   ExportFile,
+  AddressingMode,
+  BitOrderMode,
+  FrameMono,
 } from '../types/index.js';
+import { bytePacker } from '../packers/ssd1306.js';
 
 /**
  * C array exporter for embedded firmware development
@@ -29,30 +33,56 @@ export function toCRawArray(
   const sanitizedSymbol = sanitizeSymbolName(symbolName || '');
 
   // Set default options
+  const addressing: AddressingMode = options.addressing ?? 'vertical';
+  const bitOrder: BitOrderMode = options.bitOrder ?? 'lsb-first';
+  const autoLineWrap = options.autoLineWrap ?? true;
+
+  // Auto-calculate bytesPerRow based on addressing mode if enabled
+  let bytesPerRow: number;
+  if (autoLineWrap) {
+    const firstFrame = frames[0]!;
+    if (addressing === 'vertical') {
+      bytesPerRow = firstFrame.dims.width; // e.g., 128 for 128x64
+    } else {
+      bytesPerRow = Math.ceil(firstFrame.dims.width / 8); // e.g., 16 for 128x64
+    }
+  } else {
+    bytesPerRow = options.bytesPerRow ?? 16;
+  }
+
   const opts: Required<CExportOptions> = {
     perFrame: options.perFrame ?? false,
-    bytesPerRow: options.bytesPerRow ?? 16,
+    bytesPerRow,
     includeMetadata: options.includeMetadata ?? true,
+    addressing,
+    bitOrder,
+    autoLineWrap,
   };
 
   // Validate options
-  if (opts.bytesPerRow < 1 || opts.bytesPerRow > 32) {
-    throw new Error('bytesPerRow must be between 1 and 32');
+  if (opts.bytesPerRow < 1 || opts.bytesPerRow > 256) {
+    throw new Error('bytesPerRow must be between 1 and 256');
+  }
+
+  // Repack frames if using horizontal addressing
+  let exportFrames = frames;
+  if (addressing === 'horizontal') {
+    exportFrames = repackFramesHorizontal(frames, bitOrder);
   }
 
   let output = '';
 
   // Add file header with metadata
   if (opts.includeMetadata) {
-    output += generateFileHeader(frames, sanitizedSymbol);
+    output += generateFileHeader(frames, sanitizedSymbol, opts);
   }
 
   if (opts.perFrame) {
     // Generate separate array for each frame
-    output += generatePerFrameArrays(frames, sanitizedSymbol, opts);
+    output += generatePerFrameArrays(exportFrames, sanitizedSymbol, opts);
   } else {
     // Generate single concatenated array
-    output += generateBatchArray(frames, sanitizedSymbol, opts);
+    output += generateBatchArray(exportFrames, sanitizedSymbol, opts);
   }
 
   return output;
@@ -114,9 +144,14 @@ function sanitizeSymbolName(symbolName: string): string {
  * Generate file header with metadata comments
  * @param frames Array of frames
  * @param symbolName Sanitized symbol name
+ * @param options Export options
  * @returns Header comment string
  */
-function generateFileHeader(frames: PackedFrame[], symbolName: string): string {
+function generateFileHeader(
+  frames: PackedFrame[],
+  symbolName: string,
+  options?: Required<CExportOptions>
+): string {
   const firstFrame = frames[0]!; // Safe because we validate frames.length > 0 earlier
   const totalBytes = frames.reduce((sum, frame) => sum + frame.bytes.length, 0);
 
@@ -135,6 +170,14 @@ function generateFileHeader(frames: PackedFrame[], symbolName: string): string {
     } else {
       header += ` * Animation: Yes (no timing data)\n`;
     }
+  }
+
+  if (options) {
+    header += ` *\n`;
+    header += ` * Export settings:\n`;
+    header += ` * - Addressing: ${options.addressing}\n`;
+    header += ` * - Bit order: ${options.bitOrder}\n`;
+    header += ` * - Bytes per row: ${options.bytesPerRow}\n`;
   }
 
   header += ` * Generated: ${new Date().toISOString()}\n`;
@@ -337,6 +380,9 @@ function generateHeaderFile(
     perFrame: options.perFrame ?? false,
     bytesPerRow: options.bytesPerRow ?? 16,
     includeMetadata: options.includeMetadata ?? true,
+    addressing: options.addressing ?? 'vertical',
+    bitOrder: options.bitOrder ?? 'lsb-first',
+    autoLineWrap: options.autoLineWrap ?? true,
   };
 
   let header = '';
@@ -349,7 +395,7 @@ function generateHeaderFile(
   header += `#include <stdint.h>\n\n`;
 
   if (opts.includeMetadata) {
-    header += generateFileHeader(frames, symbolName);
+    header += generateFileHeader(frames, symbolName, opts);
   }
 
   // Generate declarations
@@ -402,13 +448,84 @@ function generateHeaderFile(
 }
 
 /**
+ * Repack frames from vertical to horizontal addressing
+ * @param frames Frames packed in vertical mode
+ * @param bitOrder Bit order for horizontal packing
+ * @returns Repacked frames
+ */
+function repackFramesHorizontal(
+  frames: PackedFrame[],
+  bitOrder: BitOrderMode
+): PackedFrame[] {
+  return frames.map(frame => {
+    // Convert packed frame back to monochrome bits
+    const mono = unpackVerticalFrame(frame);
+
+    // Repack in horizontal mode
+    const bytes = bytePacker.packHorizontal(mono, bitOrder, false);
+
+    return {
+      ...frame,
+      bytes,
+    };
+  });
+}
+
+/**
+ * Unpack a vertical-addressed frame back to monochrome bits
+ * @param frame Packed frame
+ * @returns Monochrome frame
+ */
+function unpackVerticalFrame(frame: PackedFrame): FrameMono {
+  const { width, height } = frame.dims;
+  const pageHeight = 8;
+  const pageCount = height / pageHeight;
+  const totalBits = width * height;
+  const bits = new Uint8Array(Math.ceil(totalBits / 8));
+
+  // Unpack each page
+  for (let page = 0; page < pageCount; page++) {
+    for (let col = 0; col < width; col++) {
+      const byteIndex = page * width + col;
+      const pageByte = frame.bytes[byteIndex];
+
+      if (pageByte === undefined) continue;
+
+      // Extract 8 vertical pixels
+      for (let pixelInPage = 0; pixelInPage < pageHeight; pixelInPage++) {
+        const y = page * pageHeight + pixelInPage;
+        const x = col;
+        const pixelIndex = y * width + x;
+
+        // Assume LSB-top (standard for SSD1306)
+        const isLit = (pageByte & (1 << pixelInPage)) !== 0;
+
+        if (isLit) {
+          const byteIdx = Math.floor(pixelIndex / 8);
+          const bitIdx = pixelIndex % 8;
+          const targetByte = bits[byteIdx];
+          if (targetByte !== undefined) {
+            bits[byteIdx] = targetByte | (1 << bitIdx);
+          }
+        }
+      }
+    }
+  }
+
+  return {
+    bits,
+    dims: frame.dims,
+  };
+}
+
+/**
  * Validate C export options
  * @param options Options to validate
  * @returns True if options are valid
  */
 export function validateCExportOptions(options: CExportOptions): boolean {
   if (options.bytesPerRow !== undefined) {
-    if (options.bytesPerRow < 1 || options.bytesPerRow > 32) {
+    if (options.bytesPerRow < 1 || options.bytesPerRow > 256) {
       return false;
     }
   }

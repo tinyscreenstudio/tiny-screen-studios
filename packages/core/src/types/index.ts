@@ -34,6 +34,7 @@ export type PackingOptions = {
   bitOrder?: 'lsb-top' | 'msb-top';
   pageOrder?: 'top-down' | 'bottom-up';
   columnOrder?: 'left-right' | 'right-left';
+  addressing?: AddressingMode; // Export addressing mode (vertical or horizontal)
 };
 
 export type MonochromeOptions = {
@@ -98,10 +99,16 @@ export type AnimationController = {
 };
 
 // Export types
+export type AddressingMode = 'vertical' | 'horizontal';
+export type BitOrderMode = 'lsb-first' | 'msb-first';
+
 export type CExportOptions = {
   perFrame?: boolean; // Separate arrays per frame
   bytesPerRow?: number; // Formatting for readability
   includeMetadata?: boolean; // Add dimension/timing comments
+  addressing?: AddressingMode; // Vertical (page/column-major) or horizontal (row-major)
+  bitOrder?: BitOrderMode; // LSB-first or MSB-first within each byte
+  autoLineWrap?: boolean; // Auto-calculate bytes per row based on addressing
 };
 
 export type ExportFile = {

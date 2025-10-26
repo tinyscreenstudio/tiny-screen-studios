@@ -1,5 +1,10 @@
 import { create } from 'zustand';
-import type { DevicePreset, PackedFrame } from '@tiny-screen-studios/core';
+import type {
+  DevicePreset,
+  PackedFrame,
+  AddressingMode,
+  BitOrderMode,
+} from '@tiny-screen-studios/core';
 import { defaultConfig } from '../config/appConfig';
 
 export interface ValidationResult {
@@ -39,6 +44,9 @@ export interface AppState {
   bytesPerRow: number;
   perFrame: boolean;
   includeMetadata: boolean;
+  addressing: AddressingMode;
+  bitOrder: BitOrderMode;
+  autoLineWrap: boolean;
 
   // UI state
   isProcessing: boolean;
@@ -64,6 +72,9 @@ export interface AppState {
   setBytesPerRow: (bytes: number) => void;
   setPerFrame: (perFrame: boolean) => void;
   setIncludeMetadata: (include: boolean) => void;
+  setAddressing: (addressing: AddressingMode) => void;
+  setBitOrder: (bitOrder: BitOrderMode) => void;
+  setAutoLineWrap: (auto: boolean) => void;
   setIsProcessing: (processing: boolean) => void;
   setShowExportPanel: (show: boolean) => void;
   setValidationResults: (results: ValidationResult | null) => void;
@@ -90,6 +101,9 @@ export const useAppStore = create<AppState>(set => ({
   bytesPerRow: 16,
   perFrame: true,
   includeMetadata: true,
+  addressing: 'vertical',
+  bitOrder: 'lsb-first',
+  autoLineWrap: true,
   isProcessing: false,
   showExportPanel: false,
   validationResults: null,
@@ -113,6 +127,9 @@ export const useAppStore = create<AppState>(set => ({
   setBytesPerRow: bytes => set({ bytesPerRow: bytes }),
   setPerFrame: perFrame => set({ perFrame }),
   setIncludeMetadata: include => set({ includeMetadata: include }),
+  setAddressing: addressing => set({ addressing }),
+  setBitOrder: bitOrder => set({ bitOrder }),
+  setAutoLineWrap: auto => set({ autoLineWrap: auto }),
   setIsProcessing: processing => set({ isProcessing: processing }),
   setShowExportPanel: show => set({ showExportPanel: show }),
   setValidationResults: results => set({ validationResults: results }),
@@ -133,6 +150,9 @@ export const useAppStore = create<AppState>(set => ({
       bytesPerRow: 16,
       perFrame: true,
       includeMetadata: true,
+      addressing: 'vertical',
+      bitOrder: 'lsb-first',
+      autoLineWrap: true,
     }),
 
   clearFiles: () =>

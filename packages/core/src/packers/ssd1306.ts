@@ -22,6 +22,7 @@ const DEFAULT_PACKING_OPTIONS: Required<Omit<PackingOptions, 'preset'>> = {
   bitOrder: 'lsb-top',
   pageOrder: 'top-down',
   columnOrder: 'left-right',
+  addressing: 'vertical',
 };
 
 /**
@@ -275,6 +276,63 @@ export class BytePackerImpl implements BytePacker {
       errors,
       warnings: [],
     };
+  }
+
+  /**
+   * Pack frame in horizontal (row-major) addressing mode
+   * Used for libraries like Adafruit GFX drawBitmap
+   */
+  packHorizontal(
+    frame: FrameMono,
+    bitOrder: 'lsb-first' | 'msb-first',
+    invert?: boolean
+  ): Uint8Array {
+    const { bits, dims } = frame;
+    const { width, height } = dims;
+
+    // Calculate bytes needed: width/8 bytes per row * height rows
+    const bytesPerRow = Math.ceil(width / 8);
+    const totalBytes = bytesPerRow * height;
+    const bytes = new Uint8Array(totalBytes);
+
+    // Process each row
+    for (let y = 0; y < height; y++) {
+      // Process each byte in the row
+      for (let byteX = 0; byteX < bytesPerRow; byteX++) {
+        let byte = 0;
+
+        // Pack 8 horizontal pixels into one byte
+        for (let bitInByte = 0; bitInByte < 8; bitInByte++) {
+          const x = byteX * 8 + bitInByte;
+
+          // Skip if beyond width
+          if (x >= width) continue;
+
+          const pixelIndex = y * width + x;
+          let isLit = getBitFromArray(bits, pixelIndex);
+
+          // Apply invert if specified
+          if (invert) {
+            isLit = !isLit;
+          }
+
+          if (isLit) {
+            if (bitOrder === 'lsb-first') {
+              // LSB = first pixel (bit 0 = leftmost, bit 7 = rightmost)
+              byte |= 1 << bitInByte;
+            } else {
+              // MSB = first pixel (bit 7 = leftmost, bit 0 = rightmost)
+              byte |= 1 << (7 - bitInByte);
+            }
+          }
+        }
+
+        const byteIndex = y * bytesPerRow + byteX;
+        bytes[byteIndex] = byte;
+      }
+    }
+
+    return bytes;
   }
 }
 
