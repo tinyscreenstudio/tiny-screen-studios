@@ -128,9 +128,9 @@ console.log('Hello World')
 
       // Check for page structure
       expect(screen.getAllByText('Documentation')).toHaveLength(2) // Header and sidebar
-      expect(screen.getByText('Getting Started')).toBeInTheDocument()
-      expect(screen.getByText('Display Types')).toBeInTheDocument()
-      expect(screen.getByText('Export & Code')).toBeInTheDocument()
+      expect(screen.getAllByText('Getting Started').length).toBeGreaterThanOrEqual(1)
+      expect(screen.getAllByText('Display Types').length).toBeGreaterThanOrEqual(1)
+      expect(screen.getAllByText('Export & Code').length).toBeGreaterThanOrEqual(1)
 
       // Wait for content to load - check for the content heading specifically
       await waitFor(() => {

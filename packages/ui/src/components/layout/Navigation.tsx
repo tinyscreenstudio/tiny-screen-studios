@@ -1,50 +1,38 @@
 import React from 'react'
-import { useNavigate } from 'react-router-dom'
-import { HomeIcon, EyeIcon, DocumentIcon } from '@heroicons/react/24/outline'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { useNavigationConfig } from '../../hooks/useAppConfig'
 
-interface NavigationProps {
-  currentPage: 'home' | 'preview' | 'docs'
-}
-
-// Icon mapping for dynamic icon rendering
-const iconMap = {
-  HomeIcon,
-  EyeIcon,
-  DocumentIcon,
-}
-
-export function Navigation({ currentPage }: NavigationProps) {
+export function Navigation() {
   const navigationItems = useNavigationConfig()
   const navigate = useNavigate()
+  const location = useLocation()
 
-  const handleNavigation = (item: any) => {
-    navigate(item.path)
+  const handleNavigation = (path: string) => {
+    navigate(path)
+  }
+
+  // Helper to check if a path is active
+  const isActive = (path: string) => {
+    if (path === '/' && location.pathname === '/') return true
+    if (path !== '/' && location.pathname.startsWith(path)) return true
+    return false
   }
 
   return (
-    <nav className="nav-container">
-      <div className="flex items-center gap-1 p-1">
-        {navigationItems.map((item) => {
-          const IconComponent = iconMap[item.icon as keyof typeof iconMap]
-          const isActive = (currentPage === 'home' && item.path === '/') || 
-                          (currentPage === 'preview' && item.path === '/oled-studio') ||
-                          (currentPage === 'docs' && item.path === '/docs')
-          
-          return (
-            <button
-              key={item.id}
-              onClick={() => handleNavigation(item)}
-              className={`nav-item flex items-center gap-2 ${
-                isActive ? 'active' : ''
-              }`}
-            >
-              {IconComponent && <IconComponent className="w-4 h-4" />}
-              <span>{item.label}</span>
-            </button>
-          )
-        })}
-      </div>
+    <nav className="flex items-center gap-6">
+      {navigationItems.map((item) => (
+        <button
+          key={item.id}
+          onClick={() => handleNavigation(item.path)}
+          className={`text-sm font-medium transition-colors ${
+            isActive(item.path)
+              ? 'text-primary'
+              : 'text-text-secondary hover:text-primary'
+          }`}
+        >
+          {item.label}
+        </button>
+      ))}
     </nav>
   )
 }

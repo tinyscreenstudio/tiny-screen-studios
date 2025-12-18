@@ -42,3 +42,6 @@ coverage/
 
 # Kiro spec files
 .kiro
+
+# Design
+redesign.md

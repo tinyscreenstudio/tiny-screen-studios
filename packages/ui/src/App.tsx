@@ -1,6 +1,6 @@
 import React from 'react'
-import { Routes, Route, useLocation, Navigate } from 'react-router-dom'
-import { Header, Navigation, Footer } from './components/layout'
+import { Routes, Route, Navigate } from 'react-router-dom'
+import { Header, Footer } from './components/layout'
 import { HomePage, PrivacyPolicyPage, TermsOfServicePage } from './components/pages'
 import { PreviewPage } from './components/preview'
 import { DocumentationPage } from './components/documentation'
@@ -10,23 +10,20 @@ import { useFeatureFlags, useProcessingConfig, useUIConfig } from './hooks/useAp
 import { useDocumentationPreloader } from './hooks/useDocumentationPreloader'
 
 function App() {
-  const location = useLocation()
+
   const { isProcessing } = useAppStore()
   const featureFlags = useFeatureFlags()
   const processingConfig = useProcessingConfig()
   const uiConfig = useUIConfig()
-  
+
   // Initialize documentation preloading
   useDocumentationPreloader()
 
-  // Determine current page based on URL
-  const currentPage = location.pathname === '/oled-studio' ? 'preview' : 
-                     location.pathname.startsWith('/docs') ? 'docs' : 'home'
-  
   // Check if we're on a legal page (privacy/terms) to hide navigation
-  const isLegalPage = location.pathname === '/privacy-policy' || location.pathname === '/terms-of-service'
+  // const isLegalPage = location.pathname === '/privacy-policy' || location.pathname === '/terms-of-service'
 
   // Legal pages handle their own layout completely
+  /*
   if (isLegalPage) {
     return (
       <>
@@ -40,23 +37,19 @@ function App() {
       </>
     )
   }
+  */
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="min-h-screen bg-bg flex flex-col pt-[70px]">
       {/* Scroll to top on route change */}
       <ScrollToTop />
-      
+
       {/* Header */}
       <Header />
 
       {/* Main content */}
       <main className="flex-1">
-        <div className={`container mx-auto px-${uiConfig.layout.containerPadding} py-8 max-w-${uiConfig.layout.maxWidth}`}>
-          {/* Navigation */}
-          <div className="mb-8">
-            <Navigation currentPage={currentPage} />
-          </div>
-
+        <div className={`container mx-auto px-6 py-8 max-w-7xl`}>
           {/* Page Content */}
           <div className={uiConfig.animations.enabled ? "animate-fade-in" : ""}>
             <Routes>
@@ -65,6 +58,8 @@ function App() {
               <Route path="/docs" element={<Navigate to="/docs/getting-started" replace />} />
               <Route path="/docs/:section" element={<DocumentationPage />} />
               <Route path="/docs/:section/:topic" element={<DocumentationPage />} />
+              <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+              <Route path="/terms-of-service" element={<TermsOfServicePage />} />
             </Routes>
           </div>
         </div>
