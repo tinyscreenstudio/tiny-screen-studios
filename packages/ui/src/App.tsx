@@ -40,7 +40,7 @@ function App() {
   */
 
   return (
-    <div className="min-h-screen bg-bg flex flex-col pt-[70px]">
+    <div className="min-h-screen bg-bg flex flex-col pt-[64px]">
       {/* Scroll to top on route change */}
       <ScrollToTop />
 

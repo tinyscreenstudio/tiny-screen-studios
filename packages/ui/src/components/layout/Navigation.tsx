@@ -1,15 +1,10 @@
 import React from 'react'
-import { useNavigate, useLocation } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { useNavigationConfig } from '../../hooks/useAppConfig'
 
 export function Navigation() {
   const navigationItems = useNavigationConfig()
-  const navigate = useNavigate()
   const location = useLocation()
-
-  const handleNavigation = (path: string) => {
-    navigate(path)
-  }
 
   // Helper to check if a path is active
   const isActive = (path: string) => {
@@ -19,20 +14,18 @@ export function Navigation() {
   }
 
   return (
-    <nav className="flex items-center gap-6">
+    <div className="flex items-center gap-8">
       {navigationItems.map((item) => (
-        <button
+        <Link
           key={item.id}
-          onClick={() => handleNavigation(item.path)}
-          className={`text-sm font-medium transition-colors ${
-            isActive(item.path)
-              ? 'text-primary'
-              : 'text-text-secondary hover:text-primary'
+          to={item.path}
+          className={`text-sm font-normal text-gray-600 hover:text-gray-900 transition-colors ${
+            isActive(item.path) ? 'text-gray-900' : ''
           }`}
         >
           {item.label}
-        </button>
+        </Link>
       ))}
-    </nav>
+    </div>
   )
 }
