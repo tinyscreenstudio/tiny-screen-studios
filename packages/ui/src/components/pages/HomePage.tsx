@@ -9,7 +9,14 @@ import {
   ClockIcon,
   HandThumbUpIcon,
   ChatBubbleLeftIcon,
-  EyeIcon
+  EyeIcon,
+  TrophyIcon,
+  AcademicCapIcon,
+  DocumentTextIcon,
+  HeartIcon,
+  StarIcon,
+  UserGroupIcon,
+  CodeBracketIcon
 } from '@heroicons/react/24/outline'
 
 // Mock data for featured items
@@ -102,63 +109,136 @@ export function HomePage() {
   return (
     <div className="min-h-screen bg-bg text-text-primary font-sans">
       {/* Hero Section */}
-      <section className="pt-24 pb-16 px-6 border-b border-border bg-bg-secondary/30">
-        <div className="container mx-auto max-w-4xl text-center">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 tracking-tight">
-            The Design Platform for <br />
-            <span className="text-primary">Embedded Displays</span>
-          </h1>
-          <p className="text-lg md:text-xl text-text-muted mb-10 max-w-2xl mx-auto leading-relaxed">
-            Share, discover, and collect pixel art and code snippets for your embedded projects.
-            Free and open source — built for makers and developers.
-          </p>
-
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
-            <button
-              onClick={() => navigate('/oled-studio')}
-              className="btn btn-primary px-8 py-3 text-lg rounded-lg font-medium flex items-center gap-2"
-            >
-              Start Creating <ArrowRightIcon className="w-5 h-5" />
-            </button>
-            <button
-              onClick={() => navigate('/docs')}
-              className="btn btn-secondary px-8 py-3 text-lg rounded-lg font-medium bg-white border border-border hover:bg-gray-50 text-text-primary"
-            >
-              Documentation
-            </button>
-          </div>
-
-          {/* Search Bar */}
-          <div className="max-w-2xl mx-auto relative">
-            <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
-              <MagnifyingGlassIcon className="w-5 h-5 text-text-muted" />
+      <section className="pt-32 pb-24 bg-bg" style={{ width: '100vw', marginLeft: 'calc(-50vw + 50%)', marginRight: 'calc(-50vw + 50%)' }}>
+        <div className="mx-auto w-full px-6" style={{ width: '100%', maxWidth: '1400px' }}>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start">
+            {/* Left Column: Heading and Description */}
+            <div className="text-left">
+              <h1 className="text-4xl md:text-4xl lg:text-6xl font-bold mb-5 tracking-tight text-text leading-[1.1]">
+                Design assets for <br />
+                <span className="text-primary">tiny displays.</span>
+              </h1>
+              <p className="text-base md:text-lg text-text max-w-xl leading-relaxed font-normal">
+                Create, preview, and export pixel art, fonts, icons, and animations for SSD1306, SH1106, and more. Grab the code snippet and ship it.
+              </p>
             </div>
-            <input
-              type="text"
-              placeholder="Search for icons, fonts, animations..."
-              className="w-full pl-12 pr-4 py-4 rounded-xl border border-border focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all shadow-sm text-lg"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
+
+            {/* Right Column: Buttons, Search, and Tags */}
+            <div className="flex flex-col items-start w-full lg:pt-1">
+              <div className="flex flex-col sm:flex-row gap-3 mb-8 w-full">
+                <button
+                  onClick={() => navigate('/oled-studio')}
+                  className="bg-primary text-white px-6 py-3 text-base rounded-lg font-medium flex items-center justify-center gap-2 hover:bg-primary-hover transition-colors shadow-sm whitespace-nowrap h-11"
+                >
+                  Start creating <ArrowRightIcon className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => navigate('/docs')}
+                  className="bg-white text-text px-6 py-3 text-base rounded-lg font-medium border border-border hover:bg-gray-50 transition-colors shadow-sm whitespace-nowrap h-11"
+                >
+                  Browse library
+                </button>
+              </div>
+
+              {/* Search Bar */}
+              <div className="w-full relative mb-6">
+                <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                  <MagnifyingGlassIcon className="w-4 h-4 text-text-muted" />
+                </div>
+                <input
+                  type="text"
+                  placeholder="Search icons, fonts, animations, templates…"
+                  className="w-full pl-10 pr-4 py-3 rounded-lg border border-border focus:border-primary focus:ring-2 focus:ring-primary-light outline-none transition-all shadow-sm text-sm bg-white h-11"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+              </div>
+
+              {/* Popular Tags */}
+              <div className="flex flex-wrap items-center gap-2.5 text-sm">
+                <span className="font-normal text-text mr-1">Popular:</span>
+                {['SSD1306', 'SH1106', 'Icons', 'Animations', 'UI Kits'].map((tag) => (
+                  <button
+                    key={tag}
+                    onClick={() => setSearchQuery(tag)}
+                    className="px-3 py-1.5 rounded-full border border-border bg-white hover:text-primary hover:border-primary/50 transition-colors cursor-pointer text-text text-sm font-normal"
+                  >
+                    {tag}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Achievements/Statistics Section */}
+      <section className="py-16 bg-white border-t border-border" style={{ width: '100vw', marginLeft: 'calc(-50vw + 50%)', marginRight: 'calc(-50vw + 50%)' }}>
+        <div className="mx-auto w-full px-6" style={{ width: '100%', maxWidth: '1400px' }}>
+          {/* Row 1: Achievements and References */}
+          <div className="flex flex-wrap items-center justify-center gap-6 mb-6">
+            <div className="flex items-center gap-2 text-text">
+              <TrophyIcon className="w-5 h-5 text-yellow-500" />
+              <span className="text-sm">Featured in <strong>Forbes</strong></span>
+            </div>
+            <div className="flex items-center gap-2 text-text">
+              <AcademicCapIcon className="w-5 h-5 text-red-500" />
+              <span className="text-sm">Referenced by <strong>Harvard University</strong></span>
+            </div>
+            <div className="flex items-center gap-2 text-text">
+              <AcademicCapIcon className="w-5 h-5 text-blue-400" />
+              <span className="text-sm">Referenced by <strong>Columbia University</strong></span>
+            </div>
+            <div className="flex items-center gap-2 text-text">
+              <AcademicCapIcon className="w-5 h-5 text-blue-600" />
+              <span className="text-sm">Referenced by <strong>Olympic College</strong></span>
+            </div>
+            <div className="flex items-center gap-2 text-text">
+              <DocumentTextIcon className="w-5 h-5 text-red-500" />
+              <span className="text-sm">Cited in <strong>arXiv Paper</strong></span>
+            </div>
           </div>
 
-          {/* Quick Tags */}
-          <div className="mt-6 flex flex-wrap justify-center gap-2 text-sm text-text-muted">
-            <span>Popular:</span>
-            {['SSD1306', 'Fonts', 'Icons', 'Animations', 'Gaming', 'UI Kits'].map((tag) => (
-              <span
-                key={tag}
-                className="px-2 py-1 bg-bg-secondary rounded-md cursor-pointer hover:text-primary hover:bg-primary/10 transition-colors"
-              >
-                {tag}
-              </span>
-            ))}
+          {/* Row 2: Statistics and Platform Recognition */}
+          <div className="flex flex-wrap items-center justify-center gap-6 mb-6">
+            <div className="flex items-center gap-2 text-text">
+              <HeartIcon className="w-5 h-5 text-red-500" />
+              <span className="text-sm">#1 Most Liked Dataset on <strong>Hugging Face</strong></span>
+            </div>
+            <div className="flex items-center gap-2 text-text">
+              <StarIcon className="w-5 h-5 text-yellow-500" />
+              <span className="text-sm"><strong>141k GitHub Stars</strong></span>
+            </div>
+            <div className="flex items-center gap-2 text-text">
+              <TrophyIcon className="w-5 h-5 text-purple-500" />
+              <span className="text-sm">#33 Most Starred Repo in the World</span>
+            </div>
+            <div className="flex items-center gap-2 text-text">
+              <UserGroupIcon className="w-5 h-5 text-green-500" />
+              <span className="text-sm">Used by Thousands Daily</span>
+            </div>
+            <div className="flex items-center gap-2 text-text">
+              <SparklesIcon className="w-5 h-5 text-purple-500" />
+              <span className="text-sm"><strong>GitHub Staff Pick</strong></span>
+            </div>
+          </div>
+
+          {/* Row 3: Product Information */}
+          <div className="flex flex-wrap items-center justify-center gap-6">
+            <div className="flex items-center gap-2 text-text">
+              <CodeBracketIcon className="w-5 h-5 text-blue-400" />
+              <span className="text-sm">&lt;&gt; The Only 100% <strong>Free & Open Source Prompt Library</strong></span>
+            </div>
+            <div className="flex items-center gap-2 text-text">
+              <SparklesIcon className="w-5 h-5 text-orange-500" />
+              <span className="text-sm"><strong>The First-Ever Prompts Library</strong> · Released on Dec 5, 2022</span>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Featured Section */}
-      <section className="py-16 px-6">
+      <section className="py-24 px-6">
         <div className="container mx-auto max-w-7xl">
           <div className="flex justify-between items-end mb-8">
             <div>
@@ -252,7 +332,7 @@ export function HomePage() {
       </section>
 
       {/* Recently Updated Section */}
-      <section className="py-16 px-6 bg-bg-secondary/30 border-t border-border">
+      <section className="py-24 px-6 bg-bg-secondary/30 border-t border-border">
         <div className="container mx-auto max-w-7xl">
           <div className="flex justify-between items-end mb-8">
             <div>
