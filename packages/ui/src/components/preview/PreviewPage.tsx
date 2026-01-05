@@ -14,14 +14,53 @@ export function PreviewPage({ }: PreviewPageProps) {
   return (
     <>
       {/* Banner — aligned to design tokens */}
-      <section className="pt-16 pb-10 px-6 border-b border-border bg-bg-secondary/30">
+      <section className="pt-16 pb-16 px-6 border-b border-border bg-gradient-to-br from-primary/5 via-purple-500/5 to-blue-500/5">
         <div className="container mx-auto max-w-4xl text-center">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-3 tracking-tight text-text-primary">
-            OLED Studio
+          <div className="flex items-center justify-center gap-2 mb-4">
+            <svg className="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            </svg>
+            <span className="text-sm font-medium text-orange-600 bg-orange-100 px-3 py-1 rounded-full">
+              Preview Release
+            </span>
+          </div>
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 tracking-tight bg-gradient-to-r from-gray-900 via-primary to-purple-600 bg-clip-text text-transparent">
+            Studio
           </h1>
-          <p className="text-lg md:text-xl text-text-muted max-w-2xl mx-auto">
-            Real-time preview, device settings, and export — streamlined.
+          <p className="text-xl text-text-muted max-w-2xl mx-auto mb-8 leading-relaxed">
+            Convert your pixel art to 1-bit format with real-time preview for SSD1306, SH1106, and SH1107 displays. 
+            Professional tools for embedded developers.
           </p>
+          
+          {/* Feature highlights */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div className="flex items-center justify-center gap-2 text-sm text-text-muted">
+              <div className="w-2 h-2 rounded-full bg-green-500"></div>
+              <span>Real-time Preview</span>
+            </div>
+            <div className="flex items-center justify-center gap-2 text-sm text-text-muted">
+              <div className="w-2 h-2 rounded-full bg-blue-500"></div>
+              <span>Multiple Export Formats</span>
+            </div>
+            <div className="flex items-center justify-center gap-2 text-sm text-text-muted">
+              <div className="w-2 h-2 rounded-full bg-purple-500"></div>
+              <span>Display Optimization</span>
+            </div>
+          </div>
+
+          {/* Supported displays */}
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            <span className="text-sm text-text-muted">Supported displays:</span>
+            {['SSD1306', 'SH1106', 'SH1107', 'SSD1309'].map((display) => (
+              <span
+                key={display}
+                className="px-3 py-1.5 bg-white border border-border rounded-full text-sm font-medium text-text hover:border-primary/50 transition-colors"
+              >
+                {display}
+              </span>
+            ))}
+          </div>
         </div>
       </section>
 

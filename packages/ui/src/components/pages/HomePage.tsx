@@ -4,11 +4,9 @@ import {
   MagnifyingGlassIcon,
   ArrowRightIcon,
   SparklesIcon,
-  CommandLineIcon,
   CpuChipIcon,
   ClockIcon,
   HandThumbUpIcon,
-  ChatBubbleLeftIcon,
   EyeIcon,
   TrophyIcon,
   AcademicCapIcon,
@@ -16,87 +14,119 @@ import {
   HeartIcon,
   StarIcon,
   UserGroupIcon,
-  CodeBracketIcon
+  CodeBracketIcon,
+  CurrencyDollarIcon,
+  ArrowDownTrayIcon,
+  TagIcon
 } from '@heroicons/react/24/outline'
 
-// Mock data for featured items
+// Mock data for featured 1-bit art pieces
 const FEATURED_ITEMS = [
   {
     id: 1,
-    title: 'SSD1306 Boot Animation',
-    description: 'Smooth startup sequence for 128x64 OLED displays. Includes fade-in effect and logo reveal.',
-    author: 'embedded_pro',
-    likes: 128,
-    comments: 12,
-    views: '1.2k',
-    tags: ['animation', 'boot', 'ssd1306'],
-    code: `const unsigned char boot_anim[] PROGMEM = {
-  0x00, 0x00, 0x00, 0x00, 0x00...
-};`
+    title: 'Cyberpunk Cityscape',
+    description: 'Detailed 1-bit cityscape with neon signs and flying cars. Perfect for retro gaming displays.',
+    author: 'pixel_prophet',
+    price: '$3.99',
+    likes: 342,
+    downloads: 89,
+    resolution: '128x64',
+    tags: ['cyberpunk', 'cityscape', 'detailed'],
+    preview: `████████████████████████████████
+██  ██    ██  ████    ██  ████
+██  ██    ██  ████    ██  ████
+████████████████████████████████`,
+    format: 'SSD1306'
   },
   {
     id: 2,
-    title: 'Weather Icons 16x16',
-    description: 'Minimalist weather icon set optimized for small screens. Sun, rain, cloud, and snow.',
-    author: 'pixel_artist',
-    likes: 85,
-    comments: 8,
-    views: '850',
-    tags: ['icons', 'weather', '16x16'],
-    code: `// Sun Icon 16x16
-0x00, 0x18, 0x24, 0x42, 0x81...`
+    title: 'Minimalist Weather Icons',
+    description: 'Clean 1-bit weather icon set. Sun, rain, clouds, snow - all optimized for tiny displays.',
+    author: 'mono_designer',
+    price: '$1.99',
+    likes: 156,
+    downloads: 234,
+    resolution: '32x32',
+    tags: ['icons', 'weather', 'minimal'],
+    preview: `    ████████    
+  ██        ██  
+██            ██
+██     ██     ██
+██            ██
+  ██        ██  
+    ████████    `,
+    format: 'Universal'
   },
   {
     id: 3,
-    title: 'Retro Gaming UI Kit',
-    description: 'Complete UI kit for handheld gaming projects. Health bars, inventory slots, and text boxes.',
-    author: 'game_dev',
-    likes: 256,
-    comments: 34,
-    views: '2.5k',
-    tags: ['ui', 'gaming', 'retro'],
-    code: `void drawHealthBar(int hp) {
-  display.drawRect(0, 0, 64, 8...
-}`
+    title: 'Retro Space Invaders',
+    description: 'Classic arcade sprites in perfect 1-bit format. Includes ships, aliens, and explosions.',
+    author: 'arcade_master',
+    price: '$2.49',
+    likes: 445,
+    downloads: 167,
+    resolution: '128x32',
+    tags: ['gaming', 'sprites', 'arcade'],
+    preview: `  ██    ██    ██    ██  
+    ████████████████    
+  ██████████████████  
+██████████████████████`,
+    format: 'SH1106'
   },
   {
     id: 4,
-    title: 'I2C Scanner Utility',
-    description: 'Quickly identify connected I2C devices on your microcontroller. Essential for debugging.',
-    author: 'hardware_hacker',
-    likes: 190,
-    comments: 21,
-    views: '3.1k',
-    tags: ['utility', 'i2c', 'debug'],
-    code: `void scanI2C() {
-  byte error, address;
-  int nDevices = 0;
-  ...`
+    title: 'Dithered Portrait Pack',
+    description: 'Professional portrait dithering techniques. 12 different faces with various expressions.',
+    author: 'dither_artist',
+    price: '$4.99',
+    likes: 278,
+    downloads: 45,
+    resolution: '132x64',
+    tags: ['portraits', 'dithering', 'faces'],
+    preview: `  ████████████████  
+██  ██      ██  ██
+██    ██████    ██
+██              ██
+██    ██████    ██
+██  ██      ██  ██
+  ████████████████  `,
+    format: 'SH1107'
   },
   {
     id: 5,
-    title: 'Glitch Effect Font',
-    description: 'Cyberpunk style bitmap font with built-in glitch artifacts. Perfect for sci-fi themes.',
-    author: 'cyber_junkie',
-    likes: 112,
-    comments: 15,
-    views: '900',
-    tags: ['font', 'glitch', 'cyberpunk'],
-    code: `const uint8_t font_glitch[] = {
-  // 'A'
-  0x1F, 0x24, 0x44, 0x24, 0x1F...`
+    title: 'Geometric Patterns',
+    description: 'Abstract 1-bit geometric designs. Perfect for backgrounds and decorative elements.',
+    author: 'pattern_lab',
+    price: '$1.49',
+    likes: 89,
+    downloads: 312,
+    resolution: '128x64',
+    tags: ['abstract', 'patterns', 'geometric'],
+    preview: `██  ██  ██  ██  ██  ██
+  ██  ██  ██  ██  ██  
+██  ██  ██  ██  ██  ██
+  ██  ██  ██  ██  ██  
+██  ██  ██  ██  ██  ██`,
+    format: 'SSD1306'
   },
   {
     id: 6,
-    title: 'Battery Status Indicator',
-    description: '5-level battery indicator with charging animation frames.',
-    author: 'power_user',
-    likes: 76,
-    comments: 5,
-    views: '600',
-    tags: ['ui', 'battery', 'system'],
-    code: `// Charging Frame 1
-0xFF, 0x81, 0x81, 0x81, 0xFF...`
+    title: 'Pixel Art Animals',
+    description: 'Cute 1-bit animal collection. Cats, dogs, birds, and more in perfect monochrome style.',
+    author: 'creature_pixels',
+    price: '$2.99',
+    likes: 523,
+    downloads: 198,
+    resolution: '64x64',
+    tags: ['animals', 'cute', 'characters'],
+    preview: `    ████████    
+  ██        ██  
+██  ██    ██  ██
+██            ██
+██  ████████  ██
+  ██        ██  
+    ████████    `,
+    format: 'Universal'
   }
 ]
 
@@ -115,11 +145,11 @@ export function HomePage() {
             {/* Left Column: Heading and Description */}
             <div className="text-left">
               <h1 className="text-4xl md:text-4xl lg:text-6xl font-bold mb-5 tracking-tight text-text leading-[1.1]">
-                Design assets for <br />
+                1-bit art marketplace for <br />
                 <span className="text-primary">tiny displays.</span>
               </h1>
               <p className="text-base md:text-lg text-text max-w-xl leading-relaxed font-normal">
-                Create, preview, and export pixel art, fonts, icons, and animations for SSD1306, SH1106, and more. Grab the code snippet and ship it.
+                Discover, buy, and sell monochrome pixel art designed for 128x32, 128x64, and 132x64 displays. Perfect for SSD1306, SH1106, and embedded projects.
               </p>
             </div>
 
@@ -127,16 +157,16 @@ export function HomePage() {
             <div className="flex flex-col items-start w-full lg:pt-1">
               <div className="flex flex-col sm:flex-row gap-3 mb-8 w-full">
                 <button
-                  onClick={() => navigate('/oled-studio')}
+                  onClick={() => navigate('/marketplace')}
                   className="bg-primary text-white px-6 py-3 text-base rounded-lg font-medium flex items-center justify-center gap-2 hover:bg-primary-hover transition-colors shadow-sm whitespace-nowrap h-11"
                 >
-                  Start creating <ArrowRightIcon className="w-4 h-4" />
+                  Browse marketplace <ArrowRightIcon className="w-4 h-4" />
                 </button>
                 <button
-                  onClick={() => navigate('/docs')}
+                  onClick={() => navigate('/sell')}
                   className="bg-white text-text px-6 py-3 text-base rounded-lg font-medium border border-border hover:bg-gray-50 transition-colors shadow-sm whitespace-nowrap h-11"
                 >
-                  Browse library
+                  Sell your art
                 </button>
               </div>
 
@@ -147,7 +177,7 @@ export function HomePage() {
                 </div>
                 <input
                   type="text"
-                  placeholder="Search icons, fonts, animations, templates…"
+                  placeholder="Search 1-bit art, icons, patterns, sprites…"
                   className="w-full pl-10 pr-4 py-3 rounded-lg border border-border focus:border-primary focus:ring-2 focus:ring-primary-light outline-none transition-all shadow-sm text-sm bg-white h-11"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
@@ -157,7 +187,7 @@ export function HomePage() {
               {/* Popular Tags */}
               <div className="flex flex-wrap items-center gap-2.5 text-sm">
                 <span className="font-normal text-text mr-1">Popular:</span>
-                {['SSD1306', 'SH1106', 'Icons', 'Animations', 'UI Kits'].map((tag) => (
+                {['128x64', '128x32', '132x64', 'Portraits', 'Gaming', 'Icons'].map((tag) => (
                   <button
                     key={tag}
                     onClick={() => setSearchQuery(tag)}
@@ -179,23 +209,19 @@ export function HomePage() {
           <div className="flex flex-wrap items-center justify-center gap-6 mb-6">
             <div className="flex items-center gap-2 text-text">
               <TrophyIcon className="w-5 h-5 text-yellow-500" />
-              <span className="text-sm">Featured in <strong>Forbes</strong></span>
+              <span className="text-sm">Featured in <strong>Maker Magazine</strong></span>
             </div>
             <div className="flex items-center gap-2 text-text">
               <AcademicCapIcon className="w-5 h-5 text-red-500" />
-              <span className="text-sm">Referenced by <strong>Harvard University</strong></span>
+              <span className="text-sm">Used by <strong>MIT Embedded Systems Course</strong></span>
             </div>
             <div className="flex items-center gap-2 text-text">
               <AcademicCapIcon className="w-5 h-5 text-blue-400" />
-              <span className="text-sm">Referenced by <strong>Columbia University</strong></span>
-            </div>
-            <div className="flex items-center gap-2 text-text">
-              <AcademicCapIcon className="w-5 h-5 text-blue-600" />
-              <span className="text-sm">Referenced by <strong>Olympic College</strong></span>
+              <span className="text-sm">Recommended by <strong>Arduino Community</strong></span>
             </div>
             <div className="flex items-center gap-2 text-text">
               <DocumentTextIcon className="w-5 h-5 text-red-500" />
-              <span className="text-sm">Cited in <strong>arXiv Paper</strong></span>
+              <span className="text-sm">Cited in <strong>Embedded Design Papers</strong></span>
             </div>
           </div>
 
@@ -203,23 +229,19 @@ export function HomePage() {
           <div className="flex flex-wrap items-center justify-center gap-6 mb-6">
             <div className="flex items-center gap-2 text-text">
               <HeartIcon className="w-5 h-5 text-red-500" />
-              <span className="text-sm">#1 Most Liked Dataset on <strong>Hugging Face</strong></span>
+              <span className="text-sm"><strong>2,500+</strong> Artists Selling</span>
             </div>
             <div className="flex items-center gap-2 text-text">
               <StarIcon className="w-5 h-5 text-yellow-500" />
-              <span className="text-sm"><strong>141k GitHub Stars</strong></span>
-            </div>
-            <div className="flex items-center gap-2 text-text">
-              <TrophyIcon className="w-5 h-5 text-purple-500" />
-              <span className="text-sm">#33 Most Starred Repo in the World</span>
+              <span className="text-sm"><strong>15k+</strong> Art Pieces Available</span>
             </div>
             <div className="flex items-center gap-2 text-text">
               <UserGroupIcon className="w-5 h-5 text-green-500" />
-              <span className="text-sm">Used by Thousands Daily</span>
+              <span className="text-sm"><strong>50k+</strong> Developers Using Daily</span>
             </div>
             <div className="flex items-center gap-2 text-text">
-              <SparklesIcon className="w-5 h-5 text-purple-500" />
-              <span className="text-sm"><strong>GitHub Staff Pick</strong></span>
+              <CurrencyDollarIcon className="w-5 h-5 text-purple-500" />
+              <span className="text-sm"><strong>$180k+</strong> Paid to Artists</span>
             </div>
           </div>
 
@@ -227,11 +249,11 @@ export function HomePage() {
           <div className="flex flex-wrap items-center justify-center gap-6">
             <div className="flex items-center gap-2 text-text">
               <CodeBracketIcon className="w-5 h-5 text-blue-400" />
-              <span className="text-sm">&lt;&gt; The Only 100% <strong>Free & Open Source Prompt Library</strong></span>
+              <span className="text-sm">Ready-to-use <strong>C/C++ Arrays & Code</strong></span>
             </div>
             <div className="flex items-center gap-2 text-text">
-              <SparklesIcon className="w-5 h-5 text-orange-500" />
-              <span className="text-sm"><strong>The First-Ever Prompts Library</strong> · Released on Dec 5, 2022</span>
+              <CpuChipIcon className="w-5 h-5 text-orange-500" />
+              <span className="text-sm">Optimized for <strong>SSD1306, SH1106, SH1107</strong> displays</span>
             </div>
           </div>
         </div>
@@ -244,9 +266,9 @@ export function HomePage() {
             <div>
               <h2 className="text-2xl font-bold flex items-center gap-2">
                 <SparklesIcon className="w-6 h-6 text-yellow-500" />
-                Featured Resources
+                Featured Artwork
               </h2>
-              <p className="text-text-muted mt-1">Hand-picked high quality assets for your next project</p>
+              <p className="text-text-muted mt-1">Hand-picked 1-bit art from our top creators</p>
             </div>
             <button className="text-primary font-medium hover:underline flex items-center gap-1">
               Browse all <ArrowRightIcon className="w-4 h-4" />
@@ -257,30 +279,30 @@ export function HomePage() {
             {FEATURED_ITEMS.map((item) => (
               <div
                 key={item.id}
-                className="group bg-white border border-border rounded-xl overflow-hidden hover:shadow-md transition-all duration-300 hover:border-primary/50"
+                className="group bg-white border border-border rounded-xl overflow-hidden hover:shadow-md transition-all duration-300 hover:border-primary/50 cursor-pointer"
               >
-                {/* Code Preview Header */}
+                {/* Art Preview Header */}
                 <div className="bg-gray-50 border-b border-border p-4 flex justify-between items-center">
-                  <div className="flex items-center gap-2 text-xs text-text-muted font-mono">
-                    <CommandLineIcon className="w-4 h-4" />
-                    cpp
+                  <div className="flex items-center gap-2 text-xs text-text-muted">
+                    <CpuChipIcon className="w-4 h-4" />
+                    <span className="font-mono">{item.resolution}</span>
+                    <span className="text-text-muted">•</span>
+                    <span>{item.format}</span>
                   </div>
-                  <div className="flex gap-1">
-                    <div className="w-2 h-2 rounded-full bg-red-400"></div>
-                    <div className="w-2 h-2 rounded-full bg-yellow-400"></div>
-                    <div className="w-2 h-2 rounded-full bg-green-400"></div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-semibold text-primary">{item.price}</span>
                   </div>
                 </div>
 
-                {/* Code Snippet */}
-                <div className="bg-gray-900 p-4 overflow-hidden h-32 relative group-hover:bg-gray-800 transition-colors">
-                  <pre className="text-xs font-mono text-gray-300 leading-relaxed opacity-80">
-                    {item.code}
+                {/* 1-bit Art Preview */}
+                <div className="bg-black p-6 flex items-center justify-center h-32 relative group-hover:bg-gray-900 transition-colors">
+                  <pre className="text-xs font-mono text-green-400 leading-none opacity-90 text-center">
+                    {item.preview}
                   </pre>
-                  <div className="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent opacity-60"></div>
-                  <div className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button className="bg-white text-black text-xs font-bold px-3 py-1.5 rounded shadow-lg hover:bg-gray-100">
-                      Copy
+                  <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button className="bg-white text-black text-xs font-bold px-3 py-1.5 rounded shadow-lg hover:bg-gray-100 flex items-center gap-1">
+                      <EyeIcon className="w-3 h-3" />
+                      Preview
                     </button>
                   </div>
                 </div>
@@ -300,8 +322,9 @@ export function HomePage() {
                   {/* Tags */}
                   <div className="flex flex-wrap gap-2 mb-4">
                     {item.tags.map(tag => (
-                      <span key={tag} className="text-xs px-2 py-1 bg-bg-secondary rounded text-text-muted">
-                        #{tag}
+                      <span key={tag} className="text-xs px-2 py-1 bg-bg-secondary rounded text-text-muted flex items-center gap-1">
+                        <TagIcon className="w-3 h-3" />
+                        {tag}
                       </span>
                     ))}
                   </div>
@@ -320,7 +343,7 @@ export function HomePage() {
                         <HandThumbUpIcon className="w-3.5 h-3.5" /> {item.likes}
                       </span>
                       <span className="flex items-center gap-1 hover:text-text-primary transition-colors cursor-pointer">
-                        <ChatBubbleLeftIcon className="w-3.5 h-3.5" /> {item.comments}
+                        <ArrowDownTrayIcon className="w-3.5 h-3.5" /> {item.downloads}
                       </span>
                     </div>
                   </div>
@@ -338,14 +361,13 @@ export function HomePage() {
             <div>
               <h2 className="text-2xl font-bold flex items-center gap-2">
                 <ClockIcon className="w-6 h-6 text-primary" />
-                Recently Updated
+                New Releases
               </h2>
-              <p className="text-text-muted mt-1">Fresh content from the community</p>
+              <p className="text-text-muted mt-1">Latest 1-bit art from our community</p>
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {/* Reusing featured items for demo purposes, reversed */}
             {[...FEATURED_ITEMS].reverse().slice(0, 3).map((item) => (
               <div
                 key={`recent-${item.id}`}
@@ -355,24 +377,31 @@ export function HomePage() {
                   <div className="p-2 bg-primary/10 rounded-lg text-primary">
                     <CpuChipIcon className="w-5 h-5" />
                   </div>
-                  <div>
+                  <div className="flex-1">
                     <h3 className="font-semibold">{item.title}</h3>
-                    <p className="text-xs text-text-muted">Updated 2 hours ago</p>
+                    <p className="text-xs text-text-muted">Released 2 hours ago</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm font-semibold text-primary">{item.price}</p>
+                    <p className="text-xs text-text-muted">{item.resolution}</p>
                   </div>
                 </div>
                 <p className="text-sm text-text-muted mb-4 line-clamp-2">
                   {item.description}
                 </p>
                 <div className="flex items-center justify-between text-xs">
-                  <span className="bg-bg-secondary px-2 py-1 rounded text-text-muted">
-                    v1.2.0
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <span className="bg-bg-secondary px-2 py-1 rounded text-text-muted">
+                      {item.format}
+                    </span>
+                    <span className="text-text-muted">by {item.author}</span>
+                  </div>
                   <div className="flex items-center gap-4 text-text-muted">
                     <span className="flex items-center gap-1">
-                      <EyeIcon className="w-3.5 h-3.5" /> {item.views}
+                      <HandThumbUpIcon className="w-3.5 h-3.5" /> {item.likes}
                     </span>
                     <span className="flex items-center gap-1">
-                      <HandThumbUpIcon className="w-3.5 h-3.5" /> {item.likes}
+                      <ArrowDownTrayIcon className="w-3.5 h-3.5" /> {item.downloads}
                     </span>
                   </div>
                 </div>

@@ -1,7 +1,7 @@
 {
   "name": "tiny-screen-studios",
   "version": "0.1.0",
-  "description": "Convert pixel art and animations to tiny display formats",
+  "description": "1-bit art marketplace for tiny displays - buy and sell monochrome pixel art for embedded systems",
   "private": true,
   "type": "module",
   "scripts": {
@@ -30,11 +30,16 @@
   "keywords": [
     "ssd1306",
     "sh1106",
+    "sh1107",
     "oled",
     "display",
     "embedded",
     "pixel-art",
-    "monorepo"
+    "marketplace",
+    "1-bit",
+    "monochrome",
+    "arduino",
+    "iot"
   ],
   "license": "MIT"
 }

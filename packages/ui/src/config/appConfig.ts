@@ -86,7 +86,7 @@ export const defaultConfig: AppConfig = {
   app: {
     name: 'TinyScreen.Studios',
     version: '1.0.0',
-    description: 'Creative Lab for Embedded Displays',
+    description: '1-bit Art Marketplace for Tiny Displays',
   },
 
   navigation: [
@@ -99,12 +99,28 @@ export const defaultConfig: AppConfig = {
       order: 1,
     },
     {
+      id: 'marketplace',
+      label: 'Marketplace',
+      path: '/marketplace',
+      icon: 'ShoppingBagIcon',
+      enabled: true,
+      order: 2,
+    },
+    {
+      id: 'sell',
+      label: 'Sell Art',
+      path: '/sell',
+      icon: 'PaintBrushIcon',
+      enabled: false,
+      order: 3,
+    },
+    {
       id: 'oled-studio',
-      label: 'OLED Studio',
+      label: 'Studio (Preview)',
       path: '/oled-studio',
       icon: 'EyeIcon',
       enabled: true,
-      order: 2,
+      order: 4,
     },
     {
       id: 'docs',
@@ -112,7 +128,7 @@ export const defaultConfig: AppConfig = {
       path: '/docs',
       icon: 'DocumentIcon',
       enabled: true,
-      order: 3,
+      order: 5,
     },
   ],
 
@@ -124,10 +140,10 @@ export const defaultConfig: AppConfig = {
       height: 48,
     },
     title: 'TinyScreen.Studios',
-    subtitle: 'Creative Lab for Embedded Displays',
+    subtitle: '1-bit Art Marketplace',
     showStatusIndicators: true,
     showSupportedDevices: true,
-    supportedDevices: ['SSD1306', 'SH1106', 'OLED'],
+    supportedDevices: ['SSD1306', 'SH1106', 'SH1107'],
   },
 
   device: {

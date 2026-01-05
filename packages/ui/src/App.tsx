@@ -1,7 +1,7 @@
 import React from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { Header, Footer } from './components/layout'
-import { HomePage, PrivacyPolicyPage, TermsOfServicePage } from './components/pages'
+import { HomePage, MarketplacePage, SellPage, PrivacyPolicyPage, TermsOfServicePage } from './components/pages'
 import { PreviewPage } from './components/preview'
 import { DocumentationPage } from './components/documentation'
 import { ScrollToTop } from './components/ui'
@@ -54,6 +54,8 @@ function App() {
           <div className={uiConfig.animations.enabled ? "animate-fade-in" : ""}>
             <Routes>
               <Route path="/" element={<HomePage />} />
+              <Route path="/marketplace" element={<MarketplacePage />} />
+              <Route path="/sell" element={<SellPage />} />
               <Route path="/oled-studio" element={<PreviewPage />} />
               <Route path="/docs" element={<Navigate to="/docs/getting-started" replace />} />
               <Route path="/docs/:section" element={<DocumentationPage />} />
