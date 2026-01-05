@@ -20,115 +20,7 @@ import {
   TagIcon
 } from '@heroicons/react/24/outline'
 
-// Mock data for featured 1-bit art pieces
-const FEATURED_ITEMS = [
-  {
-    id: 1,
-    title: 'Cyberpunk Cityscape',
-    description: 'Detailed 1-bit cityscape with neon signs and flying cars. Perfect for retro gaming displays.',
-    author: 'pixel_prophet',
-    price: '$3.99',
-    likes: 342,
-    downloads: 89,
-    resolution: '128x64',
-    tags: ['cyberpunk', 'cityscape', 'detailed'],
-    preview: `████████████████████████████████
-██  ██    ██  ████    ██  ████
-██  ██    ██  ████    ██  ████
-████████████████████████████████`,
-    format: 'SSD1306'
-  },
-  {
-    id: 2,
-    title: 'Minimalist Weather Icons',
-    description: 'Clean 1-bit weather icon set. Sun, rain, clouds, snow - all optimized for tiny displays.',
-    author: 'mono_designer',
-    price: '$1.99',
-    likes: 156,
-    downloads: 234,
-    resolution: '32x32',
-    tags: ['icons', 'weather', 'minimal'],
-    preview: `    ████████    
-  ██        ██  
-██            ██
-██     ██     ██
-██            ██
-  ██        ██  
-    ████████    `,
-    format: 'Universal'
-  },
-  {
-    id: 3,
-    title: 'Retro Space Invaders',
-    description: 'Classic arcade sprites in perfect 1-bit format. Includes ships, aliens, and explosions.',
-    author: 'arcade_master',
-    price: '$2.49',
-    likes: 445,
-    downloads: 167,
-    resolution: '128x32',
-    tags: ['gaming', 'sprites', 'arcade'],
-    preview: `  ██    ██    ██    ██  
-    ████████████████    
-  ██████████████████  
-██████████████████████`,
-    format: 'SH1106'
-  },
-  {
-    id: 4,
-    title: 'Dithered Portrait Pack',
-    description: 'Professional portrait dithering techniques. 12 different faces with various expressions.',
-    author: 'dither_artist',
-    price: '$4.99',
-    likes: 278,
-    downloads: 45,
-    resolution: '132x64',
-    tags: ['portraits', 'dithering', 'faces'],
-    preview: `  ████████████████  
-██  ██      ██  ██
-██    ██████    ██
-██              ██
-██    ██████    ██
-██  ██      ██  ██
-  ████████████████  `,
-    format: 'SH1107'
-  },
-  {
-    id: 5,
-    title: 'Geometric Patterns',
-    description: 'Abstract 1-bit geometric designs. Perfect for backgrounds and decorative elements.',
-    author: 'pattern_lab',
-    price: '$1.49',
-    likes: 89,
-    downloads: 312,
-    resolution: '128x64',
-    tags: ['abstract', 'patterns', 'geometric'],
-    preview: `██  ██  ██  ██  ██  ██
-  ██  ██  ██  ██  ██  
-██  ██  ██  ██  ██  ██
-  ██  ██  ██  ██  ██  
-██  ██  ██  ██  ██  ██`,
-    format: 'SSD1306'
-  },
-  {
-    id: 6,
-    title: 'Pixel Art Animals',
-    description: 'Cute 1-bit animal collection. Cats, dogs, birds, and more in perfect monochrome style.',
-    author: 'creature_pixels',
-    price: '$2.99',
-    likes: 523,
-    downloads: 198,
-    resolution: '64x64',
-    tags: ['animals', 'cute', 'characters'],
-    preview: `    ████████    
-  ██        ██  
-██  ██    ██  ██
-██            ██
-██  ████████  ██
-  ██        ██  
-    ████████    `,
-    format: 'Universal'
-  }
-]
+import { ARTWORKS } from '../../data/artworks'
 
 export function HomePage() {
   const navigate = useNavigate()
@@ -276,7 +168,7 @@ export function HomePage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {FEATURED_ITEMS.map((item) => (
+            {ARTWORKS.map((item) => (
               <div
                 key={item.id}
                 className="group bg-white border border-border rounded-xl overflow-hidden hover:shadow-md transition-all duration-300 hover:border-primary/50 cursor-pointer"
@@ -321,7 +213,7 @@ export function HomePage() {
 
                   {/* Tags */}
                   <div className="flex flex-wrap gap-2 mb-4">
-                    {item.tags.map(tag => (
+                    {item.tags.map((tag: string) => (
                       <span key={tag} className="text-xs px-2 py-1 bg-bg-secondary rounded text-text-muted flex items-center gap-1">
                         <TagIcon className="w-3 h-3" />
                         {tag}
@@ -368,7 +260,7 @@ export function HomePage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[...FEATURED_ITEMS].reverse().slice(0, 3).map((item) => (
+            {[...ARTWORKS].reverse().slice(0, 3).map((item) => (
               <div
                 key={`recent-${item.id}`}
                 className="bg-white border border-border rounded-xl p-5 hover:border-primary/50 transition-colors cursor-pointer"

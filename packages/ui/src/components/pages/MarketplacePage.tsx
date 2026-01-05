@@ -10,125 +10,15 @@ import {
   CpuChipIcon
 } from '@heroicons/react/24/outline'
 
-// Extended mock data for marketplace
-const MARKETPLACE_ITEMS = [
-  {
-    id: 1,
-    title: 'Cyberpunk Cityscape',
-    description: 'Detailed 1-bit cityscape with neon signs and flying cars. Perfect for retro gaming displays.',
-    author: 'pixel_prophet',
-    price: '$3.99',
-    likes: 342,
-    downloads: 89,
-    resolution: '128x64',
-    tags: ['cyberpunk', 'cityscape', 'detailed'],
-    preview: `████████████████████████████████
-██  ██    ██  ████    ██  ████
-██  ██    ██  ████    ██  ████
-████████████████████████████████`,
-    format: 'SSD1306',
-    category: 'Landscapes'
-  },
-  {
-    id: 2,
-    title: 'Minimalist Weather Icons',
-    description: 'Clean 1-bit weather icon set. Sun, rain, clouds, snow - all optimized for tiny displays.',
-    author: 'mono_designer',
-    price: '$1.99',
-    likes: 156,
-    downloads: 234,
-    resolution: '32x32',
-    tags: ['icons', 'weather', 'minimal'],
-    preview: `    ████████    
-  ██        ██  
-██            ██
-██     ██     ██
-██            ██
-  ██        ██  
-    ████████    `,
-    format: 'Universal',
-    category: 'Icons'
-  },
-  {
-    id: 3,
-    title: 'Retro Space Invaders',
-    description: 'Classic arcade sprites in perfect 1-bit format. Includes ships, aliens, and explosions.',
-    author: 'arcade_master',
-    price: '$2.49',
-    likes: 445,
-    downloads: 167,
-    resolution: '128x32',
-    tags: ['gaming', 'sprites', 'arcade'],
-    preview: `  ██    ██    ██    ██  
-    ████████████████    
-  ██████████████████  
-██████████████████████`,
-    format: 'SH1106',
-    category: 'Gaming'
-  },
-  {
-    id: 4,
-    title: 'Dithered Portrait Pack',
-    description: 'Professional portrait dithering techniques. 12 different faces with various expressions.',
-    author: 'dither_artist',
-    price: '$4.99',
-    likes: 278,
-    downloads: 45,
-    resolution: '132x64',
-    tags: ['portraits', 'dithering', 'faces'],
-    preview: `  ████████████████  
-██  ██      ██  ██
-██    ██████    ██
-██              ██
-██    ██████    ██
-██  ██      ██  ██
-  ████████████████  `,
-    format: 'SH1107',
-    category: 'Portraits'
-  },
-  {
-    id: 5,
-    title: 'Geometric Patterns',
-    description: 'Abstract 1-bit geometric designs. Perfect for backgrounds and decorative elements.',
-    author: 'pattern_lab',
-    price: '$1.49',
-    likes: 89,
-    downloads: 312,
-    resolution: '128x64',
-    tags: ['abstract', 'patterns', 'geometric'],
-    preview: `██  ██  ██  ██  ██  ██
-  ██  ██  ██  ██  ██  
-██  ██  ██  ██  ██  ██
-  ██  ██  ██  ██  ██  
-██  ██  ██  ██  ██  ██`,
-    format: 'SSD1306',
-    category: 'Patterns'
-  },
-  {
-    id: 6,
-    title: 'Pixel Art Animals',
-    description: 'Cute 1-bit animal collection. Cats, dogs, birds, and more in perfect monochrome style.',
-    author: 'creature_pixels',
-    price: '$2.99',
-    likes: 523,
-    downloads: 198,
-    resolution: '64x64',
-    tags: ['animals', 'cute', 'characters'],
-    preview: `    ████████    
-  ██        ██  
-██  ██    ██  ██
-██            ██
-██  ████████  ██
-  ██        ██  
-    ████████    `,
-    format: 'Universal',
-    category: 'Characters'
-  }
-]
+import { ARTWORKS, type Artwork } from '../../data/artworks'
 
-const CATEGORIES = ['All', 'Icons', 'Gaming', 'Portraits', 'Patterns', 'Characters', 'Landscapes']
-const RESOLUTIONS = ['All', '128x64', '128x32', '132x64', '64x64', '32x32']
-const FORMATS = ['All', 'SSD1306', 'SH1106', 'SH1107', 'Universal']
+// Use the imported artworks data
+const MARKETPLACE_ITEMS: Artwork[] = ARTWORKS
+
+// Extract unique categories and other filter options from the data
+const CATEGORIES: string[] = ['All', ...Array.from(new Set(MARKETPLACE_ITEMS.map((item: Artwork) => item.category)))]
+const RESOLUTIONS: string[] = ['All', ...Array.from(new Set(MARKETPLACE_ITEMS.map((item: Artwork) => item.resolution)))]
+const FORMATS: string[] = ['All', ...Array.from(new Set(MARKETPLACE_ITEMS.map((item: Artwork) => item.format)))]
 
 export function MarketplacePage() {
   const [searchQuery, setSearchQuery] = useState('')
@@ -141,7 +31,7 @@ export function MarketplacePage() {
   const filteredItems = MARKETPLACE_ITEMS.filter(item => {
     const matchesSearch = item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          item.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         item.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()))
+                         item.tags.some((tag: string) => tag.toLowerCase().includes(searchQuery.toLowerCase()))
     
     const matchesCategory = selectedCategory === 'All' || item.category === selectedCategory
     const matchesResolution = selectedResolution === 'All' || item.resolution === selectedResolution
@@ -193,7 +83,7 @@ export function MarketplacePage() {
             {/* Popular Display Formats */}
             <div className="flex flex-wrap items-center justify-center gap-3">
               <span className="text-sm text-text-muted">Popular formats:</span>
-              {['SSD1306', 'SH1106', 'SH1107', '128x64', '128x32', '132x64'].map((format) => (
+              {['SSD1306', 'SH1106', 'SH1107', '128x64', '128x32', '132x64'].map((format: string) => (
                 <span
                   key={format}
                   className="px-3 py-1.5 bg-white border border-border rounded-full text-sm font-medium text-text hover:border-primary/50 transition-colors"
@@ -230,7 +120,7 @@ export function MarketplacePage() {
                 onChange={(e) => setSelectedCategory(e.target.value)}
                 className="w-full px-3 py-2 rounded-lg border border-border focus:border-primary focus:ring-2 focus:ring-primary-light outline-none"
               >
-                {CATEGORIES.map(category => (
+                {CATEGORIES.map((category: string) => (
                   <option key={category} value={category}>{category}</option>
                 ))}
               </select>
@@ -243,7 +133,7 @@ export function MarketplacePage() {
                 onChange={(e) => setSelectedResolution(e.target.value)}
                 className="w-full px-3 py-2 rounded-lg border border-border focus:border-primary focus:ring-2 focus:ring-primary-light outline-none"
               >
-                {RESOLUTIONS.map(resolution => (
+                {RESOLUTIONS.map((resolution: string) => (
                   <option key={resolution} value={resolution}>{resolution}</option>
                 ))}
               </select>
@@ -256,7 +146,7 @@ export function MarketplacePage() {
                 onChange={(e) => setSelectedFormat(e.target.value)}
                 className="w-full px-3 py-2 rounded-lg border border-border focus:border-primary focus:ring-2 focus:ring-primary-light outline-none"
               >
-                {FORMATS.map(format => (
+                {FORMATS.map((format: string) => (
                   <option key={format} value={format}>{format}</option>
                 ))}
               </select>
@@ -355,7 +245,7 @@ export function MarketplacePage() {
 
                 {/* Tags */}
                 <div className="flex flex-wrap gap-2 mb-4">
-                  {item.tags.slice(0, 3).map(tag => (
+                  {item.tags.slice(0, 3).map((tag: string) => (
                     <span key={tag} className="text-xs px-2 py-1 bg-bg-secondary rounded text-text-muted flex items-center gap-1">
                       <TagIcon className="w-3 h-3" />
                       {tag}
