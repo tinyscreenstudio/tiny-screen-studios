@@ -1,9 +1,15 @@
+/// <reference types="vitest" />
 import { defineConfig } from 'vite';
 import { resolve } from 'path';
 import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   plugins: [react()],
+  resolve: {
+    alias: {
+      '@tiny-screen-studios/core': resolve(__dirname, '../core/src/index.ts'),
+    },
+  },
   root: '.',
   base: '/', // Use absolute paths for custom domain
   build: {
@@ -21,12 +27,10 @@ export default defineConfig({
   server: {
     port: 3000,
     open: true,
-    historyApiFallback: true,
   },
   preview: {
     port: 3001,
     open: true,
-    historyApiFallback: true,
   },
   test: {
     globals: true,
